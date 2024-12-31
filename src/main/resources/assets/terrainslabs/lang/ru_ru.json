@@ -1,0 +1,62 @@
+{
+  "itemgroup.terrainslabs": "Рельефные Плиты",
+
+  "block.terrainslabs.dirt_slab": "Земляная плита",
+  "block.terrainslabs.mud_slab": "Грязевая плита",
+  "block.terrainslabs.coarse_slab": "Каменистая земляная плита",
+  "block.terrainslabs.snow_slab": "Снежная плита",
+  "block.terrainslabs.packed_ice_slab": "Плита плотного льда",
+  "block.terrainslabs.deepslate_slab": "Глубинносланцевая плита",
+  "block.terrainslabs.clay_slab": "Глиняная плита",
+  "block.terrainslabs.moss_slab": "Моховая плита",
+
+  "block.terrainslabs.grass_slab": "Дерновая плита",
+  "block.terrainslabs.mycelium_slab": "Мицелиевая плита",
+  "block.terrainslabs.podzol_slab": "Подзолистая плита",
+  "block.terrainslabs.path_slab": "Плита тропинки",
+
+  "block.terrainslabs.gravel_slab": "Гравийная плита",
+  "block.terrainslabs.sand_slab": "Песчаная плита",
+  "block.terrainslabs.red_sand_slab": "Красная песчаная плита",
+
+  "block.terrainslabs.terracotta_slab": "Терракотовая плита",
+  "block.terrainslabs.red_terracotta_slab": "Плита из красной керамики",
+  "block.terrainslabs.orange_terracotta_slab": "Плита из оранжевой керамики",
+  "block.terrainslabs.light_gray_terracotta_slab": "Плита из светло-серой керамики",
+  "block.terrainslabs.white_terracotta_slab": "Плита из белой керамикиа",
+  "block.terrainslabs.brown_terracotta_slab": "Плита из коричневой керамики",
+  "block.terrainslabs.yellow_terracotta_slab": "Плита из жёлтой керамики",
+
+  "block.terrainslabs.terrain_stone_slab": "Рельефная каменная плита",
+  "block.terrainslabs.terrain_tuff_slab": "Рельефная туфовая плита",
+  "block.terrainslabs.terrain_sandstone_slab": "Рельефная песчаниковая плита",
+  "block.terrainslabs.terrain_red_sandstone_slab": "Рельефная плита из красного песчаника",
+  "block.terrainslabs.terrain_andesite_slab": "Рельефная андезитовая плита",
+  "block.terrainslabs.terrain_diorite_slab": "Рельефная диоритовая плита",
+  "block.terrainslabs.terrain_granite_slab": "Рельефная гранитная плита",
+
+  "block.terrainslabs.soul_sand_slab": "Плита из песка душ",
+  "block.terrainslabs.soul_soil_slab": "Плита из почвы душ",
+  "block.terrainslabs.netherrack_slab": "Незераковая плита",
+  "block.terrainslabs.warped_nylium_slab": "Плита из искажённого нилия",
+  "block.terrainslabs.crimson_nylium_slab": "Плита из багрового нилия",
+  "block.terrainslabs.basalt_slab": "Базальтовая плита",
+  "block.terrainslabs.terrain_blackstone_slab": "Рельефная чернитная плита",
+  "block.terrainslabs.endstone_slab": "Эндерняковая плита",
+
+  "block.terrainslabs.snow_on_top": "Снег на плите",
+  "block.terrainslabs.poppy_on_top": "Мак на плите",
+  "block.terrainslabs.dandelion_on_top": "Одуванчик на плите",
+  "block.terrainslabs.azure_bluet_on_top": "Хаустония серая на плите",
+  "block.terrainslabs.cornflower_top": "Синий василёк на плите",
+  "block.terrainslabs.seagrass_on_top": "Морская трава на плите",
+  "block.terrainslabs.red_mushroom_on_top": "Красный гриб на плите",
+  "block.terrainslabs.brown_mushroom_on_top": "Коричневый гриб на плите",
+  "block.terrainslabs.fern_on_top": "Папоротник на плите",
+  "block.terrainslabs.short_grass_on_top": "Низкая трава на плите",
+  "block.terrainslabs.dead_bush_on_top": "Мёртвый куст на плите",
+
+  "terrainslabs.midnightconfig.enableSlabGeneration": "Включить генерацию плит",
+  "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Переключите, чтобы включить или отключить генерацию плит в мире.",
+  "terrainslabs.midnightconfig.title": "Рельефные Плиты"
+}
