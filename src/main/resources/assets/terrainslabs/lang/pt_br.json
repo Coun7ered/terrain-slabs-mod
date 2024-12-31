@@ -54,7 +54,7 @@
   "block.terrainslabs.brown_mushroom_on_top": "Cogumelo marrom na laje",
   "block.terrainslabs.fern_on_top": "Samambaia na laje",
   "block.terrainslabs.short_grass_on_top": "Grama baixa na laje",
-  "block.terrainslabs.dead_bush_on_top": "Arbusto seco na laje"
+  "block.terrainslabs.dead_bush_on_top": "Arbusto seco na laje",
 
   "terrainslabs.midnightconfig.enableSlabGeneration": "Habilitar geração de lajes",
   "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Ative para habilitar ou desabilitar a geração de lajes no mundo.",
