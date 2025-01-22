@@ -43,6 +43,10 @@ processResources {
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
+
+	filesMatching("assets/terrainslabs/**") {
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	} // Ignore generated models when the file is present in assets
 }
 
 tasks.withType(JavaCompile).configureEach {
