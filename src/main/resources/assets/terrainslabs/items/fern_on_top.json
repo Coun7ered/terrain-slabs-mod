@@ -1,7 +1,7 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "terrainslabs:block/grass_slab_bottom",
+    "model": "minecraft:item/fern",
     "tints": [
       {
         "type": "minecraft:grass",
