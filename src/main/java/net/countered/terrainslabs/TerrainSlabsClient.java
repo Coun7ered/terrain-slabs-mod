@@ -28,32 +28,12 @@ public class TerrainSlabsClient implements ClientModInitializer {
                 ? BiomeColors.getGrassColor(world, pos)
                 : GrassColors.getDefaultColor(), ModBlocksRegistry.GRASS_SLAB);
 
-
-//        ColorProviderRegistry.ITEM.register(
-//                (stack, tintIndex) ->
-//                        MinecraftClient.getInstance().getBlockColors().getColor(Blocks.GRASS_BLOCK.getDefaultState(), null, null, tintIndex),
-//                ModBlocksRegistry.GRASS_SLAB
-//        );
-
         ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
                 ? BiomeColors.getGrassColor(world, pos)
                 : GrassColors.getDefaultColor(), ModBlocksRegistry.SHORT_GRASS_ON_TOP);
 
-
-//        ColorProviderRegistry.ITEM.register(
-//                (stack, tintIndex) ->
-//                        MinecraftClient.getInstance().getBlockColors().getColor(Blocks.SHORT_GRASS.getDefaultState(), null, null, tintIndex),
-//                ModBlocksRegistry.SHORT_GRASS_ON_TOP
-//        );
-
         ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
                 ? BiomeColors.getGrassColor(world, pos)
                 : GrassColors.getDefaultColor(), ModBlocksRegistry.FERN_ON_TOP);
-
-//        ColorProviderRegistry.ITEM.register(
-//                (stack, tintIndex) ->
-//                        MinecraftClient.getInstance().getBlockColors().getColor(Blocks.FERN.getDefaultState(), null, null, tintIndex),
-//                ModBlocksRegistry.FERN_ON_TOP
-//        );
     }
 }
