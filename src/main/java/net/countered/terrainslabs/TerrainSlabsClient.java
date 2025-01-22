@@ -1,12 +1,9 @@
 package net.countered.terrainslabs;
 
-import net.countered.terrainslabs.block.ModBlocksRegistry;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-import net.minecraft.client.color.world.BiomeColors;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.world.biome.GrassColors;
+import net.countered.terrainslabs.block.*;
+import net.fabricmc.api.*;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.*;
+import net.minecraft.client.render.*;
 
 public class TerrainSlabsClient implements ClientModInitializer {
     @Override
@@ -24,9 +21,9 @@ public class TerrainSlabsClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.DEAD_BUSH_ON_TOP, RenderLayer.getCutoutMipped());
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.SEAGRASS_ON_TOP, RenderLayer.getCutoutMipped());
 
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
-                ? BiomeColors.getGrassColor(world, pos)
-                : GrassColors.getDefaultColor(), ModBlocksRegistry.GRASS_SLAB);
+//        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
+//                ? BiomeColors.getGrassColor(world, pos)
+//                : GrassColors.getDefaultColor(), ModBlocksRegistry.GRASS_SLAB);
 
 
 //        ColorProviderRegistry.ITEM.register(
@@ -35,9 +32,9 @@ public class TerrainSlabsClient implements ClientModInitializer {
 //                ModBlocksRegistry.GRASS_SLAB
 //        );
 
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
-                ? BiomeColors.getGrassColor(world, pos)
-                : GrassColors.getDefaultColor(), ModBlocksRegistry.SHORT_GRASS_ON_TOP);
+//        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
+//                ? BiomeColors.getGrassColor(world, pos)
+//                : GrassColors.getDefaultColor(), ModBlocksRegistry.SHORT_GRASS_ON_TOP);
 
 
 //        ColorProviderRegistry.ITEM.register(
@@ -46,9 +43,9 @@ public class TerrainSlabsClient implements ClientModInitializer {
 //                ModBlocksRegistry.SHORT_GRASS_ON_TOP
 //        );
 
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
-                ? BiomeColors.getGrassColor(world, pos)
-                : GrassColors.getDefaultColor(), ModBlocksRegistry.FERN_ON_TOP);
+//        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
+//                ? BiomeColors.getGrassColor(world, pos)
+//                : GrassColors.getDefaultColor(), ModBlocksRegistry.FERN_ON_TOP);
 
 //        ColorProviderRegistry.ITEM.register(
 //                (stack, tintIndex) ->
