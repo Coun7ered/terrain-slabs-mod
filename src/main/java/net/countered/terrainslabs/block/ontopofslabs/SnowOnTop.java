@@ -2,9 +2,7 @@ package net.countered.terrainslabs.block.ontopofslabs;
 
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -52,9 +50,7 @@ public class SnowOnTop extends SnowBlock {
     protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos.down());
         if (blockState.getBlock() instanceof SlabBlock) {
-            if (blockState.get(TYPE).equals(SlabType.BOTTOM)) {
-                return true;
-            }
+            return blockState.get(TYPE).equals(SlabType.BOTTOM);
         }
         return false;
     }

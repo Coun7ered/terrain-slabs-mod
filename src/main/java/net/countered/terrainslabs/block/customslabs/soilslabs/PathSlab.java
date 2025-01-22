@@ -10,7 +10,6 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
@@ -26,13 +25,13 @@ public class PathSlab extends CustomSlab {
         super(settings);
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
+                .with(WATERLOGGED, Boolean.FALSE)
+                .with(GENERATED, Boolean.FALSE));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(TYPE, WATERLOGGED, GENERATED);
+        super.appendProperties(builder);
     }
 
     public static final MapCodec<PathSlab> CODEC = createCodec(PathSlab::new);
@@ -54,26 +53,20 @@ public class PathSlab extends CustomSlab {
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         SlabType slabType = state.get(TYPE);
-        switch (slabType) {
-            case DOUBLE:
-                return DOUBLE_SHAPE_COL;
-            case TOP:
-                return TOP_SHAPE_COL;
-            default:
-                return BOTTOM_SHAPE_COL;
-        }
+        return switch (slabType) {
+            case DOUBLE -> DOUBLE_SHAPE_COL;
+            case TOP -> TOP_SHAPE_COL;
+            default -> BOTTOM_SHAPE_COL;
+        };
     }
     @Override
     protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         SlabType slabType = state.get(TYPE);
-        switch (slabType) {
-            case DOUBLE:
-                return DOUBLE_SHAPE_COL;
-            case TOP:
-                return TOP_SHAPE_COL;
-            default:
-                return BOTTOM_SHAPE_COL;
-        }
+        return switch (slabType) {
+            case DOUBLE -> DOUBLE_SHAPE_COL;
+            case TOP -> TOP_SHAPE_COL;
+            default -> BOTTOM_SHAPE_COL;
+        };
     }
 
     @Override
@@ -140,7 +133,7 @@ public class PathSlab extends CustomSlab {
         if (direction == Direction.UP && !state.canPlaceAt(world, pos)) {
             tickView.scheduleBlockTick(pos, this, 1);
         }
-        if ((Boolean)state.get(WATERLOGGED)) {
+        if (state.get(WATERLOGGED)) {
             tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return state;

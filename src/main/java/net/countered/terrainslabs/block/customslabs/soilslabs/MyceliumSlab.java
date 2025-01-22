@@ -19,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.chunk.light.ChunkLightProvider;
 import net.minecraft.world.tick.ScheduledTickView;
@@ -31,8 +30,8 @@ public class MyceliumSlab extends CustomSlab {
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(SlabBlock.TYPE, SlabType.BOTTOM)
                 .with(SNOWY, false)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
+                .with(WATERLOGGED, Boolean.FALSE)
+                .with(GENERATED, Boolean.FALSE));
     }
 
     public static final MapCodec<MyceliumSlab> CODEC = createCodec(MyceliumSlab::new);
@@ -49,7 +48,7 @@ public class MyceliumSlab extends CustomSlab {
             state = state.with(SNOWY, isSnow(neighborState));
         }
 
-        if ((Boolean)state.get(WATERLOGGED)) {
+        if (state.get(WATERLOGGED)) {
             tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return state;
@@ -97,7 +96,7 @@ public class MyceliumSlab extends CustomSlab {
     private static boolean canSurvive(BlockState state, WorldView world, BlockPos pos) {
         BlockPos blockPosUp = pos.up();
         BlockState blockStateUp = world.getBlockState(blockPosUp);
-        if (blockStateUp.isOf(Blocks.SNOW) && (Integer)blockStateUp.get(SnowBlock.LAYERS) == 1
+        if (blockStateUp.isOf(Blocks.SNOW) && blockStateUp.get(SnowBlock.LAYERS) == 1
                 || blockStateUp.isOf(ModBlocksRegistry.SNOW_SLAB)) {
             return true;
         } else if (blockStateUp.getFluidState().getLevel() == 8) {
@@ -143,7 +142,7 @@ public class MyceliumSlab extends CustomSlab {
                 for (int i = 0; i < 4; i++) {
                     BlockPos blockPos = pos.add(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
                     if (world.getBlockState(blockPos).isOf(ModBlocksRegistry.DIRT_SLAB) && canSpread(blockState, world, blockPos)) {
-                        world.setBlockState(blockPos, blockState.with(SNOWY, Boolean.valueOf(world.getBlockState(blockPos.up()).isOf(Blocks.SNOW))).with(TYPE, world.getBlockState(blockPos).get(TYPE)));
+                        world.setBlockState(blockPos, blockState.with(SNOWY, world.getBlockState(blockPos.up()).isOf(Blocks.SNOW)).with(TYPE, world.getBlockState(blockPos).get(TYPE)));
                     }
                 }
             }

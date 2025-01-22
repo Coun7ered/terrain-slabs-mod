@@ -18,8 +18,8 @@ public class CustomSlab extends SlabBlock {
         super(settings);
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
+                .with(WATERLOGGED, Boolean.FALSE)
+                .with(GENERATED, Boolean.FALSE));
     }
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {

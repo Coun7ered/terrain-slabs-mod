@@ -17,7 +17,6 @@ import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.entry.AlternativeEntry;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.entry.LeafEntry;
-import net.minecraft.loot.entry.LootPoolEntry;
 import net.minecraft.loot.function.ApplyBonusLootFunction;
 import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
@@ -97,7 +96,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
                                                                         SnowBlock.LAYERS.getValues(),
                                                                         integer -> ItemEntry.builder(Items.SNOWBALL)
                                                                                 .conditionally(BlockStatePropertyLootCondition.builder(block).properties(StatePredicate.Builder.create().exactMatch(SnowBlock.LAYERS, integer)))
-                                                                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create((float)integer.intValue())))
+                                                                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create((float) integer)))
                                                                 )
                                                                 .conditionally(this.createWithoutSilkTouchCondition()),
                                                         AlternativeEntry.builder(
@@ -105,7 +104,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
                                                                 integer -> integer == 8
                                                                         ? ItemEntry.builder(Blocks.SNOW_BLOCK)
                                                                         : ItemEntry.builder(Blocks.SNOW)
-                                                                        .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create((float)integer.intValue())))
+                                                                        .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create((float) integer)))
                                                                         .conditionally(BlockStatePropertyLootCondition.builder(block).properties(StatePredicate.Builder.create().exactMatch(SnowBlock.LAYERS, integer)))
                                                         )
                                                 )
@@ -118,17 +117,13 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         this.addDrop(ModBlocksRegistry.CORNFLOWER_ON_TOP, block -> this.drops(block, Blocks.CORNFLOWER));
         this.addDrop(ModBlocksRegistry.BROWN_MUSHROOM_ON_TOP, block -> this.drops(block, Blocks.BROWN_MUSHROOM));
         this.addDrop(ModBlocksRegistry.RED_MUSHROOM_ON_TOP, block -> this.drops(block, Blocks.RED_MUSHROOM));
-        this.addDrop(ModBlocksRegistry.SHORT_GRASS_ON_TOP, (block) -> {
-            return this.shortPlantDrops1(Blocks.SHORT_GRASS);
-        });
-        this.addDrop(ModBlocksRegistry.FERN_ON_TOP, (block) -> {
-            return this.shortPlantDrops1(Blocks.FERN);
-        });
+        this.addDrop(ModBlocksRegistry.SHORT_GRASS_ON_TOP, (block) -> this.shortPlantDrops1(Blocks.SHORT_GRASS));
+        this.addDrop(ModBlocksRegistry.FERN_ON_TOP, (block) -> this.shortPlantDrops1(Blocks.FERN));
         this.addDrop(
                 ModBlocksRegistry.DEAD_BUSH_ON_TOP,
                 block -> this.dropsWithShears(
                         Blocks.DEAD_BUSH,
-                        (LootPoolEntry.Builder<?>)this.applyExplosionDecay(
+                        this.applyExplosionDecay(
                                 block, ItemEntry.builder(Items.STICK).apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0.0F, 2.0F)))
                         )
                 )
@@ -138,7 +133,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
     }
     public LootTable.Builder shortPlantDrops1(Block withShears) {
         RegistryWrapper.Impl<Enchantment> impl = this.registries.getOrThrow(RegistryKeys.ENCHANTMENT);
-        return this.dropsWithShears(withShears, (LootPoolEntry.Builder)this.applyExplosionDecay(withShears, ((LeafEntry.Builder)ItemEntry.builder(Items.WHEAT_SEEDS).conditionally(RandomChanceLootCondition.builder(0.125F))).apply(ApplyBonusLootFunction.uniformBonusCount(impl.getOrThrow(Enchantments.FORTUNE), 2))));
+        return this.dropsWithShears(withShears, this.applyExplosionDecay(withShears, ((LeafEntry.Builder<?>)ItemEntry.builder(Items.WHEAT_SEEDS).conditionally(RandomChanceLootCondition.builder(0.125F))).apply(ApplyBonusLootFunction.uniformBonusCount(impl.getOrThrow(Enchantments.FORTUNE), 2))));
     }
 
     /**

@@ -3,7 +3,6 @@ package net.countered.terrainslabs.block.customslabs.specialslabs;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -21,62 +20,48 @@ public class MudSlab extends CustomSlab {
         super(settings);
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
+                .with(WATERLOGGED, Boolean.FALSE)
+                .with(GENERATED, Boolean.FALSE));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(TYPE, WATERLOGGED, GENERATED);
+        super.appendProperties(builder);
     }
 
     @Override
     protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         SlabType slabType = state.get(TYPE);
-        switch (slabType) {
-            case DOUBLE:
-                return FULL_SHAPE_COL;
-            case TOP:
-                return TOP_SHAPE_COL;
-            default:
-                return BOTTOM_SHAPE_COL;
-        }
+        return switch (slabType) {
+            case DOUBLE -> FULL_SHAPE_COL;
+            case TOP -> TOP_SHAPE_COL;
+            default -> BOTTOM_SHAPE_COL;
+        };
     }
 
     @Override
     protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         SlabType slabType = state.get(TYPE);
-        switch (slabType) {
-            case DOUBLE:
-                return VoxelShapes.fullCube();
-            case TOP:
-                return TOP_SHAPE_OUT;
-            default:
-                return BOTTOM_SHAPE_OUT;
-        }
+        return switch (slabType) {
+            case DOUBLE -> VoxelShapes.fullCube();
+            case TOP -> TOP_SHAPE_OUT;
+            default -> BOTTOM_SHAPE_OUT;
+        };
     }
 
     @Override
     protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         SlabType slabType = state.get(TYPE);
-        switch (slabType) {
-            case DOUBLE:
-                return VoxelShapes.fullCube();
-            case TOP:
-                return TOP_SHAPE_OUT;
-            default:
-                return BOTTOM_SHAPE_OUT;
-        }
+        return switch (slabType) {
+            case DOUBLE -> VoxelShapes.fullCube();
+            case TOP -> TOP_SHAPE_OUT;
+            default -> BOTTOM_SHAPE_OUT;
+        };
     }
     @Override
     protected float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
         SlabType slabType = state.get(TYPE);
-        switch (slabType) {
-            case DOUBLE:
-                return 0.2F;
-            default:
-                return 1F;
-        }
+        return slabType == SlabType.DOUBLE ? 0.2F : 1F;
     }
 }
 

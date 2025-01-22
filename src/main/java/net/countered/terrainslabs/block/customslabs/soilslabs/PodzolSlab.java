@@ -14,7 +14,6 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.tick.ScheduledTickView;
 
@@ -25,8 +24,8 @@ public class PodzolSlab extends CustomSlab {
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(SlabBlock.TYPE, SlabType.BOTTOM)
                 .with(SNOWY, false)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
+                .with(WATERLOGGED, Boolean.FALSE)
+                .with(GENERATED, Boolean.FALSE));
     }
 
     public static final MapCodec<PodzolSlab> CODEC = createCodec(PodzolSlab::new);
@@ -43,7 +42,7 @@ public class PodzolSlab extends CustomSlab {
             state = state.with(SNOWY, isSnow(neighborState));
         }
 
-        if ((Boolean)state.get(WATERLOGGED)) {
+        if (state.get(WATERLOGGED)) {
             tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return state;

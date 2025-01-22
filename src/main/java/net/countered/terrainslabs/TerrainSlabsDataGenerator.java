@@ -8,7 +8,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.registry.RegistryBuilder;
 import net.minecraft.registry.RegistryKeys;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,25 +34,11 @@ public class TerrainSlabsDataGenerator implements DataGeneratorEntrypoint {
 
 		if (Files.exists(generatedDir)) {
 			try {
-				deleteDirectoryRecursively(generatedDir.toFile());
+				Files.delete(generatedDir);
 				System.out.println("Deleted generated directory after data generation: " + generatedDir);
 			} catch (IOException e) {
 				System.err.println("Error deleting directory: " + e.getMessage());
 			}
 		}
-	}
-
-	private void deleteDirectoryRecursively(File dir) throws IOException {
-		File[] allContents = dir.listFiles();
-		if (allContents != null) {
-			for (File file : allContents) {
-				if (file.isDirectory()) {
-					deleteDirectoryRecursively(file);
-				} else {
-					file.delete();
-				}
-			}
-		}
-		dir.delete();
 	}
 }

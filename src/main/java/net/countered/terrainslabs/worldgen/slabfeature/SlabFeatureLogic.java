@@ -264,11 +264,8 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     }
 
     private Boolean badNextToWaterSlab(WorldAccess world, BlockPos currentPos, BlockPos blockBelowPos, Direction direction) {
-        if (world.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER) &&
-                (world.getBlockState(blockBelowPos).isOf(Blocks.AIR) || world.getBlockState(currentPos.offset(direction.getOpposite())).getBlock() == Blocks.AIR)) {
-            return true;
-        }
-        return false;
+        return world.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER) &&
+                (world.getBlockState(blockBelowPos).isOf(Blocks.AIR) || world.getBlockState(currentPos.offset(direction.getOpposite())).getBlock() == Blocks.AIR);
     }
 
     private boolean bottomOfMountain(WorldAccess world, BlockPos currentPos) {
@@ -285,10 +282,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     }
 
     private boolean nextToGlowLichen(WorldAccess world, BlockPos currentPos, Direction direction) {
-
-        if (world.getBlockState(currentPos.offset(direction)).isOf(Blocks.GLOW_LICHEN)){
-            return true;
-        }
-        return false;
+        return world.getBlockState(currentPos.offset(direction)).isOf(Blocks.GLOW_LICHEN);
     }
 }

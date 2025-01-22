@@ -5,25 +5,19 @@ import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.chunk.light.ChunkLightProvider;
@@ -64,7 +58,7 @@ public class GrassSlab extends CustomSlab {
             state = state.with(SNOWY, isSnow(neighborState));
         }
 
-        if ((Boolean)state.get(WATERLOGGED)) {
+        if (state.get(WATERLOGGED)) {
             tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return state;
@@ -112,7 +106,7 @@ public class GrassSlab extends CustomSlab {
     private static boolean canSurvive(BlockState state, WorldView world, BlockPos pos) {
         BlockPos blockPosUp = pos.up();
         BlockState blockStateUp = world.getBlockState(blockPosUp);
-        if (blockStateUp.isOf(Blocks.SNOW) && (Integer)blockStateUp.get(SnowBlock.LAYERS) == 1
+        if (blockStateUp.isOf(Blocks.SNOW) && blockStateUp.get(SnowBlock.LAYERS) == 1
         || blockStateUp.isOf(ModBlocksRegistry.SNOW_SLAB)) {
             return true;
         } else if (blockStateUp.getFluidState().getLevel() == 8) {
@@ -147,7 +141,7 @@ public class GrassSlab extends CustomSlab {
                 for (int i = 0; i < 4; i++) {
                     BlockPos blockPos = pos.add(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
                     if (world.getBlockState(blockPos).isOf(ModBlocksRegistry.DIRT_SLAB) && canSpread(blockState, world, blockPos)) {
-                        world.setBlockState(blockPos, blockState.with(SNOWY, Boolean.valueOf(world.getBlockState(blockPos.up()).isOf(Blocks.SNOW))).with(TYPE, world.getBlockState(blockPos).get(TYPE)));
+                        world.setBlockState(blockPos, blockState.with(SNOWY, world.getBlockState(blockPos.up()).isOf(Blocks.SNOW)).with(TYPE, world.getBlockState(blockPos).get(TYPE)));
                     }
                 }
             }

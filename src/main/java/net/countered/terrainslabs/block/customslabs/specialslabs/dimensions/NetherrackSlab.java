@@ -7,7 +7,6 @@ import net.minecraft.block.enums.SlabType;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
@@ -19,13 +18,13 @@ public class NetherrackSlab extends CustomSlab implements Fertilizable{
         super(settings);
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
+                .with(WATERLOGGED, Boolean.FALSE)
+                .with(GENERATED, Boolean.FALSE));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(TYPE, WATERLOGGED, GENERATED);
+        super.appendProperties(builder);
     }
 
     @Override

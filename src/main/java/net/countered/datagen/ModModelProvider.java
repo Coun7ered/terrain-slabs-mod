@@ -1,14 +1,10 @@
 package net.countered.datagen;
 
 import net.countered.terrainslabs.block.ModBlocksRegistry;
+import net.fabricmc.fabric.api.client.datagen.v1.provider.*;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.data.client.*;
-
-import static net.minecraft.data.client.BlockStateModelGenerator.createSingletonBlockState;
-
+import net.minecraft.client.data.*;
 
 public class ModModelProvider extends FabricModelProvider {
     public ModModelProvider(FabricDataOutput output) {

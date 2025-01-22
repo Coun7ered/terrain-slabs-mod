@@ -6,7 +6,6 @@ import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
@@ -20,13 +19,13 @@ public class NyliumSlab extends CustomSlab implements Fertilizable {
         super(settings);
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
+                .with(WATERLOGGED, Boolean.FALSE)
+                .with(GENERATED, Boolean.FALSE));
     }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(TYPE, WATERLOGGED, GENERATED);
+        super.appendProperties(builder);
     }
 
     private static boolean stayAlive(BlockState state, WorldView world, BlockPos pos) {

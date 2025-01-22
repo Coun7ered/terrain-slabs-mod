@@ -2,7 +2,6 @@ package net.countered.terrainslabs.block.ontopofslabs;
 
 import net.minecraft.block.*;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
