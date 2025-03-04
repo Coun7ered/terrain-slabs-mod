@@ -1,39 +1,50 @@
 package net.countered.terrainslabs;
 
-import net.countered.terrainslabs.block.*;
 import net.fabricmc.api.*;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.*;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
+import net.minecraft.block.*;
+import net.minecraft.client.color.block.*;
 import net.minecraft.client.color.world.*;
 import net.minecraft.client.render.*;
 import net.minecraft.world.biome.*;
 
+import static net.countered.terrainslabs.block.ModBlocksRegistry.*;
+
 public class TerrainSlabsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.GRASS_SLAB, RenderLayer.getCutoutMipped());
+        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(), getCutoutMippedBlocks());
+        ColorProviderRegistry.BLOCK.register(colorBlockOrDefaultProvider(), getTintedBlocks());
+    }
 
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.POPPY_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.DANDELION_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.AZURE_BLUET_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.CORNFLOWER_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.SHORT_GRASS_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.FERN_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.BROWN_MUSHROOM_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.RED_MUSHROOM_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.DEAD_BUSH_ON_TOP, RenderLayer.getCutoutMipped());
-        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocksRegistry.SEAGRASS_ON_TOP, RenderLayer.getCutoutMipped());
+    private static Block[] getCutoutMippedBlocks() {
+        return new Block[]{
+                GRASS_SLAB,
+                POPPY_ON_TOP,
+                DANDELION_ON_TOP,
+                AZURE_BLUET_ON_TOP,
+                CORNFLOWER_ON_TOP,
+                SHORT_GRASS_ON_TOP,
+                FERN_ON_TOP,
+                BROWN_MUSHROOM_ON_TOP,
+                RED_MUSHROOM_ON_TOP,
+                DEAD_BUSH_ON_TOP,
+                SEAGRASS_ON_TOP
+        };
+    }
 
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
+    private static Block[] getTintedBlocks() {
+        return new Block[] {
+                GRASS_SLAB,
+                SHORT_GRASS_ON_TOP,
+                FERN_ON_TOP
+        };
+    }
+
+    private static BlockColorProvider colorBlockOrDefaultProvider() {
+        return (state, world, pos, tintIndex) -> world != null && pos != null
                 ? BiomeColors.getGrassColor(world, pos)
-                : GrassColors.getDefaultColor(), ModBlocksRegistry.GRASS_SLAB);
-
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
-                ? BiomeColors.getGrassColor(world, pos)
-                : GrassColors.getDefaultColor(), ModBlocksRegistry.SHORT_GRASS_ON_TOP);
-
-        ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> world != null && pos != null
-                ? BiomeColors.getGrassColor(world, pos)
-                : GrassColors.getDefaultColor(), ModBlocksRegistry.FERN_ON_TOP);
+                : GrassColors.getDefaultColor();
     }
 }
