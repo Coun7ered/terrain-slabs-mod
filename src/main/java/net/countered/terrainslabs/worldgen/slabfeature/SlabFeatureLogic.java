@@ -15,19 +15,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.util.FeatureContext;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
 
     public SlabFeatureLogic(Codec<DefaultFeatureConfig> codec) {
         super(codec);
     }
+
+    public static Map<ChunkPos, List<BlockPos>> placementPositions;
+
     public static final Set<Block> VALID_BLOCKS_FOR_SLAB_PLACEMENT = new HashSet<>();
     static {
         VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.GRASS_BLOCK);
@@ -73,12 +76,14 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.BLACKSTONE);
         VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.END_STONE);
     }
+
     private static final Set<Block> SOIL_SLAB_BLOCKS = Set.of(
             ModBlocksRegistry.GRASS_SLAB,
             ModBlocksRegistry.PODZOL_SLAB,
             ModBlocksRegistry.MYCELIUM_SLAB,
             ModBlocksRegistry.PATH_SLAB
     );
+
     @Override
     public boolean generate(FeatureContext<DefaultFeatureConfig> context){
         if (MyModConfig.enableSlabGeneration) {
@@ -88,90 +93,93 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     }
 
     private boolean runLogic(FeatureContext<DefaultFeatureConfig> context) {
-        WorldAccess world = context.getWorld();
+        WorldAccess worldAccess = context.getWorld();
         BlockPos origin = context.getOrigin();
         ChunkPos chunkPos = new ChunkPos(origin);
-        BlockPos highestBlock = new BlockPos.Mutable(0,0,0);
-        BlockPos.Mutable pos = new BlockPos.Mutable();
 
-        // Loop through x and z within the chunk boundaries
-        for (int x = chunkPos.getStartX(); x <= chunkPos.getEndX(); x++) {
-            for (int z = chunkPos.getStartZ(); z <= chunkPos.getEndZ(); z++) {
-                pos.set(x, 0, z);
-                // Ensure the chunk at this position is loaded
-                if (world.isChunkLoaded(chunkPos.x, chunkPos.z)) {
-                    BlockPos topPosition = world.getTopPosition(Heightmap.Type.WORLD_SURFACE_WG, pos);
-                    // Check and update highest block
-                    if (highestBlock.getY() < topPosition.getY()) {
-                        highestBlock = topPosition;
-                    }
-                }
-            }
-        }
+        BlockPos highestBlock = findHighestChunkPos(worldAccess, chunkPos);
 
-        for (int y = world.getBottomY(); y < highestBlock.getY()+1; y++) {
+        for (int y = worldAccess.getBottomY(); y < highestBlock.getY()+1; y++) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     BlockPos currentPos = chunkPos.getBlockPos(x, y, z);
                     BlockPos blockBelowPos = currentPos.down();
                     BlockPos blockAbovePos = currentPos.up();
-                    BlockState blockBelowState = world.getBlockState(blockBelowPos);
-                    BlockState blockAboveState = world.getBlockState(blockAbovePos);
-                    BlockState currentBlockState = world.getBlockState(currentPos);
+                    BlockState blockBelowState = worldAccess.getBlockState(blockBelowPos);
+                    BlockState blockAboveState = worldAccess.getBlockState(blockAbovePos);
+                    BlockState currentBlockState = worldAccess.getBlockState(currentPos);
                     BlockState slabState;
                     // Check conditions to place a slab on top of the current block
-                    if (shouldPlaceSlabTop(world, currentPos, blockBelowPos, blockAboveState, blockBelowState, currentBlockState)) {
-                        if (world.getBlockState(currentPos).isOf(Blocks.SNOW)){
-                            if (world.getBlockState(blockBelowPos).isOf(Blocks.GRASS_BLOCK)){
-                                world.setBlockState(blockBelowPos, Blocks.DIRT.getDefaultState(), 3);
-                                world.setBlockState(currentPos, ModBlocksRegistry.GRASS_SLAB.getDefaultState().with(Properties.SNOWY, true).with(CustomSlab.GENERATED, true), 3);
+                    if (shouldPlaceSlabTop(worldAccess, currentPos, blockBelowPos, blockAboveState, blockBelowState, currentBlockState)) {
+                        if (worldAccess.getBlockState(currentPos).isOf(Blocks.SNOW)){
+                            if (worldAccess.getBlockState(blockBelowPos).isOf(Blocks.GRASS_BLOCK)){
+                                worldAccess.setBlockState(blockBelowPos, Blocks.DIRT.getDefaultState(), 3);
+                                worldAccess.setBlockState(currentPos, ModBlocksRegistry.GRASS_SLAB.getDefaultState().with(Properties.SNOWY, true).with(CustomSlab.GENERATED, true), 3);
                             }
                             else {
-                                world.setBlockState(currentPos, ModSlabsMap.getSlabForBlock(world.getBlockState(blockBelowPos).getBlock()).getDefaultState().with(CustomSlab.GENERATED, true), 3);
+                                worldAccess.setBlockState(currentPos, ModSlabsMap.getSlabForBlock(worldAccess.getBlockState(blockBelowPos).getBlock()).getDefaultState().with(CustomSlab.GENERATED, true), 3);
                             }
-                            world.setBlockState(blockAbovePos, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState(), 3);
+                            worldAccess.setBlockState(blockAbovePos, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState(), 3);
                         }
                         else {
-                            blockBelowState = world.getBlockState(blockBelowPos);
+                            blockBelowState = worldAccess.getBlockState(blockBelowPos);
 
                             // Retrieve the slab type based on the block below the current position
                             slabState = ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()).getDefaultState();
 
                             // Handle grass slab special case by converting grass to dirt before placing the slab
                             if (SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
-                                world.setBlockState(blockBelowPos, Blocks.DIRT.getDefaultState(), 3);
+                                worldAccess.setBlockState(blockBelowPos, Blocks.DIRT.getDefaultState(), 3);
                             }
                             if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
-                                world.setBlockState(blockBelowPos, Blocks.NETHERRACK.getDefaultState(), 3);
+                                worldAccess.setBlockState(blockBelowPos, Blocks.NETHERRACK.getDefaultState(), 3);
                             }
 
-                            slabState = updateWaterloggedState(world, currentPos, slabState);
+                            slabState = updateWaterloggedState(worldAccess, currentPos, slabState);
 
                             if (ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())){
-                                if (world.getBlockState(blockAbovePos).isOf(Blocks.WATER)){
-                                    world.setBlockState(blockAbovePos, ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState(), 3);
+                                if (worldAccess.getBlockState(blockAbovePos).isOf(Blocks.WATER)){
+                                    worldAccess.setBlockState(blockAbovePos, ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState(), 3);
                                 }
-                                else if (!world.getBlockState(currentPos).isOf(Blocks.SEAGRASS)){
-                                    world.setBlockState(blockAbovePos, ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState(), 3);
+                                else if (!worldAccess.getBlockState(currentPos).isOf(Blocks.SEAGRASS)){
+                                    worldAccess.setBlockState(blockAbovePos, ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState(), 3);
                                 }
                             }
-                            world.setBlockState(currentPos, slabState.with(CustomSlab.GENERATED, true), 3);
+                            worldAccess.setBlockState(currentPos, slabState.with(CustomSlab.GENERATED, true), 3);
                         }
                     }
-                    else if (shouldPlaceSlabOnUnderside(world, currentPos, blockAbovePos, blockBelowPos, currentBlockState, blockBelowState)) {
+                    else if (shouldPlaceSlabOnUnderside(worldAccess, currentPos, blockAbovePos, blockBelowPos, currentBlockState, blockBelowState)) {
                         slabState = ModSlabsMap.getSlabForBlock(currentBlockState.getBlock()).getDefaultState();
 
                         if (SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
                             slabState = ModBlocksRegistry.DIRT_SLAB.getDefaultState();
                         }
                         slabState = slabState.with(Properties.SLAB_TYPE, SlabType.TOP);
-                        slabState = updateWaterloggedState(world, currentPos, slabState);
-                        world.setBlockState(currentPos, slabState.with(CustomSlab.GENERATED, true), 3);
+                        slabState = updateWaterloggedState(worldAccess, currentPos, slabState);
+                        worldAccess.setBlockState(currentPos, slabState.with(CustomSlab.GENERATED, true), 3);
                     }
                 }
             }
         }
         return true;
+    }
+
+    private BlockPos findHighestChunkPos(WorldAccess worldAccess, ChunkPos chunkPos) {
+        BlockPos.Mutable highestChunkPos = new BlockPos.Mutable(0,0,0);
+        BlockPos.Mutable testPos = new BlockPos.Mutable(0,0,0);
+        // Loop through x and z within the chunk boundaries
+        for (int x = chunkPos.getStartX(); x <= chunkPos.getEndX(); x++) {
+            for (int z = chunkPos.getStartZ(); z <= chunkPos.getEndZ(); z++) {
+                testPos.set(x, 0, z);
+                // Ensure the chunk at this position is loaded
+                BlockPos topPosition = worldAccess.getTopPosition(Heightmap.Type.WORLD_SURFACE_WG, testPos);
+                // Check and update highest block
+                if (highestChunkPos.getY() < topPosition.getY()) {
+                    highestChunkPos = topPosition.mutableCopy();
+                }
+            }
+        }
+        return highestChunkPos;
     }
 
     /**
@@ -228,7 +236,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     return false;
                 }
             }
-
             // Check neighboring blocks to ensure at least one horizontal neighbor is air or water
             for (Direction direction : Direction.Type.HORIZONTAL) {
                 BlockPos neighborPos = currentPos.offset(direction);

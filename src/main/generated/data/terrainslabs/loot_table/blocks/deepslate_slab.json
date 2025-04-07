@@ -71,7 +71,7 @@
                   "function": "minecraft:set_count"
                 }
               ],
-              "name": "minecraft:deepslate"
+              "name": "minecraft:cobbled_deepslate"
             },
             {
               "type": "minecraft:item",
