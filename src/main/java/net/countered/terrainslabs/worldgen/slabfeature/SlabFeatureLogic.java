@@ -14,6 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
@@ -112,8 +113,10 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     if (shouldPlaceBottomSlab(worldAccess, currentPos, blockAboveState, blockBelowState, currentBlockState)) {
                         chunkPlacePositions.getLeft().add(currentPos);
                     }
-                    /*
-                    else if (shouldPlaceSlabOnUnderside(worldAccess, currentPos, blockAbovePos, blockBelowPos, currentBlockState, blockBelowState)) {
+
+                    else if (shouldPlaceTopSlab(worldAccess, currentPos, currentBlockState, blockBelowState)) {
+                        chunkPlacePositions.getRight().add(currentPos);
+                        /*
                         slabState = ModSlabsMap.getSlabForBlock(currentBlockState.getBlock()).getDefaultState();
 
                         if (SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
@@ -123,7 +126,8 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                         slabState = updateWaterloggedState(worldAccess, currentPos, slabState);
                         worldAccess.setBlockState(currentPos, slabState.with(CustomSlab.GENERATED, true), 3);
 
-                 */
+                         */
+                    }
                 }
             }
         }
@@ -158,58 +162,19 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         {
             return false;
         }
-        return validSurrounding(world, currentPos);
+        return validSurroundingBottom(world, currentPos);
     }
 
-    private boolean shouldPlaceSlabOnUnderside(WorldAccess world, BlockPos currentPos, BlockPos blockAbovePos, BlockPos blockBelowPos, BlockState currentBlock, BlockState blockBelow) {
-
-        if (ModSlabsMap.getSlabForBlock(world.getBlockState(blockAbovePos).getBlock()) == Blocks.AIR || world.getBlockState(blockAbovePos).getBlock() instanceof SlabBlock){
+    private boolean shouldPlaceTopSlab(WorldAccess world, BlockPos currentPos, BlockState currentState, BlockState blockBelow) {
+        if (!currentState.isOpaqueFullCube(world, currentPos)
+                || !(blockBelow.isOf(Blocks.AIR) || blockBelow.isOf(Blocks.WATER))
+                || ModSlabsMap.getSlabForBlock(currentState.getBlock()).equals(Blocks.AIR))
+        {
             return false;
         }
-        // Check that the block above is a valid block for slab placement and that the current block is air or water
-        if (VALID_BLOCKS_FOR_SLAB_PLACEMENT.contains(currentBlock.getBlock())
-                && (blockBelow.isAir() || blockBelow.getBlock() == Blocks.WATER)
-                && currentBlock.isOpaque()) {
-
-            for (Direction direction1 : Direction.Type.HORIZONTAL){
-                BlockPos neighborPos = currentPos.offset(direction1);
-                BlockState neighborState = world.getBlockState(neighborPos);
-                if ( nextToGlowLichen(world, currentPos, direction1) || neighborState.isOf(Blocks.LAVA)) {
-                    return false;
-                }
-            }
-            // Check neighboring blocks to ensure at least one horizontal neighbor is air or water
-            for (Direction direction : Direction.Type.HORIZONTAL) {
-                BlockPos neighborPos = currentPos.offset(direction);
-                BlockState neighborState = world.getBlockState(neighborPos);
-
-                // If at least one horizontal neighbor is air or water, mark this position for slab placement
-                if ((neighborState.isAir() || neighborState.getBlock() == Blocks.WATER)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return validSurroundingTop(world, currentPos);
     }
 
-    /**
-     * Updates the slab state to be waterlogged if applicable.
-     */
-    private BlockState updateWaterloggedState(WorldAccess world, BlockPos pos, BlockState slabState) {
-
-        if (slabState.contains(Properties.WATERLOGGED)) {
-            if (world.getBlockState(pos).isOf(Blocks.WATER) || world.getBlockState(pos.up()).isOf(Blocks.WATER)) {
-                return slabState.with(Properties.WATERLOGGED, true);
-            }
-            for (Direction direction1 : Direction.Type.HORIZONTAL) {
-                // Check if the neighbor or the block above contains water to set the waterlogged property
-                if (world.getBlockState(pos.offset(direction1)).isOf(Blocks.WATER)) {
-                    return slabState.with(Properties.WATERLOGGED, true);
-                }
-            }
-        }
-        return slabState;
-    }
 
     /*
     private Boolean nextToLiquidAndAir(WorldAccess world, BlockPos currentPos, Direction direction) {
@@ -223,55 +188,73 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     }
 
      */
+    private boolean validSurroundingTop(WorldAccess world, BlockPos currentPos) {
+        boolean topOfCeiling = false;
+        boolean validNeighbors = false;
+        for (Direction direction : Direction.Type.HORIZONTAL) {
+            BlockPos neighborPos = currentPos.offset(direction);
+            BlockPos aboveNeighborPos = neighborPos.up();
+            BlockPos oppositePos = currentPos.offset(direction.getOpposite());
+            BlockState neighborState = world.getBlockState(neighborPos);
+            BlockState aboveNeighborState = world.getBlockState(aboveNeighborPos);
+            BlockState oppositeState = world.getBlockState(oppositePos);
 
-    private boolean validSurrounding(WorldAccess world, BlockPos currentPos) {
+            if (neighborState.isOf(Blocks.GLOW_LICHEN) || neighborState.isOf(Blocks.LAVA)) {
+                return false;
+            }
+            boolean isAboveNeighborStateOpaque = aboveNeighborState.isOpaqueFullCube(world, neighborPos);
+            boolean isOppositeStateOpaque = oppositeState.isOpaqueFullCube(world, oppositePos);
+
+            if (isAboveNeighborStateOpaque && isOppositeStateOpaque) {
+                topOfCeiling = true;
+            }
+            // Check neighboring blocks to ensure at least one horizontal neighbor is air or water
+            if (neighborState.isOf(Blocks.AIR) || neighborState.isOf(Blocks.WATER)) {
+                validNeighbors = true;
+            }
+        }
+        return topOfCeiling && validNeighbors;
+    }
+
+    private boolean validSurroundingBottom(WorldAccess world, BlockPos currentPos) {
         boolean bottomOfMountain = false;
         boolean validNeighbors = false;
         for (Direction direction : Direction.Type.HORIZONTAL) {
-            BlockPos offset = currentPos.offset(direction);
-            BlockPos belowOffset = offset.down();
-            BlockPos opposite = currentPos.offset(direction.getOpposite());
-            BlockState offsetState = world.getBlockState(offset);
-            BlockState belowOffsetState = world.getBlockState(belowOffset);
-            BlockState oppositeState = world.getBlockState(opposite);
+            BlockPos neighborPos = currentPos.offset(direction);
+            BlockPos belowNeighborPos = neighborPos.down();
+            BlockPos oppositePos = currentPos.offset(direction.getOpposite());
+            BlockState neighborState = world.getBlockState(neighborPos);
+            BlockState belowNeighborState = world.getBlockState(belowNeighborPos);
+            BlockState oppositeState = world.getBlockState(oppositePos);
 
-            if (offsetState.isOf(Blocks.LAVA)) return false;
+            if (neighborState.isOf(Blocks.LAVA)) return false;
             // Prüfe Bedingungen
-            boolean isOffsetBelowOpaque = belowOffsetState.isOpaque();
+            boolean isNeighborBelowOpaque = belowNeighborState.isOpaque();
             boolean isOppositeDirOpaque = oppositeState.isOpaque();
             boolean isBelowNoSlab =
-                    !(belowOffsetState.getBlock() instanceof SlabBlock);
+                    !(belowNeighborState.getBlock() instanceof SlabBlock);
             boolean isOppositeDirNoSlab =
                     !(oppositeState.getBlock() instanceof SlabBlock);
-            boolean isOffsetBelowNoSnow =
-                    !belowOffsetState.isOf(Blocks.SNOW) &&
-                            !belowOffsetState.isOf(ModBlocksRegistry.SNOW_ON_TOP);
+            boolean isNeighborBelowNoSnow =
+                    !belowNeighborState.isOf(Blocks.SNOW) &&
+                            !belowNeighborState.isOf(ModBlocksRegistry.SNOW_ON_TOP);
             boolean isOppositeDirNoSnow =
                     !oppositeState.isOf(Blocks.SNOW) &&
                             !oppositeState.isOf(ModBlocksRegistry.SNOW_ON_TOP);
 
             // Gesamtbedingung prüfen
-            if (isOffsetBelowOpaque && isOppositeDirOpaque &&
+            if (isNeighborBelowOpaque && isOppositeDirOpaque &&
                     isBelowNoSlab && isOppositeDirNoSlab &&
-                    isOffsetBelowNoSnow && isOppositeDirNoSnow) {
+                    isNeighborBelowNoSnow && isOppositeDirNoSnow) {
                 bottomOfMountain = true;
             }
 
-            BlockState neighborState = world.getBlockState(offset);
             // Check if a neighboring block is opaque and not a slab
-            if (neighborState.isOpaqueFullCube(world, offset) && !(neighborState.getBlock() instanceof SlabBlock) && !neighborState.isOf(Blocks.SNOW)
-                    && (!world.getBlockState(offset.up()).isOpaque() || world.getBlockState(offset.up()).getBlock() == Blocks.SNOW)) {
+            if (neighborState.isOpaqueFullCube(world, neighborPos) && !(neighborState.getBlock() instanceof SlabBlock) && !neighborState.isOf(Blocks.SNOW)
+                    && (!world.getBlockState(neighborPos.up()).isOpaque() || world.getBlockState(neighborPos.up()).getBlock() == Blocks.SNOW)) {
                 validNeighbors = true;
             }
         }
         return validNeighbors && bottomOfMountain;
-    }
-
-
-    private boolean nextToGlowLichen(WorldAccess world, BlockPos currentPos, Direction direction) {
-        if (world.getBlockState(currentPos.offset(direction)).isOf(Blocks.GLOW_LICHEN)){
-            return true;
-        }
-        return false;
     }
 }

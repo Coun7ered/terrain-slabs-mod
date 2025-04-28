@@ -12,7 +12,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
@@ -24,6 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.HashMap;
@@ -114,16 +115,38 @@ public class RegisterCallbacks {
 
     private static void registerSlabPlacementCallback() {
         ServerChunkEvents.CHUNK_GENERATE.register((serverWorld, worldChunk) -> {
-            Map<ChunkPos, Pair<List<BlockPos>, List<BlockPos>>> bottomPlacementMap = SlabFeatureLogic.chunkSlabPlacementPositions;
-            if (bottomPlacementMap == null) return;
+            Map<ChunkPos, Pair<List<BlockPos>, List<BlockPos>>> chunkSlabPlacementPositions = SlabFeatureLogic.chunkSlabPlacementPositions;
+            if (chunkSlabPlacementPositions == null) return;
             ChunkPos chunkPos = worldChunk.getPos();
             Pair<List<BlockPos>, List<BlockPos>> placementPositions = SlabFeatureLogic.chunkSlabPlacementPositions.get(chunkPos);
             if (placementPositions == null) return;
             for (BlockPos placePos : placementPositions.getLeft()) {
                 placeBottomSlab(worldChunk, placePos);
             }
-            bottomPlacementMap.remove(chunkPos);
+            for (BlockPos placePos : placementPositions.getRight()) {
+                placeTopSlab(worldChunk, placePos);
+            }
+            chunkSlabPlacementPositions.remove(chunkPos);
         });
+    }
+
+    private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
+        BlockState currentBlockState = worldChunk.getBlockState(placePos);
+
+        // Retrieve the slab type based on the block below the current position
+        BlockState slabState = ModSlabsMap.getSlabForBlock(currentBlockState.getBlock()).getDefaultState();
+
+        if (slabState.getBlock().equals(Blocks.AIR)) {
+            /* DEBUG
+            System.out.println(blockBelowState);
+            System.out.println(currentBlockState);
+             */
+            return;
+        }
+
+        slabState = updateTopWaterloggedState(worldChunk, placePos, slabState);
+        ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
+        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
     }
 
     private static void placeBottomSlab(WorldChunk worldChunk, BlockPos placePos) {
@@ -153,8 +176,7 @@ public class RegisterCallbacks {
         if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
             worldChunk.setBlockState(blockBelowPos, Blocks.NETHERRACK.getDefaultState(), false);
         }
-
-        slabState = updateWaterloggedState(currentBlockState, blockAboveState, slabState);
+        slabState = updateBottomWaterloggedState(currentBlockState, blockAboveState, slabState);
 
         if (ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())){
             if (!(currentBlockState.isOf(Blocks.SEAGRASS) && blockAboveState.isOf(Blocks.AIR))) {
@@ -167,10 +189,11 @@ public class RegisterCallbacks {
                 }
             }
         }
-        worldChunk.setBlockState(placePos, slabState.with(CustomSlab.GENERATED, true), false);
+        ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
+        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true));
     }
 
-    private static BlockState updateWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
+    private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
         if (slabState.contains(Properties.WATERLOGGED)) {
             if (currentBlockState.isOf(Blocks.WATER) || blockAboveState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.SEAGRASS)) {
                 return slabState.with(Properties.WATERLOGGED, true);
@@ -178,4 +201,16 @@ public class RegisterCallbacks {
         }
         return slabState;
     }
+
+    private static BlockState updateTopWaterloggedState(WorldChunk worldChunk, BlockPos currentPos, BlockState slabState) {
+        for (Direction direction : Direction.Type.HORIZONTAL) {
+            // Check if the neighbor or the block above contains water to set the waterlogged property
+            if (worldChunk.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER)) {
+                return slabState.with(Properties.WATERLOGGED, true);
+            }
+        }
+        return slabState;
+    }
+
+
 }
