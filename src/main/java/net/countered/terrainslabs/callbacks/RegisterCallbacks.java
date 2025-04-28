@@ -1,6 +1,10 @@
 package net.countered.terrainslabs.callbacks;
 
 import net.countered.terrainslabs.block.ModBlocksRegistry;
+import net.countered.terrainslabs.block.ModSlabsMap;
+import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
+import net.countered.terrainslabs.worldgen.slabfeature.SlabFeatureLogic;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
@@ -8,17 +12,22 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RegisterCallbacks {
@@ -39,6 +48,11 @@ public class RegisterCallbacks {
 
 
     public static void registerCallbacks() {
+        registerPlaceOnTopCallback();
+        registerSlabPlacementCallback();
+    }
+
+    private static void registerPlaceOnTopCallback(){
         UseBlockCallback.EVENT.register((PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) -> {
             ItemStack item = player.getStackInHand(hand);
 
@@ -96,5 +110,72 @@ public class RegisterCallbacks {
             // Pass to allow normal behavior if conditions are not met
             return ActionResult.PASS;
         });
+    }
+
+    private static void registerSlabPlacementCallback() {
+        ServerChunkEvents.CHUNK_GENERATE.register((serverWorld, worldChunk) -> {
+            Map<ChunkPos, Pair<List<BlockPos>, List<BlockPos>>> bottomPlacementMap = SlabFeatureLogic.chunkSlabPlacementPositions;
+            if (bottomPlacementMap == null) return;
+            ChunkPos chunkPos = worldChunk.getPos();
+            Pair<List<BlockPos>, List<BlockPos>> placementPositions = SlabFeatureLogic.chunkSlabPlacementPositions.get(chunkPos);
+            if (placementPositions == null) return;
+            for (BlockPos placePos : placementPositions.getLeft()) {
+                placeBottomSlab(worldChunk, placePos);
+            }
+            bottomPlacementMap.remove(chunkPos);
+        });
+    }
+
+    private static void placeBottomSlab(WorldChunk worldChunk, BlockPos placePos) {
+        BlockPos blockBelowPos = placePos.down();
+        BlockPos blockAbovePos = placePos.up();
+        BlockState blockAboveState = worldChunk.getBlockState(blockAbovePos);
+        BlockState currentBlockState = worldChunk.getBlockState(placePos);
+        BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
+
+        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.LAVA)) && !ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
+            return;
+        }
+        // Retrieve the slab type based on the block below the current position
+        BlockState slabState = ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()).getDefaultState();
+
+        if (slabState.getBlock().equals(Blocks.AIR)) {
+            /* DEBUG
+            System.out.println(blockBelowState);
+            System.out.println(currentBlockState);
+             */
+            return;
+        }
+        // Handle grass slab special case by converting grass to dirt before placing the slab
+        if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
+            worldChunk.setBlockState(blockBelowPos, Blocks.DIRT.getDefaultState(), false);
+        }
+        if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
+            worldChunk.setBlockState(blockBelowPos, Blocks.NETHERRACK.getDefaultState(), false);
+        }
+
+        slabState = updateWaterloggedState(currentBlockState, blockAboveState, slabState);
+
+        if (ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())){
+            if (!(currentBlockState.isOf(Blocks.SEAGRASS) && blockAboveState.isOf(Blocks.AIR))) {
+                worldChunk.setBlockState(blockAbovePos, ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState(), false);
+            }
+            if (currentBlockState.isOf(Blocks.SNOW)){
+                if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())){
+                    worldChunk.setBlockState(placePos, slabState.with(CustomSlab.GENERATED, true).with(Properties.SNOWY, true), false);
+                    return;
+                }
+            }
+        }
+        worldChunk.setBlockState(placePos, slabState.with(CustomSlab.GENERATED, true), false);
+    }
+
+    private static BlockState updateWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
+        if (slabState.contains(Properties.WATERLOGGED)) {
+            if (currentBlockState.isOf(Blocks.WATER) || blockAboveState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.SEAGRASS)) {
+                return slabState.with(Properties.WATERLOGGED, true);
+            }
+        }
+        return slabState;
     }
 }

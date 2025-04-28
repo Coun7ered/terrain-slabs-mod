@@ -55,7 +55,6 @@ public class ModSlabsMap {
         SLAB_MAP.put(Blocks.END_STONE, ModBlocksRegistry.ENDSTONE_SLAB);
     }
     public static final Map<Block, Block> ON_TOP_SLAB_BLOCKS_MAP = new HashMap<>();
-
     static {
         ON_TOP_SLAB_BLOCKS_MAP.put(Blocks.POPPY, ModBlocksRegistry.POPPY_ON_TOP);
         ON_TOP_SLAB_BLOCKS_MAP.put(Blocks.DANDELION, ModBlocksRegistry.DANDELION_ON_TOP);
@@ -67,6 +66,7 @@ public class ModSlabsMap {
         ON_TOP_SLAB_BLOCKS_MAP.put(Blocks.SHORT_GRASS, ModBlocksRegistry.SHORT_GRASS_ON_TOP);
         ON_TOP_SLAB_BLOCKS_MAP.put(Blocks.FERN, ModBlocksRegistry.FERN_ON_TOP);
         ON_TOP_SLAB_BLOCKS_MAP.put(Blocks.SEAGRASS, ModBlocksRegistry.SEAGRASS_ON_TOP);
+        ON_TOP_SLAB_BLOCKS_MAP.put(Blocks.SNOW, ModBlocksRegistry.SNOW_ON_TOP);
     }
 
     public static Block getSlabForBlock(Block blockBelow) {
