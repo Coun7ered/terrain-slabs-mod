@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
+import net.minecraft.block.enums.SlabType;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
@@ -29,52 +30,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     }
 
     public static Map<ChunkPos, Pair<List<BlockPos>, List<BlockPos>>> chunkSlabPlacementPositions = new HashMap<>();
-
-    public static final Set<Block> VALID_BLOCKS_FOR_SLAB_PLACEMENT = new HashSet<>();
-    static {
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.GRASS_BLOCK);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.PODZOL);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.MYCELIUM);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.DIRT_PATH);
-
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.DIRT);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.MOSS_BLOCK);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.PACKED_ICE);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.COARSE_DIRT);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.MUD);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.SNOW_BLOCK);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.CLAY);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.DEEPSLATE);
-
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.STONE);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.ANDESITE);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.DIORITE);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.GRANITE);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.TUFF);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.SANDSTONE);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.RED_SANDSTONE);
-
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.SAND);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.GRAVEL);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.RED_SAND);
-
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.TERRACOTTA);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.BROWN_TERRACOTTA);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.RED_TERRACOTTA);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.ORANGE_TERRACOTTA);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.LIGHT_GRAY_TERRACOTTA);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.YELLOW_TERRACOTTA);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.WHITE_TERRACOTTA);
-
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.SOUL_SAND);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.SOUL_SOIL);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.NETHERRACK);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.WARPED_NYLIUM);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.CRIMSON_NYLIUM);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.BASALT);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.BLACKSTONE);
-        VALID_BLOCKS_FOR_SLAB_PLACEMENT.add(Blocks.END_STONE);
-    }
 
     public static final Set<Block> SOIL_SLAB_BLOCKS = Set.of(
             ModBlocksRegistry.GRASS_SLAB,
@@ -113,20 +68,8 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     if (shouldPlaceBottomSlab(worldAccess, currentPos, blockAboveState, blockBelowState, currentBlockState)) {
                         chunkPlacePositions.getLeft().add(currentPos);
                     }
-
-                    else if (shouldPlaceTopSlab(worldAccess, currentPos, currentBlockState, blockBelowState)) {
+                    else if (shouldPlaceTopSlab(worldAccess, currentPos, currentBlockState, blockBelowState, blockAboveState, blockAbovePos)) {
                         chunkPlacePositions.getRight().add(currentPos);
-                        /*
-                        slabState = ModSlabsMap.getSlabForBlock(currentBlockState.getBlock()).getDefaultState();
-
-                        if (SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
-                            slabState = ModBlocksRegistry.DIRT_SLAB.getDefaultState();
-                        }
-                        slabState = slabState.with(Properties.SLAB_TYPE, SlabType.TOP);
-                        slabState = updateWaterloggedState(worldAccess, currentPos, slabState);
-                        worldAccess.setBlockState(currentPos, slabState.with(CustomSlab.GENERATED, true), 3);
-
-                         */
                     }
                 }
             }
@@ -156,19 +99,19 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
      * Determines if a slab should be placed at the given position based on world conditions.
      */
     private boolean shouldPlaceBottomSlab(WorldAccess world, BlockPos currentPos, BlockState blockAboveState, BlockState blockBelowState, BlockState currentBlockState) {
-        if ((currentBlockState.isOpaque() && !currentBlockState.isOf(Blocks.SNOW) && !currentBlockState.isReplaceable())
+        if ((currentBlockState.isOpaqueFullCube(world, currentPos) && !currentBlockState.isOf(Blocks.SNOW) && !currentBlockState.isReplaceable())
                 || ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()) == Blocks.AIR
-                || (!blockAboveState.isAir() && !blockAboveState.isOf(Blocks.WATER)))
+                || (!blockAboveState.isOf(Blocks.AIR) && !blockAboveState.isOf(Blocks.WATER) && !blockAboveState.isOf(Blocks.CAVE_AIR)))
         {
             return false;
         }
         return validSurroundingBottom(world, currentPos);
     }
 
-    private boolean shouldPlaceTopSlab(WorldAccess world, BlockPos currentPos, BlockState currentState, BlockState blockBelow) {
+    private boolean shouldPlaceTopSlab(WorldAccess world, BlockPos currentPos, BlockState currentState, BlockState blockBelow, BlockState blockAboveState, BlockPos blockAbovePos) {
         if (!currentState.isOpaqueFullCube(world, currentPos)
-                || !(blockBelow.isOf(Blocks.AIR) || blockBelow.isOf(Blocks.WATER))
-                || ModSlabsMap.getSlabForBlock(currentState.getBlock()).equals(Blocks.AIR))
+                || !(blockBelow.isOf(Blocks.AIR) || blockBelow.isOf(Blocks.WATER) || blockBelow.isOf(Blocks.CAVE_AIR))
+                || ModSlabsMap.getSlabForBlock(blockAboveState.getBlock()).equals(Blocks.AIR))
         {
             return false;
         }
@@ -186,7 +129,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         }
         return false;
     }
-
      */
     private boolean validSurroundingTop(WorldAccess world, BlockPos currentPos) {
         boolean topOfCeiling = false;
@@ -198,18 +140,18 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
             BlockState neighborState = world.getBlockState(neighborPos);
             BlockState aboveNeighborState = world.getBlockState(aboveNeighborPos);
             BlockState oppositeState = world.getBlockState(oppositePos);
-
+            BlockState belowNeighborState = world.getBlockState(neighborPos.down());
             if (neighborState.isOf(Blocks.GLOW_LICHEN) || neighborState.isOf(Blocks.LAVA)) {
                 return false;
             }
-            boolean isAboveNeighborStateOpaque = aboveNeighborState.isOpaqueFullCube(world, neighborPos);
+            boolean isNeighborStateNotOpaque = !neighborState.isOpaqueFullCube(world, neighborPos);
             boolean isOppositeStateOpaque = oppositeState.isOpaqueFullCube(world, oppositePos);
 
-            if (isAboveNeighborStateOpaque && isOppositeStateOpaque) {
+            if (isNeighborStateNotOpaque && isOppositeStateOpaque) {
                 topOfCeiling = true;
             }
             // Check neighboring blocks to ensure at least one horizontal neighbor is air or water
-            if (neighborState.isOf(Blocks.AIR) || neighborState.isOf(Blocks.WATER)) {
+            if (neighborState.isOf(Blocks.AIR) || neighborState.isOf(Blocks.WATER) || neighborState.isOf(Blocks.CAVE_AIR)) {
                 validNeighbors = true;
             }
         }

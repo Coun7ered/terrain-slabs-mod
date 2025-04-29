@@ -118,7 +118,7 @@ public class RegisterCallbacks {
             Map<ChunkPos, Pair<List<BlockPos>, List<BlockPos>>> chunkSlabPlacementPositions = SlabFeatureLogic.chunkSlabPlacementPositions;
             if (chunkSlabPlacementPositions == null) return;
             ChunkPos chunkPos = worldChunk.getPos();
-            Pair<List<BlockPos>, List<BlockPos>> placementPositions = SlabFeatureLogic.chunkSlabPlacementPositions.get(chunkPos);
+            Pair<List<BlockPos>, List<BlockPos>> placementPositions = chunkSlabPlacementPositions.get(chunkPos);
             if (placementPositions == null) return;
             for (BlockPos placePos : placementPositions.getLeft()) {
                 placeBottomSlab(worldChunk, placePos);
@@ -126,15 +126,15 @@ public class RegisterCallbacks {
             for (BlockPos placePos : placementPositions.getRight()) {
                 placeTopSlab(worldChunk, placePos);
             }
-            chunkSlabPlacementPositions.remove(chunkPos);
+            SlabFeatureLogic.chunkSlabPlacementPositions.remove(chunkPos);
         });
     }
 
     private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
-        BlockState currentBlockState = worldChunk.getBlockState(placePos);
+        BlockState blockAboveState = worldChunk.getBlockState(placePos.up());
 
         // Retrieve the slab type based on the block below the current position
-        BlockState slabState = ModSlabsMap.getSlabForBlock(currentBlockState.getBlock()).getDefaultState();
+        BlockState slabState = ModSlabsMap.getSlabForBlock(blockAboveState.getBlock()).getDefaultState();
 
         if (slabState.getBlock().equals(Blocks.AIR)) {
             /* DEBUG
@@ -143,7 +143,12 @@ public class RegisterCallbacks {
              */
             return;
         }
-
+        if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
+            slabState = ModBlocksRegistry.DIRT_SLAB.getDefaultState();
+        }
+        if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
+            slabState = ModBlocksRegistry.NETHERRACK_SLAB.getDefaultState();
+        }
         slabState = updateTopWaterloggedState(worldChunk, placePos, slabState);
         ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
         section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
@@ -156,7 +161,7 @@ public class RegisterCallbacks {
         BlockState currentBlockState = worldChunk.getBlockState(placePos);
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
-        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.LAVA)) && !ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
+        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.LAVA)) && !ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
             return;
         }
         // Retrieve the slab type based on the block below the current position
@@ -211,6 +216,4 @@ public class RegisterCallbacks {
         }
         return slabState;
     }
-
-
 }

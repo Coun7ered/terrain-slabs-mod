@@ -24,8 +24,6 @@ public class ModPlacedFeatures {
         register(context, SLAB_FEATURE_PLACED_KEY,
                 configuredFeatureRegistryEntryLookup.getOrThrow(ModConfiguredFeatures.SLAB_FEATURE_KEY),
                 List.of(
-                        CountPlacementModifier.of(1),
-                        BiomePlacementModifier.of()// Once per chunk
                 )
         );
     }
