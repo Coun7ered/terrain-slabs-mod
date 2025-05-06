@@ -172,28 +172,30 @@ public class RegisterCallbacks {
              */
             return;
         }
+        ChunkSection belowPosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockBelowPos.getY()));
+        ChunkSection placePosSection = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
+        ChunkSection abovePosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockAbovePos.getY()));
         // Handle grass slab special case by converting grass to dirt before placing the slab
         if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
-            worldChunk.setBlockState(blockBelowPos, Blocks.DIRT.getDefaultState(), false);
+            belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15,  Blocks.DIRT.getDefaultState());
         }
         if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
-            worldChunk.setBlockState(blockBelowPos, Blocks.NETHERRACK.getDefaultState(), false);
+            belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15,  Blocks.NETHERRACK.getDefaultState());
         }
         slabState = updateBottomWaterloggedState(currentBlockState, blockAboveState, slabState);
 
         if (ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())){
             if (!(currentBlockState.isOf(Blocks.SEAGRASS) && blockAboveState.isOf(Blocks.AIR))) {
-                worldChunk.setBlockState(blockAbovePos, ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState(), false);
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState());
             }
             if (currentBlockState.isOf(Blocks.SNOW)){
                 if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)){
-                    worldChunk.setBlockState(placePos, slabState.with(CustomSlab.GENERATED, true).with(Properties.SNOWY, true), false);
+                    placePosSection.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SNOWY, true));
                     return;
                 }
             }
         }
-        ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
-        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true));
+        placePosSection.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true));
     }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {

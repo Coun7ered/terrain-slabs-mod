@@ -25,4 +25,7 @@ public class SlabChunkAttachment {
                     .persistent(Codec.list(BlockPos.CODEC))
                     .initializer(ArrayList::new)
     );
+
+    public static void registerSlabAttachment() {;
+    }
 }
