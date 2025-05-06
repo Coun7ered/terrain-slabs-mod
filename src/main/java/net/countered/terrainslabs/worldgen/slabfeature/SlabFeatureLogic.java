@@ -4,32 +4,28 @@ import com.mojang.serialization.Codec;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.config.MyModConfig;
+import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
-import net.minecraft.block.enums.SlabType;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.Heightmap;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.util.FeatureContext;
 
-import java.util.*;
+import java.util.Set;
 
 public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
 
     public SlabFeatureLogic(Codec<DefaultFeatureConfig> codec) {
         super(codec);
     }
-
-    public static Map<ChunkPos, Pair<List<BlockPos>, List<BlockPos>>> chunkSlabPlacementPositions = new HashMap<>();
 
     public static final Set<Block> SOIL_SLAB_BLOCKS = Set.of(
             ModBlocksRegistry.GRASS_SLAB,
@@ -51,10 +47,8 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         WorldAccess worldAccess = context.getWorld();
         BlockPos origin = context.getOrigin();
         ChunkPos chunkPos = new ChunkPos(origin);
-        Pair<List<BlockPos>, List<BlockPos>> chunkPlacePositions = new Pair<>(new ArrayList<>(), new ArrayList<>());
-
+        Chunk chunk = worldAccess.getChunk(chunkPos.x, chunkPos.z);
         BlockPos highestBlock = findHighestChunkPos(worldAccess, chunkPos);
-
         for (int y = worldAccess.getBottomY(); y < highestBlock.getY()+1; y++) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
@@ -66,15 +60,14 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     BlockState currentBlockState = worldAccess.getBlockState(currentPos);
                     // Check conditions to place a slab on top of the current block
                     if (shouldPlaceBottomSlab(worldAccess, currentPos, blockAboveState, blockBelowState, currentBlockState)) {
-                        chunkPlacePositions.getLeft().add(currentPos);
+                        chunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS).add(currentPos);
                     }
                     else if (shouldPlaceTopSlab(worldAccess, currentPos, currentBlockState, blockBelowState, blockAboveState, blockAbovePos)) {
-                        chunkPlacePositions.getRight().add(currentPos);
+                        chunk.getAttachedOrCreate(SlabChunkAttachment.TOP_SLAB_POSITIONS).add(currentPos);
                     }
                 }
             }
         }
-        chunkSlabPlacementPositions.put(chunkPos, chunkPlacePositions);
     }
 
     private BlockPos findHighestChunkPos(WorldAccess worldAccess, ChunkPos chunkPos) {
@@ -101,7 +94,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     private boolean shouldPlaceBottomSlab(WorldAccess world, BlockPos currentPos, BlockState blockAboveState, BlockState blockBelowState, BlockState currentBlockState) {
         if ((currentBlockState.isOpaqueFullCube(world, currentPos) && !currentBlockState.isOf(Blocks.SNOW) && !currentBlockState.isReplaceable())
                 || ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()) == Blocks.AIR
-                || (!blockAboveState.isOf(Blocks.AIR) && !blockAboveState.isOf(Blocks.WATER) && !blockAboveState.isOf(Blocks.CAVE_AIR)))
+                || (!blockAboveState.isOf(Blocks.AIR) && !blockAboveState.isOf(Blocks.WATER) && !blockAboveState.isOf(Blocks.CAVE_AIR) && !blockAboveState.isOf(Blocks.VOID_AIR)))
         {
             return false;
         }
@@ -110,7 +103,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
 
     private boolean shouldPlaceTopSlab(WorldAccess world, BlockPos currentPos, BlockState currentState, BlockState blockBelow, BlockState blockAboveState, BlockPos blockAbovePos) {
         if (!currentState.isOpaqueFullCube(world, currentPos)
-                || !(blockBelow.isOf(Blocks.AIR) || blockBelow.isOf(Blocks.WATER) || blockBelow.isOf(Blocks.CAVE_AIR))
+                || !(blockBelow.isOf(Blocks.AIR) || blockBelow.isOf(Blocks.WATER) || blockBelow.isOf(Blocks.CAVE_AIR) || blockBelow.isOf(Blocks.VOID_AIR))
                 || ModSlabsMap.getSlabForBlock(blockAboveState.getBlock()).equals(Blocks.AIR))
         {
             return false;
@@ -118,18 +111,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         return validSurroundingTop(world, currentPos);
     }
 
-
-    /*
-    private Boolean nextToLiquidAndAir(WorldAccess world, BlockPos currentPos, Direction direction) {
-        BlockState directionBlockState = world.getBlockState(currentPos.offset(direction));
-        BlockState oppositeDirectionBlockState = world.getBlockState(currentPos.offset(direction.getOpposite()));
-        if ((directionBlockState.isOf(Blocks.WATER) && oppositeDirectionBlockState.getBlock() == Blocks.AIR)
-            || (directionBlockState.isOf(Blocks.LAVA) && oppositeDirectionBlockState.getBlock() == Blocks.AIR)){
-            return true;
-        }
-        return false;
-    }
-     */
     private boolean validSurroundingTop(WorldAccess world, BlockPos currentPos) {
         boolean topOfCeiling = false;
         boolean validNeighbors = false;
@@ -137,21 +118,25 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
             BlockPos neighborPos = currentPos.offset(direction);
             BlockPos aboveNeighborPos = neighborPos.up();
             BlockPos oppositePos = currentPos.offset(direction.getOpposite());
+            BlockPos belowOppositePos = oppositePos.down();
             BlockState neighborState = world.getBlockState(neighborPos);
             BlockState aboveNeighborState = world.getBlockState(aboveNeighborPos);
             BlockState oppositeState = world.getBlockState(oppositePos);
-            BlockState belowNeighborState = world.getBlockState(neighborPos.down());
+            BlockState belowOppositeState = world.getBlockState(belowOppositePos);
+
             if (neighborState.isOf(Blocks.GLOW_LICHEN) || neighborState.isOf(Blocks.LAVA)) {
                 return false;
             }
             boolean isNeighborStateNotOpaque = !neighborState.isOpaqueFullCube(world, neighborPos);
             boolean isOppositeStateOpaque = oppositeState.isOpaqueFullCube(world, oppositePos);
+            boolean isAboveNeighborStateOpaque = aboveNeighborState.isOpaqueFullCube(world, aboveNeighborPos);
+            boolean isBelowOppositeStateNotOpaque = !belowOppositeState.isOpaqueFullCube(world, belowOppositePos);
 
-            if (isNeighborStateNotOpaque && isOppositeStateOpaque) {
+            if (isNeighborStateNotOpaque && isOppositeStateOpaque && isBelowOppositeStateNotOpaque) {
                 topOfCeiling = true;
             }
             // Check neighboring blocks to ensure at least one horizontal neighbor is air or water
-            if (neighborState.isOf(Blocks.AIR) || neighborState.isOf(Blocks.WATER) || neighborState.isOf(Blocks.CAVE_AIR)) {
+            if (neighborState.isOf(Blocks.AIR) || neighborState.isOf(Blocks.WATER) || neighborState.isOf(Blocks.CAVE_AIR) || neighborState.isOf(Blocks.VOID_AIR)) {
                 validNeighbors = true;
             }
         }
@@ -170,7 +155,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
             BlockState oppositeState = world.getBlockState(oppositePos);
 
             if (neighborState.isOf(Blocks.LAVA)) return false;
-            // Prüfe Bedingungen
+
             boolean isNeighborBelowOpaque = belowNeighborState.isOpaque();
             boolean isOppositeDirOpaque = oppositeState.isOpaque();
             boolean isBelowNoSlab =
@@ -184,7 +169,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     !oppositeState.isOf(Blocks.SNOW) &&
                             !oppositeState.isOf(ModBlocksRegistry.SNOW_ON_TOP);
 
-            // Gesamtbedingung prüfen
             if (isNeighborBelowOpaque && isOppositeDirOpaque &&
                     isBelowNoSlab && isOppositeDirNoSlab &&
                     isNeighborBelowNoSnow && isOppositeDirNoSnow) {

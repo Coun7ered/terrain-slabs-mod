@@ -3,6 +3,7 @@ package net.countered.terrainslabs.callbacks;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
+import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.countered.terrainslabs.worldgen.slabfeature.SlabFeatureLogic;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -17,13 +18,10 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
@@ -115,18 +113,18 @@ public class RegisterCallbacks {
 
     private static void registerSlabPlacementCallback() {
         ServerChunkEvents.CHUNK_GENERATE.register((serverWorld, worldChunk) -> {
-            Map<ChunkPos, Pair<List<BlockPos>, List<BlockPos>>> chunkSlabPlacementPositions = SlabFeatureLogic.chunkSlabPlacementPositions;
-            if (chunkSlabPlacementPositions == null) return;
-            ChunkPos chunkPos = worldChunk.getPos();
-            Pair<List<BlockPos>, List<BlockPos>> placementPositions = chunkSlabPlacementPositions.get(chunkPos);
-            if (placementPositions == null) return;
-            for (BlockPos placePos : placementPositions.getLeft()) {
-                placeBottomSlab(worldChunk, placePos);
+            List<BlockPos> botAttachedSlabPositions = worldChunk.getAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS);
+            if (botAttachedSlabPositions != null ) {
+                for (BlockPos pos : botAttachedSlabPositions) {
+                    placeBottomSlab(worldChunk, pos);
+                }
             }
-            for (BlockPos placePos : placementPositions.getRight()) {
-                placeTopSlab(worldChunk, placePos);
+            List<BlockPos> topAttachedSlabPositions = worldChunk.getAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS);
+            if (topAttachedSlabPositions != null) {
+                for (BlockPos pos : topAttachedSlabPositions) {
+                    placeTopSlab(worldChunk, pos);
+                }
             }
-            SlabFeatureLogic.chunkSlabPlacementPositions.remove(chunkPos);
         });
     }
 
@@ -161,7 +159,7 @@ public class RegisterCallbacks {
         BlockState currentBlockState = worldChunk.getBlockState(placePos);
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
-        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.LAVA)) && !ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
+        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA)) && !ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
             return;
         }
         // Retrieve the slab type based on the block below the current position
@@ -188,7 +186,7 @@ public class RegisterCallbacks {
                 worldChunk.setBlockState(blockAbovePos, ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState(), false);
             }
             if (currentBlockState.isOf(Blocks.SNOW)){
-                if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())){
+                if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)){
                     worldChunk.setBlockState(placePos, slabState.with(CustomSlab.GENERATED, true).with(Properties.SNOWY, true), false);
                     return;
                 }
