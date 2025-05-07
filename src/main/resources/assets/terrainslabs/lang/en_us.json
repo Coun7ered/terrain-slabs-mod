@@ -56,7 +56,17 @@
   "block.terrainslabs.short_grass_on_top": "Short Grass On Slab",
   "block.terrainslabs.dead_bush_on_top": "Dead Bush On Slab",
 
+  "terrainslabs.midnightconfig.category.generation": "Generation",
   "terrainslabs.midnightconfig.enableSlabGeneration": "Enable Slab Generation",
   "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Toggle to enable or disable slab generation in the world.",
+  "terrainslabs.midnightconfig.enableVegetationOnSlabs": "Enable Vegetation on Slabs",
+  "terrainslabs.midnightconfig.enableVegetationOnSlabs.tooltip": "Toggle whether vegetation like grass will be generated on top of slabs",
+  "terrainslabs.midnightconfig.enableSnowOnSlabs": "Enable Snow on Slabs",
+  "terrainslabs.midnightconfig.enableSnowOnSlabs.tooltip": "Toggle whether snow will be generated on top of slabs",
+  "terrainslabs.midnightconfig.category.textures": "Textures",
+  "terrainslabs.midnightconfig.textureConnectionStyle": "Texture Connection Style",
+  "terrainslabs.midnightconfig.textureConnectionStyle.tooltip": "CONNECTED: Soil based blocks use top texture for sides, VANILLA: Soil based blocks use side texture of Vanilla blocks",
+  "terrainslabs.midnightconfig.enum.TextureConnection.CONNECTED": "CONNECTED",
+  "terrainslabs.midnightconfig.enum.TextureConnection.VANILLA": "VANILLA",
   "terrainslabs.midnightconfig.title": "Countered's Terrain Slabs"
 }
