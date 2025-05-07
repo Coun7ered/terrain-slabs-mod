@@ -14,11 +14,4 @@ public class MyModConfig extends MidnightConfig {
 
     @Entry(category = GENERATION)
     public static boolean enableSnowOnSlabs = true;
-
-    public static final String TEXTURES = "textures";
-    public enum TextureConnection {
-        CONNECTED, VANILLA
-    }
-    @Entry(category = TEXTURES)
-    public static TextureConnection textureConnectionStyle = TextureConnection.CONNECTED;
 }
