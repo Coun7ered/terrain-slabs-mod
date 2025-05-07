@@ -3,6 +3,7 @@ package net.countered.terrainslabs.callbacks;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
+import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.countered.terrainslabs.worldgen.slabfeature.SlabFeatureLogic;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
@@ -159,7 +160,8 @@ public class RegisterCallbacks {
         BlockState currentBlockState = worldChunk.getBlockState(placePos);
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
-        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA)) && !ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
+        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
+                && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)) {
             return;
         }
         // Retrieve the slab type based on the block below the current position
@@ -184,18 +186,29 @@ public class RegisterCallbacks {
         }
         slabState = updateBottomWaterloggedState(currentBlockState, blockAboveState, slabState);
 
-        if (ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.containsKey(currentBlockState.getBlock())){
-            if (!(currentBlockState.isOf(Blocks.SEAGRASS) && blockAboveState.isOf(Blocks.AIR))) {
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  ModSlabsMap.ON_TOP_SLAB_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState());
-            }
-            if (currentBlockState.isOf(Blocks.SNOW)){
-                if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)){
-                    placePosSection.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SNOWY, true));
-                    return;
+        // place vegetation / snow on top
+        if (MyModConfig.enableVegetationOnSlabs) {
+            placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos);
+        }
+        if (currentBlockState.isOf(Blocks.SNOW)) {
+            if (MyModConfig.enableSnowOnSlabs) {
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState());
+                if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
+                    slabState = slabState.with(Properties.SNOWY, true);
                 }
+            } else {
+                slabState = ModBlocksRegistry.SNOW_SLAB.getDefaultState();
             }
         }
         placePosSection.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true));
+    }
+
+    private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
+        if (ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
+            if (!(currentBlockState.isOf(Blocks.SEAGRASS) && blockAboveState.isOf(Blocks.AIR))) {
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState());
+            }
+        }
     }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
