@@ -7,7 +7,7 @@ license="CC0-1.0"
 
 [[mods]]
 modId="terrainslabs"
-version="1.4.0"
+version="2.0.2"
 displayName="Countered's Terrain Slabs"
 authors="Countered, Souldbminer"
 description='''A Minecraft mod designed to smooth out terrain using custom slabs, improving the world generation and overall feel.'''
