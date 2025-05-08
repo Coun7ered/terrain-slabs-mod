@@ -6,6 +6,7 @@ import net.countered.terrainslabs.callbacks.RegisterCallbacks;
 import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.item.ModItemGroups;
 import net.countered.terrainslabs.item.ShovelPathSlab;
+import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.countered.terrainslabs.worldgen.feature.ModAddedFeatures;
 import net.countered.terrainslabs.worldgen.slabfeature.ModSlabGeneration;
 import net.fabricmc.api.ModInitializer;
@@ -22,6 +23,7 @@ public class TerrainSlabs implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initializing TerrainSlabs");
 		MidnightConfig.init(TerrainSlabs.MOD_ID, MyModConfig.class);
+		SlabChunkAttachment.registerSlabAttachment();
 		ModBlocksRegistry.registerModBlocks();
 		ModAddedFeatures.registerFeatures();
 		ModSlabGeneration.generateSlabs();

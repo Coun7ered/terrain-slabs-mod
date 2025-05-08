@@ -1,7 +1,6 @@
 package net.countered.terrainslabs.config;
 
 import eu.midnightdust.lib.config.MidnightConfig;
-import net.minecraft.util.Identifier;
 
 public class MyModConfig extends MidnightConfig {
     // Define categories and entries
@@ -9,4 +8,10 @@ public class MyModConfig extends MidnightConfig {
 
     @Entry(category = GENERATION)
     public static boolean enableSlabGeneration = true;
+
+    @Entry(category = GENERATION)
+    public static boolean enableVegetationOnSlabs = true;
+
+    @Entry(category = GENERATION)
+    public static boolean enableSnowOnSlabs = true;
 }

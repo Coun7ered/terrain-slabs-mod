@@ -1,5 +1,6 @@
 {
   "itemgroup.terrainslabs": "Рельефные Плиты",
+  "resourcepack.terrainslabs.better_grass_slabs.description": "Альтернативные текстуры дерновых плит (сверху и по бокам)",
 
   "block.terrainslabs.dirt_slab": "Земляная плита",
   "block.terrainslabs.mud_slab": "Грязевая плита",
@@ -48,7 +49,7 @@
   "block.terrainslabs.poppy_on_top": "Мак на плите",
   "block.terrainslabs.dandelion_on_top": "Одуванчик на плите",
   "block.terrainslabs.azure_bluet_on_top": "Хаустония серая на плите",
-  "block.terrainslabs.cornflower_top": "Синий василёк на плите",
+  "block.terrainslabs.cornflower_on_top": "Синий василёк на плите",
   "block.terrainslabs.seagrass_on_top": "Морская трава на плите",
   "block.terrainslabs.red_mushroom_on_top": "Красный гриб на плите",
   "block.terrainslabs.brown_mushroom_on_top": "Коричневый гриб на плите",
@@ -56,7 +57,12 @@
   "block.terrainslabs.short_grass_on_top": "Низкая трава на плите",
   "block.terrainslabs.dead_bush_on_top": "Мёртвый куст на плите",
 
+  "terrainslabs.midnightconfig.category.generation": "Генерация",
   "terrainslabs.midnightconfig.enableSlabGeneration": "Включить генерацию плит",
   "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Переключите, чтобы включить или отключить генерацию плит в мире.",
+  "terrainslabs.midnightconfig.enableVegetationOnSlabs": "Включить растительность на плитах",
+  "terrainslabs.midnightconfig.enableVegetationOnSlabs.tooltip": "Будет ли растительность вроде травы генерироваться на плитах.",
+  "terrainslabs.midnightconfig.enableSnowOnSlabs": "Включить снег на плитах",
+  "terrainslabs.midnightconfig.enableSnowOnSlabs.tooltip": "Будет ли снег генерироваться на плитах",
   "terrainslabs.midnightconfig.title": "Рельефные Плиты"
 }
