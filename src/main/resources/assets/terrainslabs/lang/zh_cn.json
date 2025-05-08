@@ -1,0 +1,62 @@
+{
+  "itemgroup.terrainslabs":"地势台阶",
+
+  "block.terrainslabs.dirt_slab": "泥土台阶",
+  "block.terrainslabs.mud_slab": "泥巴台阶",
+  "block.terrainslabs.coarse_slab": "灰化土台阶",
+  "block.terrainslabs.snow_slab": "雪台阶",
+  "block.terrainslabs.packed_ice_slab": "浮冰台阶",
+  "block.terrainslabs.deepslate_slab": "深板岩台阶",
+  "block.terrainslabs.clay_slab": "黏土台阶",
+  "block.terrainslabs.moss_slab": "苔藓台阶",
+
+  "block.terrainslabs.grass_slab": "草方块台阶",
+  "block.terrainslabs.mycelium_slab": "菌丝体台阶",
+  "block.terrainslabs.podzol_slab": "灰化土台阶",
+  "block.terrainslabs.path_slab": "土径台阶",
+
+  "block.terrainslabs.gravel_slab": "砂砾台阶",
+  "block.terrainslabs.sand_slab": "沙台阶",
+  "block.terrainslabs.red_sand_slab": "红沙台阶",
+
+  "block.terrainslabs.terracotta_slab": "陶瓦台阶",
+  "block.terrainslabs.red_terracotta_slab": "红色陶瓦台阶",
+  "block.terrainslabs.orange_terracotta_slab": "橙色陶瓦台阶",
+  "block.terrainslabs.light_gray_terracotta_slab": "淡灰色陶瓦台阶",
+  "block.terrainslabs.white_terracotta_slab": "白色陶瓦台阶",
+  "block.terrainslabs.brown_terracotta_slab": "棕色陶瓦台阶",
+  "block.terrainslabs.yellow_terracotta_slab": "黄色陶瓦台阶",
+
+  "block.terrainslabs.terrain_stone_slab": "地势石头台阶",
+  "block.terrainslabs.terrain_tuff_slab": "地势凝灰岩台阶",
+  "block.terrainslabs.terrain_sandstone_slab": "地势砂岩台阶",
+  "block.terrainslabs.terrain_red_sandstone_slab": "地势红砂岩台阶",
+  "block.terrainslabs.terrain_andesite_slab": "地势安山岩台阶",
+  "block.terrainslabs.terrain_diorite_slab": "地势闪长岩台阶",
+  "block.terrainslabs.terrain_granite_slab": "地势花岗岩台阶",
+
+  "block.terrainslabs.soul_sand_slab": "灵魂沙台阶",
+  "block.terrainslabs.soul_soil_slab": "灵魂土台阶",
+  "block.terrainslabs.netherrack_slab": "下界岩台阶",
+  "block.terrainslabs.warped_nylium_slab": "诡异菌岩台阶",
+  "block.terrainslabs.crimson_nylium_slab": "绯红菌岩台阶",
+  "block.terrainslabs.basalt_slab": "玄武岩台阶",
+  "block.terrainslabs.terrain_blackstone_slab": "地势黑石台阶",
+  "block.terrainslabs.endstone_slab": "末地石台阶",
+
+  "block.terrainslabs.snow_on_top": "台阶上的雪",
+  "block.terrainslabs.poppy_on_top": "台阶上的虞美人",
+  "block.terrainslabs.dandelion_on_top": "台阶上的蒲公英",
+  "block.terrainslabs.azure_bluet_on_top": "台阶上的蓝花美耳草",
+  "block.terrainslabs.cornflower_on_top": "台阶上的矢车菊",
+  "block.terrainslabs.seagrass_on_top": "台阶上的海草",
+  "block.terrainslabs.red_mushroom_on_top": "台阶上的红色蘑菇",
+  "block.terrainslabs.brown_mushroom_on_top": "台阶上的棕色蘑菇",
+  "block.terrainslabs.fern_on_top": "台阶上的蕨",
+  "block.terrainslabs.short_grass_on_top": "台阶上的矮草丛",
+  "block.terrainslabs.dead_bush_on_top": "台阶上的枯萎的灌木",
+
+  "terrainslabs.midnightconfig.enableSlabGeneration": "启用地势台阶生成",
+  "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "是否在世界生成的同时生成对应的台阶。",
+  "terrainslabs.midnightconfig.title": "Countered 的地势台阶"
+}

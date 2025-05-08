@@ -1,18 +1,17 @@
 {
 	"schemaVersion": 1,
 	"id": "terrainslabs",
-	"version": "1.4.0",
-	"name": "Countered's Terrain Slabs - connector Edition",
+	"version": "${version}",
+	"name": "Countered's Terrain Slabs",
 	"description": "A Minecraft mod designed to smooth out terrain using custom slabs, improving the world generation and overall feel.",
 	"authors": [
-		"Countered!",
-		"Souldbminer"
+		"Countered!"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "GNU AGPLv3",
+	"license": "CC0-1.0",
 	"icon": "assets/terrainslabs/icon.png",
 	"environment": "*",
 	"entrypoints": {
