@@ -26,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,16 +116,18 @@ public class RegisterCallbacks {
     private static void registerSlabPlacementCallback() {
         ServerChunkEvents.CHUNK_GENERATE.register((serverWorld, worldChunk) -> {
             List<BlockPos> botAttachedSlabPositions = worldChunk.getAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS);
-            if (botAttachedSlabPositions != null ) {
+            if (botAttachedSlabPositions != null && !botAttachedSlabPositions.isEmpty()) {
                 for (BlockPos pos : botAttachedSlabPositions) {
                     placeBottomSlab(worldChunk, pos);
                 }
+                worldChunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, new ArrayList<>());
             }
             List<BlockPos> topAttachedSlabPositions = worldChunk.getAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS);
-            if (topAttachedSlabPositions != null) {
+            if (topAttachedSlabPositions != null && !topAttachedSlabPositions.isEmpty()) {
                 for (BlockPos pos : topAttachedSlabPositions) {
                     placeTopSlab(worldChunk, pos);
                 }
+                worldChunk.setAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS, new ArrayList<>());
             }
         });
     }
