@@ -129,30 +129,6 @@ public class RegisterCallbacks {
         });
     }
 
-    private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
-        BlockState blockAboveState = worldChunk.getBlockState(placePos.up());
-
-        // Retrieve the slab type based on the block below the current position
-        BlockState slabState = ModSlabsMap.getSlabForBlock(blockAboveState.getBlock()).getDefaultState();
-
-        if (slabState.getBlock().equals(Blocks.AIR)) {
-            /* DEBUG
-            System.out.println(blockBelowState);
-            System.out.println(currentBlockState);
-             */
-            return;
-        }
-        if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
-            slabState = ModBlocksRegistry.DIRT_SLAB.getDefaultState();
-        }
-        if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
-            slabState = ModBlocksRegistry.NETHERRACK_SLAB.getDefaultState();
-        }
-        slabState = updateTopWaterloggedState(worldChunk, placePos, slabState);
-        ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
-        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
-    }
-
     private static void placeBottomSlab(WorldChunk worldChunk, BlockPos placePos) {
         BlockPos blockBelowPos = placePos.down();
         BlockPos blockAbovePos = placePos.up();
@@ -174,9 +150,19 @@ public class RegisterCallbacks {
              */
             return;
         }
-        ChunkSection belowPosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockBelowPos.getY()));
-        ChunkSection placePosSection = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
-        ChunkSection abovePosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockAbovePos.getY()));
+        int blockBelowY = blockBelowPos.getY();
+        int blockAboveY = blockAbovePos.getY();
+        int placeY = placePos.getY();
+
+        // check if section is too high
+        int sectionIndex = worldChunk.getSectionIndex(blockAboveY);
+        if (sectionIndex < 0 || sectionIndex >= worldChunk.getSectionArray().length) {
+            return;
+        }
+        ChunkSection placePosSection = worldChunk.getSection(worldChunk.getSectionIndex(placeY));
+        ChunkSection belowPosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockBelowY));
+        ChunkSection abovePosSection = worldChunk.getSection(sectionIndex);
+
         // Handle grass slab special case by converting grass to dirt before placing the slab
         if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
             belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15,  Blocks.DIRT.getDefaultState());
@@ -201,6 +187,30 @@ public class RegisterCallbacks {
             }
         }
         placePosSection.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true));
+    }
+
+    private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
+        BlockState blockAboveState = worldChunk.getBlockState(placePos.up());
+
+        // Retrieve the slab type based on the block below the current position
+        BlockState slabState = ModSlabsMap.getSlabForBlock(blockAboveState.getBlock()).getDefaultState();
+
+        if (slabState.getBlock().equals(Blocks.AIR)) {
+            /* DEBUG
+            System.out.println(blockBelowState);
+            System.out.println(currentBlockState);
+             */
+            return;
+        }
+        if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
+            slabState = ModBlocksRegistry.DIRT_SLAB.getDefaultState();
+        }
+        if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
+            slabState = ModBlocksRegistry.NETHERRACK_SLAB.getDefaultState();
+        }
+        slabState = updateTopWaterloggedState(worldChunk, placePos, slabState);
+        ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
+        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
     }
 
     private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
