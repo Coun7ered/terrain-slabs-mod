@@ -1,5 +1,6 @@
 {
-  "itemgroup.terrainslabs":"Terrain Slabs",
+  "itemgroup.terrainslabs": "Terrain Slabs",
+  "resourcepack.terrainslabs.better_grass_slabs.description": "Alternative Grass Slab Textures (Top sides)",
 
   "block.terrainslabs.dirt_slab": "Dirt Slab",
   "block.terrainslabs.mud_slab": "Mud Slab",
