@@ -72,7 +72,6 @@
   "block.terrainslabs.short_grass_on_top": "Niska trawa na płycie",
   "block.terrainslabs.dead_bush_on_top": "Uschnięty krzak na płycie",
 
-  "terrainslabs.midnightconfig.category.generation": "Generacja",
   "terrainslabs.midnightconfig.enableVegetationOnSlabs": "Włącz roślinność na płytach",
   "terrainslabs.midnightconfig.enableVegetationOnSlabs.tooltip": "Przełącz, aby włączyć lub wyłączyć generowanie roślinności na płytach",
   "terrainslabs.midnightconfig.enableSnowOnSlabs": "Włącz śnieg na płytach",
