@@ -41,7 +41,20 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         this.addDrop(ModBlocksRegistry.COARSE_SLAB, block -> silkSlabDrops(block, Blocks.COARSE_DIRT));
         this.addDrop(ModBlocksRegistry.DEEPSLATE_SLAB, block -> silkSlabDrops(block, Blocks.DEEPSLATE));
         this.addDrop(ModBlocksRegistry.MOSS_SLAB, block -> silkSlabDrops(block, Blocks.MOSS_BLOCK));
-
+        //terralith
+        this.addDrop(ModBlocksRegistry.CALCITE_SLAB, block -> silkSlabDrops(block, Blocks.CALCITE));
+        this.addDrop(ModBlocksRegistry.SMOOTH_BASALT_SLAB, block -> silkSlabDrops(block, Blocks.SMOOTH_BASALT));
+        this.addDrop(ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB, block -> silkSlabDrops(block, Blocks.LIGHT_BLUE_TERRACOTTA));
+        this.addDrop(ModBlocksRegistry.CYAN_TERRACOTTA_SLAB, block -> silkSlabDrops(block, Blocks.CYAN_TERRACOTTA));
+        this.addDrop(ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB, block -> silkSlabDrops(block, Blocks.COBBLESTONE));
+        this.addDrop(ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB, block -> silkSlabDrops(block, Blocks.MOSSY_COBBLESTONE));
+        this.addDrop(ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB, block -> silkSlabDrops(block, Blocks.COBBLED_DEEPSLATE));
+        this.addDrop(ModBlocksRegistry.ICE_SLAB, block -> silkSlabDrops(block, Blocks.ICE));
+        this.addDrop(ModBlocksRegistry.ROOTED_DIRT_SLAB, block -> silkSlabDrops(block, Blocks.ROOTED_DIRT));
+        this.addDrop(ModBlocksRegistry.PACKED_MUD_SLAB, block -> silkSlabDrops(block, Blocks.PACKED_MUD));
+        this.addDrop(ModBlocksRegistry.BLUE_ICE_SLAB, block -> silkSlabDrops(block, Blocks.BLUE_ICE));
+        this.addDrop(ModBlocksRegistry.BLACK_TERRACOTTA_SLAB, block -> silkSlabDrops(block, Blocks.BLACK_TERRACOTTA));
+        this.addDrop(ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB, block -> silkSlabDrops(block, Blocks.PRISMARINE));
         this.addDrop(ModBlocksRegistry.SAND_SLAB, block -> silkSlabDrops(block, Blocks.SAND));
         this.addDrop(ModBlocksRegistry.RED_SAND_SLAB, block -> silkSlabDrops(block, Blocks.RED_SAND));
 

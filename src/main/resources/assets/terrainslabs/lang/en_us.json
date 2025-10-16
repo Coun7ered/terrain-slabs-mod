@@ -11,6 +11,20 @@
   "block.terrainslabs.clay_slab": "Clay Slab",
   "block.terrainslabs.moss_slab": "Moss Slab",
 
+  "block.terrainslabs.calcite_slab": "Calcite Slab",
+  "block.terrainslabs.smooth_basalt_slab": "Smooth Basalt Slab",
+  "block.terrainslabs.light_blue_terracotta_slab": "Light Blue Terracotta Slab",
+  "block.terrainslabs.terrain_cobblestone_slab": "Cobblestone Slab",
+  "block.terrainslabs.cyan_terracotta_slab": "Cyan Terracotta Slab",
+  "block.terrainslabs.terrain_mossy_cobblestone_slab": "Mossy Cobblestone Slab",
+  "block.terrainslabs.terrain_cobbled_deepslate_slab": "Terrain Cobbled Deepslate Slab",
+  "block.terrainslabs.ice_slab": "Ice Slab",
+  "block.terrainslabs.rooted_dirt_slab": "Rooted Dirt Slab",
+  "block.terrainslabs.packed_mud_slab": "Packed Mud Slab",
+  "block.terrainslabs.blue_ice_slab": "Blue Ice Slab",
+  "block.terrainslabs.black_terracotta_slab": "Black Terracotta Slab",
+  "block.terrainslabs.terrain_prismarine_slab": "Terrain Prismarine Slab",
+
   "block.terrainslabs.grass_slab": "Grass Slab",
   "block.terrainslabs.mycelium_slab": "Mycelium Slab",
   "block.terrainslabs.podzol_slab": "Podzol Slab",
@@ -57,12 +71,11 @@
   "block.terrainslabs.short_grass_on_top": "Short Grass On Slab",
   "block.terrainslabs.dead_bush_on_top": "Dead Bush On Slab",
 
-  "terrainslabs.midnightconfig.category.generation": "Generation",
-  "terrainslabs.midnightconfig.enableSlabGeneration": "Enable Slab Generation",
-  "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Toggle to enable or disable slab generation in the world.",
   "terrainslabs.midnightconfig.enableVegetationOnSlabs": "Enable Vegetation on Slabs",
   "terrainslabs.midnightconfig.enableVegetationOnSlabs.tooltip": "Toggle whether vegetation like grass will be generated on top of slabs",
   "terrainslabs.midnightconfig.enableSnowOnSlabs": "Enable Snow on Slabs",
   "terrainslabs.midnightconfig.enableSnowOnSlabs.tooltip": "Toggle whether snow will be generated on top of slabs",
+  "terrainslabs.midnightconfig.enableSlabGeneration": "Enable Slab Generation",
+  "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Toggle to enable or disable slab generation in the world.",
   "terrainslabs.midnightconfig.title": "Countered's Terrain Slabs"
 }

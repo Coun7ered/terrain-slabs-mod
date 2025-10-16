@@ -24,6 +24,20 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocksRegistry.DEEPSLATE_SLAB)
                 .add(ModBlocksRegistry.CLAY_SLAB)
                 .add(ModBlocksRegistry.MOSS_SLAB)
+//terralith compat
+                .add(ModBlocksRegistry.CALCITE_SLAB)
+                .add(ModBlocksRegistry.SMOOTH_BASALT_SLAB)
+                .add(ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB)
+                .add(ModBlocksRegistry.CYAN_TERRACOTTA_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB)
+                .add(ModBlocksRegistry.ICE_SLAB)
+                .add(ModBlocksRegistry.ROOTED_DIRT_SLAB)
+                .add(ModBlocksRegistry.PACKED_MUD_SLAB)
+                .add(ModBlocksRegistry.BLUE_ICE_SLAB)
+                .add(ModBlocksRegistry.BLACK_TERRACOTTA_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB)
 
                 .add(ModBlocksRegistry.GRASS_SLAB)
                 .add(ModBlocksRegistry.MYCELIUM_SLAB)
@@ -75,7 +89,10 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocksRegistry.SNOW_ON_TOP)
 
                 .add(ModBlocksRegistry.SOUL_SAND_SLAB)
-                .add(ModBlocksRegistry.SOUL_SOIL_SLAB);
+                .add(ModBlocksRegistry.SOUL_SOIL_SLAB)
+
+        //terralith
+                .add(ModBlocksRegistry.ROOTED_DIRT_SLAB);
 
         this.getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(ModBlocksRegistry.PACKED_ICE_SLAB)
@@ -94,6 +111,19 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocksRegistry.CUSTOM_STONE_SLAB)
                 .add(ModBlocksRegistry.CUSTOM_RED_SANDSTONE_SLAB)
                 .add(ModBlocksRegistry.CUSTOM_SANDSTONE_SLAB)
+                //terralith
+                .add(ModBlocksRegistry.CALCITE_SLAB)
+                .add(ModBlocksRegistry.SMOOTH_BASALT_SLAB)
+                .add(ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB)
+                .add(ModBlocksRegistry.CYAN_TERRACOTTA_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB)
+                .add(ModBlocksRegistry.ICE_SLAB)
+                .add(ModBlocksRegistry.PACKED_MUD_SLAB)
+                .add(ModBlocksRegistry.BLUE_ICE_SLAB)
+                .add(ModBlocksRegistry.BLACK_TERRACOTTA_SLAB)
+                .add(ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB)
 
                 .add(ModBlocksRegistry.NETHERRACK_SLAB)
                 .add(ModBlocksRegistry.WARPED_NYLIUM_SLAB)
