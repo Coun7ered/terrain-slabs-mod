@@ -27,6 +27,21 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.DEEPSLATE).slab(ModBlocksRegistry.DEEPSLATE_SLAB);
         blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.CLAY).slab(ModBlocksRegistry.CLAY_SLAB);
 
+        //terralith
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.CALCITE).slab(ModBlocksRegistry.CALCITE_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.SMOOTH_BASALT).slab(ModBlocksRegistry.SMOOTH_BASALT_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.LIGHT_BLUE_TERRACOTTA).slab(ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.CYAN_TERRACOTTA).slab(ModBlocksRegistry.CYAN_TERRACOTTA_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.ICE).slab(ModBlocksRegistry.ICE_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.COBBLESTONE).slab(ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.MOSSY_COBBLESTONE).slab(ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.COBBLED_DEEPSLATE).slab(ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.ROOTED_DIRT).slab(ModBlocksRegistry.ROOTED_DIRT_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.PACKED_MUD).slab(ModBlocksRegistry.PACKED_MUD_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.BLUE_ICE).slab(ModBlocksRegistry.BLUE_ICE_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.BLACK_TERRACOTTA).slab(ModBlocksRegistry.BLACK_TERRACOTTA_SLAB);
+        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.PRISMARINE).slab(ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB);
+
         blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.TERRACOTTA).slab(ModBlocksRegistry.TERRACOTTA_SLAB);
         blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.BROWN_TERRACOTTA).slab(ModBlocksRegistry.BROWN_TERRACOTTA_SLAB);
         blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.ORANGE_TERRACOTTA).slab(ModBlocksRegistry.ORANGE_TERRACOTTA_SLAB);

@@ -36,6 +36,20 @@ public class ModSlabsMap {
         SLAB_MAP.put(Blocks.CLAY, ModBlocksRegistry.CLAY_SLAB);
         SLAB_MAP.put(Blocks.DEEPSLATE, ModBlocksRegistry.DEEPSLATE_SLAB);
         SLAB_MAP.put(Blocks.MOSS_BLOCK, ModBlocksRegistry.MOSS_SLAB);
+        //terralith
+        SLAB_MAP.put(Blocks.CALCITE, ModBlocksRegistry.CALCITE_SLAB);
+        SLAB_MAP.put(Blocks.SMOOTH_BASALT, ModBlocksRegistry.SMOOTH_BASALT_SLAB);
+        SLAB_MAP.put(Blocks.LIGHT_BLUE_TERRACOTTA, ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB);
+        SLAB_MAP.put(Blocks.CYAN_TERRACOTTA, ModBlocksRegistry.CYAN_TERRACOTTA_SLAB);
+        SLAB_MAP.put(Blocks.COBBLESTONE, ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB);
+        SLAB_MAP.put(Blocks.MOSSY_COBBLESTONE, ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB);
+        SLAB_MAP.put(Blocks.COBBLED_DEEPSLATE, ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB);
+        SLAB_MAP.put(Blocks.ICE, ModBlocksRegistry.ICE_SLAB);
+        SLAB_MAP.put(Blocks.ROOTED_DIRT, ModBlocksRegistry.ROOTED_DIRT_SLAB);
+        SLAB_MAP.put(Blocks.PACKED_MUD, ModBlocksRegistry.PACKED_MUD_SLAB);
+        SLAB_MAP.put(Blocks.BLUE_ICE, ModBlocksRegistry.BLUE_ICE_SLAB);
+        SLAB_MAP.put(Blocks.BLACK_TERRACOTTA, ModBlocksRegistry.BLACK_TERRACOTTA_SLAB);
+        SLAB_MAP.put(Blocks.PRISMARINE, ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB);
 
         SLAB_MAP.put(Blocks.TERRACOTTA, ModBlocksRegistry.TERRACOTTA_SLAB);
         SLAB_MAP.put(Blocks.RED_TERRACOTTA, ModBlocksRegistry.RED_TERRACOTTA_SLAB);

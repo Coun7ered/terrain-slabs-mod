@@ -25,7 +25,19 @@ public class ModItemGroups {
                 entries.add(ModBlocksRegistry.DEEPSLATE_SLAB);
                 entries.add(ModBlocksRegistry.CLAY_SLAB);
                 entries.add(ModBlocksRegistry.MOSS_SLAB);
-
+                //terralith
+                entries.add(ModBlocksRegistry.CALCITE_SLAB);
+                entries.add(ModBlocksRegistry.SMOOTH_BASALT_SLAB);
+                entries.add(ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB);
+                entries.add(ModBlocksRegistry.CYAN_TERRACOTTA_SLAB);
+                entries.add(ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB);
+                entries.add(ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB);
+                entries.add(ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB);entries.add(ModBlocksRegistry.ICE_SLAB);
+                entries.add(ModBlocksRegistry.ROOTED_DIRT_SLAB);
+                entries.add(ModBlocksRegistry.PACKED_MUD_SLAB);
+                entries.add(ModBlocksRegistry.BLUE_ICE_SLAB);
+                entries.add(ModBlocksRegistry.BLACK_TERRACOTTA_SLAB);
+                entries.add(ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB);
                 entries.add(ModBlocksRegistry.GRASS_SLAB);
                 entries.add(ModBlocksRegistry.MYCELIUM_SLAB);
                 entries.add(ModBlocksRegistry.PODZOL_SLAB);
