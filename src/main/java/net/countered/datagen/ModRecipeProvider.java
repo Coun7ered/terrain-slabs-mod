@@ -31,6 +31,17 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.MOSS_SLAB, Ingredient.ofItems(Blocks.MOSS_BLOCK)).criterion("has_moss_block", conditionsFromItem(Blocks.MOSS_BLOCK)).offerTo(consumer);
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.CUSTOM_TUFF_SLAB, Ingredient.ofItems(Blocks.TUFF)).criterion("has_tuff_block", conditionsFromItem(Blocks.TUFF)).offerTo(consumer);
 
+        //terralith
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.CALCITE_SLAB, Ingredient.ofItems(Blocks.CALCITE)).criterion("has_calcite", conditionsFromItem(Blocks.CALCITE)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.SMOOTH_BASALT_SLAB, Ingredient.ofItems(Blocks.SMOOTH_BASALT)).criterion("has_smooth_basalt", conditionsFromItem(Blocks.SMOOTH_BASALT)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.LIGHT_BLUE_TERRACOTTA)).criterion("has_light_blue_terracotta", conditionsFromItem(Blocks.LIGHT_BLUE_TERRACOTTA)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.CYAN_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.CYAN_TERRACOTTA)).criterion("has_cyan_terracotta", conditionsFromItem(Blocks.CYAN_TERRACOTTA)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.ICE_SLAB, Ingredient.ofItems(Blocks.ICE)).criterion("has_ice", conditionsFromItem(Blocks.ICE)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.ROOTED_DIRT_SLAB, Ingredient.ofItems(Blocks.ROOTED_DIRT)).criterion("has_rooted_dirt", conditionsFromItem(Blocks.ROOTED_DIRT)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.PACKED_MUD_SLAB, Ingredient.ofItems(Blocks.PACKED_MUD)).criterion("has_packed_mud", conditionsFromItem(Blocks.PACKED_MUD)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.BLUE_ICE_SLAB, Ingredient.ofItems(Blocks.BLUE_ICE)).criterion("has_blue_ice", conditionsFromItem(Blocks.BLUE_ICE)).offerTo(consumer);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.BLACK_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.BLACK_TERRACOTTA)).criterion("has_black_terracotta", conditionsFromItem(Blocks.BLACK_TERRACOTTA)).offerTo(consumer);
+
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.GRASS_SLAB, Ingredient.ofItems(Blocks.GRASS_BLOCK)).criterion("has_grass_block", conditionsFromItem(Blocks.GRASS_BLOCK)).offerTo(consumer);
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.MYCELIUM_SLAB, Ingredient.ofItems(Blocks.MYCELIUM)).criterion("has_mycelium_block", conditionsFromItem(Blocks.MYCELIUM)).offerTo(consumer);
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.PODZOL_SLAB, Ingredient.ofItems(Blocks.PODZOL)).criterion("has_podzol_block", conditionsFromItem(Blocks.PODZOL)).offerTo(consumer);
