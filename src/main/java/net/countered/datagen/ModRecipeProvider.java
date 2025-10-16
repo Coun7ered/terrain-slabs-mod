@@ -45,6 +45,17 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.BROWN_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.BROWN_TERRACOTTA)).criterion("has_brown_terracotta_block", conditionsFromItem(Blocks.BROWN_TERRACOTTA)).offerTo(exporter);
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.YELLOW_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.YELLOW_TERRACOTTA)).criterion("has_yellow_terracotta_block", conditionsFromItem(Blocks.YELLOW_TERRACOTTA)).offerTo(exporter);
 
+        //terralith
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.CALCITE_SLAB, Ingredient.ofItems(Blocks.CALCITE)).criterion("has_calcite", conditionsFromItem(Blocks.CALCITE)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.SMOOTH_BASALT_SLAB, Ingredient.ofItems(Blocks.SMOOTH_BASALT)).criterion("has_smooth_basalt", conditionsFromItem(Blocks.SMOOTH_BASALT)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.LIGHT_BLUE_TERRACOTTA)).criterion("has_light_blue_terracotta", conditionsFromItem(Blocks.LIGHT_BLUE_TERRACOTTA)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.CYAN_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.CYAN_TERRACOTTA)).criterion("has_cyan_terracotta", conditionsFromItem(Blocks.CYAN_TERRACOTTA)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.ICE_SLAB, Ingredient.ofItems(Blocks.ICE)).criterion("has_ice", conditionsFromItem(Blocks.ICE)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.ROOTED_DIRT_SLAB, Ingredient.ofItems(Blocks.ROOTED_DIRT)).criterion("has_rooted_dirt", conditionsFromItem(Blocks.ROOTED_DIRT)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.PACKED_MUD_SLAB, Ingredient.ofItems(Blocks.PACKED_MUD)).criterion("has_packed_mud", conditionsFromItem(Blocks.PACKED_MUD)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.BLUE_ICE_SLAB, Ingredient.ofItems(Blocks.BLUE_ICE)).criterion("has_blue_ice", conditionsFromItem(Blocks.BLUE_ICE)).offerTo(exporter);
+        createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.BLACK_TERRACOTTA_SLAB, Ingredient.ofItems(Blocks.BLACK_TERRACOTTA)).criterion("has_black_terracotta", conditionsFromItem(Blocks.BLACK_TERRACOTTA)).offerTo(exporter);
+
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.SOUL_SAND_SLAB, Ingredient.ofItems(Blocks.SOUL_SAND)).criterion("has_soul_sand_block", conditionsFromItem(Blocks.SOUL_SAND)).offerTo(exporter);
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.SOUL_SOIL_SLAB, Ingredient.ofItems(Blocks.SOUL_SOIL)).criterion("has_soul_soil_block", conditionsFromItem(Blocks.SOUL_SOIL)).offerTo(exporter);
         createSlabRecipe(RecipeCategory.BUILDING_BLOCKS, ModBlocksRegistry.NETHERRACK_SLAB, Ingredient.ofItems(Blocks.NETHERRACK)).criterion("has_netherrack_block", conditionsFromItem(Blocks.NETHERRACK)).offerTo(exporter);

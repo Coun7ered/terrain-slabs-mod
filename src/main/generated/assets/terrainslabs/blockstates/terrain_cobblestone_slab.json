@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "terrainslabs:block/terrain_cobblestone_slab"
+    },
+    "type=double": {
+      "model": "minecraft:block/cobblestone"
+    },
+    "type=top": {
+      "model": "terrainslabs:block/terrain_cobblestone_slab_top"
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "predicates": {
+                      "minecraft:enchantments": [
+                        {
+                          "enchantments": "minecraft:silk_touch",
+                          "levels": {
+                            "min": 1
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "add": false,
+                  "conditions": [
+                    {
+                      "block": "terrainslabs:cyan_terracotta_slab",
+                      "condition": "minecraft:block_state_property",
+                      "properties": {
+                        "type": "double"
+                      }
+                    }
+                  ],
+                  "count": 2.0,
+                  "function": "minecraft:set_count"
+                }
+              ],
+              "name": "terrainslabs:cyan_terracotta_slab"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "block": "terrainslabs:cyan_terracotta_slab",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "generated": "true"
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "add": false,
+                  "conditions": [
+                    {
+                      "block": "terrainslabs:cyan_terracotta_slab",
+                      "condition": "minecraft:block_state_property",
+                      "properties": {
+                        "type": "double"
+                      }
+                    }
+                  ],
+                  "count": 2.0,
+                  "function": "minecraft:set_count"
+                }
+              ],
+              "name": "minecraft:cyan_terracotta"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "block": "terrainslabs:cyan_terracotta_slab",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "generated": "false"
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "add": false,
+                  "conditions": [
+                    {
+                      "block": "terrainslabs:cyan_terracotta_slab",
+                      "condition": "minecraft:block_state_property",
+                      "properties": {
+                        "type": "double"
+                      }
+                    }
+                  ],
+                  "count": 2.0,
+                  "function": "minecraft:set_count"
+                }
+              ],
+              "name": "terrainslabs:cyan_terracotta_slab"
+            }
+          ]
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}
