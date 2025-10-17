@@ -24,7 +24,8 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocksRegistry.DEEPSLATE_SLAB)
                 .add(ModBlocksRegistry.CLAY_SLAB)
                 .add(ModBlocksRegistry.MOSS_SLAB)
-//terralith compat
+
+                //terralith compat
                 .add(ModBlocksRegistry.CALCITE_SLAB)
                 .add(ModBlocksRegistry.SMOOTH_BASALT_SLAB)
                 .add(ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB)
@@ -91,7 +92,7 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocksRegistry.SOUL_SAND_SLAB)
                 .add(ModBlocksRegistry.SOUL_SOIL_SLAB)
 
-        //terralith
+                //terralith
                 .add(ModBlocksRegistry.ROOTED_DIRT_SLAB);
 
         this.getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
