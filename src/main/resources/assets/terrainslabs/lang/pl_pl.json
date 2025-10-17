@@ -11,6 +11,7 @@
   "block.terrainslabs.clay_slab": "Glinowa płyta",
   "block.terrainslabs.moss_slab": "Mchowa płyta",
 
+
   "block.terrainslabs.calcite_slab": "Kalcytowa płyta",
   "block.terrainslabs.smooth_basalt_slab": "Gładka bazaltowa płyta",
   "block.terrainslabs.light_blue_terracotta_slab": "Jasnoniebieska terakotowa płyta",
@@ -71,7 +72,6 @@
   "block.terrainslabs.short_grass_on_top": "Niska trawa na płycie",
   "block.terrainslabs.dead_bush_on_top": "Uschnięty krzak na płycie",
 
-  "terrainslabs.midnightconfig.category.generation": "Generacja",
   "terrainslabs.midnightconfig.enableVegetationOnSlabs": "Włącz roślinność na płytach",
   "terrainslabs.midnightconfig.enableVegetationOnSlabs.tooltip": "Przełącz, aby włączyć lub wyłączyć generowanie roślinności na płytach",
   "terrainslabs.midnightconfig.enableSnowOnSlabs": "Włącz śnieg na płytach",

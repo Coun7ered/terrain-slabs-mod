@@ -39,6 +39,7 @@ public class ModItemGroups {
                 entries.add(ModBlocksRegistry.BLUE_ICE_SLAB);
                 entries.add(ModBlocksRegistry.BLACK_TERRACOTTA_SLAB);
                 entries.add(ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB);
+
                 entries.add(ModBlocksRegistry.GRASS_SLAB);
                 entries.add(ModBlocksRegistry.MYCELIUM_SLAB);
                 entries.add(ModBlocksRegistry.PODZOL_SLAB);
