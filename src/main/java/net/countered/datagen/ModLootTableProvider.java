@@ -45,7 +45,6 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         this.addDrop(ModBlocksRegistry.COARSE_SLAB, block -> silkSlabDrops(block, Blocks.COARSE_DIRT));
         this.addDrop(ModBlocksRegistry.DEEPSLATE_SLAB, block -> silkSlabDrops(block, Blocks.COBBLED_DEEPSLATE));
         this.addDrop(ModBlocksRegistry.MOSS_SLAB, block -> silkSlabDrops(block, Blocks.MOSS_BLOCK));
-
         //terralith
         this.addDrop(ModBlocksRegistry.CALCITE_SLAB, block -> silkSlabDrops(block, Blocks.CALCITE));
         this.addDrop(ModBlocksRegistry.SMOOTH_BASALT_SLAB, block -> silkSlabDrops(block, Blocks.SMOOTH_BASALT));

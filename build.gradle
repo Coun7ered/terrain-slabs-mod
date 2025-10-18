@@ -1,6 +1,37 @@
 plugins {
 	id 'fabric-loom' version '1.10-SNAPSHOT'
 	id 'maven-publish'
+	id "me.shedaniel.unified-publishing" version "0.1.+"
+}
+
+unifiedPublishing {
+	project {
+		displayName = "Terrain Slabs v$mod_version"
+		changelog = file("$rootDir/CHANGELOG.md").text
+		releaseType = "release"
+		gameVersions = [minecraft_version]
+		gameLoaders = ["fabric"]
+
+		mainPublication(tasks.named("remapJar").get())
+
+		/* Not yet architectury
+		relations {
+			depends {
+				curseforge = "architectury-api"
+				modrinth = "architectury-api"
+			}
+		}
+		 */
+
+        curseforge {
+            token = System.getenv("CURSEFORGE_TOKEN")
+            id = "1125437"
+        }
+        modrinth {
+            token = System.getenv("MODRINTH_TOKEN")
+            id = "SJu6sklj"
+        }
+	}
 }
 
 version = project.mod_version
