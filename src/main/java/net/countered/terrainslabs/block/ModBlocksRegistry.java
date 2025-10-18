@@ -157,6 +157,8 @@ public class ModBlocksRegistry {
             new GrassOnTop(AbstractBlock.Settings.copy(Blocks.FERN)));
 
 
+
+
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
         return Registry.register(Registries.BLOCK, Identifier.of(TerrainSlabs.MOD_ID, name), block);
@@ -168,6 +170,6 @@ public class ModBlocksRegistry {
     }
 
     public static void registerModBlocks() {
-        TerrainSlabs.LOGGER.info("Registering Mod Blocks for" + TerrainSlabs.MOD_ID);
+        TerrainSlabs.LOGGER.info("Registering Mod Blocks for " + TerrainSlabs.MOD_ID);
     }
 }

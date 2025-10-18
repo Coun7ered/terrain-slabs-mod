@@ -3,8 +3,6 @@ package net.countered.datagen;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.server.tag.TagProvider;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 
@@ -26,6 +24,7 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocksRegistry.DEEPSLATE_SLAB)
                 .add(ModBlocksRegistry.CLAY_SLAB)
                 .add(ModBlocksRegistry.MOSS_SLAB)
+
                 //terralith compat
                 .add(ModBlocksRegistry.CALCITE_SLAB)
                 .add(ModBlocksRegistry.SMOOTH_BASALT_SLAB)
@@ -92,7 +91,8 @@ public class ModBlockTagsProvider extends FabricTagProvider.BlockTagProvider {
 
                 .add(ModBlocksRegistry.SOUL_SAND_SLAB)
                 .add(ModBlocksRegistry.SOUL_SOIL_SLAB)
-        //terralith
+
+                //terralith
                 .add(ModBlocksRegistry.ROOTED_DIRT_SLAB);
 
         this.getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
