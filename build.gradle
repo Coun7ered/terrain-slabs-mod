@@ -10,7 +10,7 @@ unifiedPublishing {
 		changelog = file("$rootDir/CHANGELOG.md").text
 		releaseType = "release"
 		gameVersions = [minecraft_version]
-		gameLoaders = ["fabric"]
+		gameLoaders = ["forge"]
 
 		mainPublication(tasks.named("remapJar").get())
 
@@ -26,10 +26,18 @@ unifiedPublishing {
         curseforge {
             token = System.getenv("CURSEFORGE_TOKEN")
             id = "1125437"
+			relations {
+				depends "forgified-fabric-api"
+				depends "sinytra-connector"
+			}
         }
         modrinth {
             token = System.getenv("MODRINTH_TOKEN")
             id = "SJu6sklj"
+			relations {
+				depends "forgified-fabric-api"
+				depends "connector"
+			}
         }
 	}
 }
