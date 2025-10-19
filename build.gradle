@@ -10,7 +10,7 @@ unifiedPublishing {
 		changelog = file("$rootDir/CHANGELOG.md").text
 		releaseType = "release"
 		gameVersions = [minecraft_version]
-		gameLoaders = ["forge"]
+		gameLoaders = ["neoforge"]
 
 		mainPublication(tasks.named("remapJar").get())
 
