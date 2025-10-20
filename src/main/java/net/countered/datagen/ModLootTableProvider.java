@@ -26,8 +26,6 @@ import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
 
 public class ModLootTableProvider extends FabricBlockLootTableProvider {
     public ModLootTableProvider(FabricDataOutput dataOutput) {
@@ -39,7 +37,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         this.addDrop(ModBlocksRegistry.DIRT_SLAB, block -> silkSlabDrops(block, Blocks.DIRT));
         this.addDrop(ModBlocksRegistry.MUD_SLAB, block -> silkSlabDrops(block, Blocks.MUD));
         this.addDrop(ModBlocksRegistry.COARSE_SLAB, block -> silkSlabDrops(block, Blocks.COARSE_DIRT));
-        this.addDrop(ModBlocksRegistry.DEEPSLATE_SLAB, block -> silkSlabDrops(block, Blocks.DEEPSLATE));
+        this.addDrop(ModBlocksRegistry.DEEPSLATE_SLAB, block -> silkSlabDrops(block, Blocks.COBBLED_DEEPSLATE));
         this.addDrop(ModBlocksRegistry.MOSS_SLAB, block -> silkSlabDrops(block, Blocks.MOSS_BLOCK));
         //terralith
         this.addDrop(ModBlocksRegistry.CALCITE_SLAB, block -> silkSlabDrops(block, Blocks.CALCITE));
