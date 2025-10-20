@@ -4,7 +4,7 @@
       "model": "terrainslabs:block/smooth_basalt_slab"
     },
     "type=double": {
-      "model": "minecraft:block/smooth_basalt"
+      "model": "terrainslabs:block/smooth_basalt_slab_double"
     },
     "type=top": {
       "model": "terrainslabs:block/smooth_basalt_slab_top"

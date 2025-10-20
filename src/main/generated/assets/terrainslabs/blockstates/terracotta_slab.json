@@ -4,7 +4,7 @@
       "model": "terrainslabs:block/terracotta_slab"
     },
     "type=double": {
-      "model": "minecraft:block/terracotta"
+      "model": "terrainslabs:block/terracotta_slab_double"
     },
     "type=top": {
       "model": "terrainslabs:block/terracotta_slab_top"

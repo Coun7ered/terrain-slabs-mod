@@ -2,7 +2,6 @@ package net.countered.terrainslabs.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.SlabBlock;
 
 import java.util.HashMap;
 import java.util.Map;

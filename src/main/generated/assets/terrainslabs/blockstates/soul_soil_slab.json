@@ -4,7 +4,7 @@
       "model": "terrainslabs:block/soul_soil_slab"
     },
     "type=double": {
-      "model": "minecraft:block/soul_soil"
+      "model": "terrainslabs:block/soul_soil_slab_double"
     },
     "type=top": {
       "model": "terrainslabs:block/soul_soil_slab_top"
