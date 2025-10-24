@@ -158,26 +158,23 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
             if (neighborState.isOf(Blocks.LAVA)) return false;
 
             boolean isNeighborBelowOpaque = belowNeighborState.isOpaque();
-            boolean isOppositeDirOpaque = oppositeState.isOpaque();
-            boolean isBelowNoSlab =
-                    !(belowNeighborState.getBlock() instanceof SlabBlock);
-            boolean isOppositeDirNoSlab =
+            boolean elevationBlockState = oppositeState.isOpaque();
+            boolean isElevationDirNoSlab =
                     !(oppositeState.getBlock() instanceof SlabBlock);
             boolean isNeighborBelowNoSnow =
                     !belowNeighborState.isOf(Blocks.SNOW) &&
                             !belowNeighborState.isOf(ModBlocksRegistry.SNOW_ON_TOP);
-            boolean isOppositeDirNoSnow =
+            boolean isElevationDirNoSnow =
                     !oppositeState.isOf(Blocks.SNOW) &&
                             !oppositeState.isOf(ModBlocksRegistry.SNOW_ON_TOP);
 
-            if (isNeighborBelowOpaque && isOppositeDirOpaque &&
-                    isBelowNoSlab && isOppositeDirNoSlab &&
-                    isNeighborBelowNoSnow && isOppositeDirNoSnow) {
+            if (isNeighborBelowOpaque && elevationBlockState && isElevationDirNoSlab &&
+                    isNeighborBelowNoSnow && isElevationDirNoSnow) {
                 bottomOfMountain = true;
             }
 
             // Check if a neighboring block is opaque and not a slab
-            if (neighborState.isOpaqueFullCube(world, neighborPos) && !(neighborState.getBlock() instanceof SlabBlock) && !neighborState.isOf(Blocks.SNOW)
+            if (neighborState.isOpaqueFullCube(world, neighborPos) && !neighborState.isOf(Blocks.SNOW)
                     && (!world.getBlockState(neighborPos.up()).isOpaque() || world.getBlockState(neighborPos.up()).getBlock() == Blocks.SNOW)) {
                 validNeighbors = true;
             }
