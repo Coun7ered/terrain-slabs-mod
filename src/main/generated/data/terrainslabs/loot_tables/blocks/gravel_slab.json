@@ -43,77 +43,72 @@
               "name": "terrainslabs:gravel_slab"
             },
             {
-              "type": "minecraft:alternatives",
-              "children": [
+              "type": "minecraft:item",
+              "conditions": [
                 {
-                  "type": "minecraft:item",
-                  "conditions": [
-                    {
-                      "block": "terrainslabs:gravel_slab",
-                      "condition": "minecraft:block_state_property",
-                      "properties": {
-                        "generated": "true"
-                      }
-                    },
-                    {
-                      "chances": [
-                        0.1,
-                        0.14285715,
-                        0.25,
-                        1.0
-                      ],
-                      "condition": "minecraft:table_bonus",
-                      "enchantment": "minecraft:fortune"
-                    }
-                  ],
-                  "functions": [
-                    {
-                      "add": false,
-                      "conditions": [
-                        {
-                          "block": "terrainslabs:gravel_slab",
-                          "condition": "minecraft:block_state_property",
-                          "properties": {
-                            "type": "double"
-                          }
-                        }
-                      ],
-                      "count": 2.0,
-                      "function": "minecraft:set_count"
-                    }
-                  ],
-                  "name": "minecraft:flint"
+                  "block": "terrainslabs:gravel_slab",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "generated": "true"
+                  }
                 },
                 {
-                  "type": "minecraft:item",
+                  "chances": [
+                    0.1,
+                    0.14285715,
+                    0.25,
+                    1.0
+                  ],
+                  "condition": "minecraft:table_bonus",
+                  "enchantment": "minecraft:fortune"
+                }
+              ],
+              "functions": [
+                {
+                  "add": false,
                   "conditions": [
                     {
                       "block": "terrainslabs:gravel_slab",
                       "condition": "minecraft:block_state_property",
                       "properties": {
-                        "generated": "true"
+                        "type": "double"
                       }
                     }
                   ],
-                  "functions": [
+                  "count": 2.0,
+                  "function": "minecraft:set_count"
+                }
+              ],
+              "name": "minecraft:flint"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "block": "terrainslabs:gravel_slab",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "generated": "true"
+                  }
+                }
+              ],
+              "functions": [
+                {
+                  "add": false,
+                  "conditions": [
                     {
-                      "add": false,
-                      "conditions": [
-                        {
-                          "block": "terrainslabs:gravel_slab",
-                          "condition": "minecraft:block_state_property",
-                          "properties": {
-                            "type": "double"
-                          }
-                        }
-                      ],
-                      "count": 2.0,
-                      "function": "minecraft:set_count"
+                      "block": "terrainslabs:gravel_slab",
+                      "condition": "minecraft:block_state_property",
+                      "properties": {
+                        "type": "double"
+                      }
                     }
                   ],
-                  "name": "minecraft:gravel"
+                  "count": 2.0,
+                  "function": "minecraft:set_count"
                 }
-              ]
+              ],
+              "name": "minecraft:gravel"
             },
             {
               "type": "minecraft:item",
