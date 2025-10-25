@@ -54,6 +54,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         BlockPos highestBlock = findHighestChunkPos(worldAccess, chunkPos);
         List<BlockPos> tempBotSlabPositions = new ArrayList<>();
         List<BlockPos> tempTopSlabPositions = new ArrayList<>();
+        List<BlockPos> extendedPositionsGlobal = new ArrayList<>(); // neu: Sammelstelle für extended positions
 
         for (int y = worldAccess.getBottomY(); y < highestBlock.getY()+1; y++) {
             for (int x = 0; x < 16; x++) {
@@ -64,8 +65,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     BlockState blockBelowState = worldAccess.getBlockState(blockBelowPos);
                     BlockState blockAboveState = worldAccess.getBlockState(blockAbovePos);
                     BlockState currentBlockState = worldAccess.getBlockState(currentPos);
-                    // Check conditions to place a slab on top of the current block
-                    if (shouldPlaceBottomSlab(worldAccess, currentPos, blockAboveState, blockBelowState, currentBlockState, chunk)) {
+                    if (shouldPlaceBottomSlab(worldAccess, currentPos, blockAboveState, blockBelowState, currentBlockState, chunk, extendedPositionsGlobal)) {
                         tempBotSlabPositions.add(currentPos);
                     }
                     else if (shouldPlaceTopSlab(worldAccess, currentPos, currentBlockState, blockBelowState, blockAboveState, blockAbovePos)) {
@@ -74,10 +74,23 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                 }
             }
         }
-        tempBotSlabPositions.addAll(chunk.getAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS));
+        tempBotSlabPositions.addAll(chunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
         chunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, tempBotSlabPositions);
-        //chunk.getAttachedOrCreate(SlabChunkAttachment.TOP_SLAB_POSITIONS, ArrayList::new).addAll(tempTopSlabPositions);
-        addCornerSlabsForDiagonals(worldAccess, chunkPos, chunk);
+        tempBotSlabPositions.addAll(chunk.getAttachedOrCreate(SlabChunkAttachment.TOP_SLAB_POSITIONS, ArrayList::new));
+        chunk.setAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS, tempTopSlabPositions);
+        if (MyModConfig.enableCornerSlabs) {
+            addCornerSlabsForDiagonals(worldAccess, chunkPos, chunk);
+        }
+
+        // Am Ende: extendedPositionsGlobal in die jeweiligen Chunks schreiben (erst jetzt)
+        for (BlockPos extendedPosition : extendedPositionsGlobal) {
+            Chunk tempChunk = worldAccess.getChunk(extendedPosition);
+            List<BlockPos> tempList = new ArrayList<>(tempChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
+            if (!tempList.contains(extendedPosition)) {
+                tempList.add(extendedPosition);
+                tempChunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, tempList);
+            }
+        }
     }
 
     private BlockPos findHighestChunkPos(WorldAccess worldAccess, ChunkPos chunkPos) {
@@ -101,14 +114,14 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     /**
      * Determines if a slab should be placed at the given position based on world conditions.
      */
-    private boolean shouldPlaceBottomSlab(WorldAccess world, BlockPos currentPos, BlockState blockAboveState, BlockState blockBelowState, BlockState currentBlockState, Chunk chunk) {
+    private boolean shouldPlaceBottomSlab(WorldAccess world, BlockPos currentPos, BlockState blockAboveState, BlockState blockBelowState, BlockState currentBlockState, Chunk chunk, List<BlockPos> extendedCollector) {
         if ((currentBlockState.isOpaqueFullCube(world, currentPos) && !currentBlockState.isOf(Blocks.SNOW) && !currentBlockState.isReplaceable())
                 || ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()) == Blocks.AIR
                 || (!blockAboveState.isOf(Blocks.AIR) && !blockAboveState.isOf(Blocks.WATER) && !blockAboveState.isOf(Blocks.CAVE_AIR) && !blockAboveState.isOf(Blocks.VOID_AIR)))
         {
             return false;
         }
-        return validSurroundingBottom(world, currentPos, chunk);
+        return validSurroundingBottom(world, currentPos, chunk, extendedCollector);
     }
 
     private boolean shouldPlaceTopSlab(WorldAccess world, BlockPos currentPos, BlockState currentState, BlockState blockBelow, BlockState blockAboveState, BlockPos blockAbovePos) {
@@ -153,7 +166,9 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         return topOfCeiling && validNeighbors;
     }
 
-    private boolean validSurroundingBottom(WorldAccess world, BlockPos currentPos, Chunk chunk) {
+    private List<BlockPos> storedLengthSlabPositions = new ArrayList<>();
+
+    private boolean validSurroundingBottom(WorldAccess world, BlockPos currentPos, Chunk chunk, List<BlockPos> extendedCollector) {
         boolean bottomOfMountain = false;
         boolean validNeighbors = false;
         List<BlockPos> extendedPositions = new ArrayList<>();
@@ -187,24 +202,21 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                 bottomOfMountain = true;
             }
 
-            // Check if a neighboring block is opaque and not a slab
             if (neighborState.isOpaqueFullCube(world, neighborPos) && !(neighborState.getBlock() instanceof SlabBlock) && !neighborState.isOf(Blocks.SNOW)
                     && (!world.getBlockState(neighborPos.up()).isOpaque() || world.getBlockState(neighborPos.up()).getBlock() == Blocks.SNOW)) {
                 validNeighbors = true;
 
                 for (int i = 1; i < MyModConfig.slabRunLength; i++) {
                     if (world.getBlockState(oppositePos.offset(direction.getOpposite(), i).down()).isOpaque()) {
-                        extendedPositions.add(oppositePos.offset(direction.getOpposite(), i-1));
+                        extendedPositions.add(oppositePos.offset(direction.getOpposite(), i - 1));
                     }
                 }
             }
         }
         if (validNeighbors && bottomOfMountain) {
-            for (BlockPos extendedPosition : extendedPositions) {
-                Chunk tempChunk = world.getChunk(extendedPosition);
-                List<BlockPos> tempList = new ArrayList<>(tempChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
-                tempList.add(extendedPosition);
-                tempChunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, tempList);
+            // Statt die Positions direkt in die Chunks zu schreiben, sammeln wir sie und geben sie an den Collector zurück
+            for (BlockPos p : extendedPositions) {
+                if (!extendedCollector.contains(p)) extendedCollector.add(p);
             }
             return true;
         }

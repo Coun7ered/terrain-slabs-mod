@@ -17,4 +17,7 @@ public class MyModConfig extends MidnightConfig {
 
     @Entry(category = GENERATION)
     public static int slabRunLength = 1;
+
+    @Entry(category = GENERATION)
+    public static boolean enableCornerSlabs = true;
 }
