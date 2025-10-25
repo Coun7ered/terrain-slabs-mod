@@ -16,7 +16,7 @@ public class MyModConfig extends MidnightConfig {
     public static boolean enableSnowOnSlabs = true;
 
     @Entry(category = GENERATION)
-    public static int slabRunLength = 1;
+    public static int slabRunLength = 2;
 
     @Entry(category = GENERATION)
     public static boolean enableCornerSlabs = true;
