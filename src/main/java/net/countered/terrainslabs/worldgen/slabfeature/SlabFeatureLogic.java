@@ -20,6 +20,7 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.util.FeatureContext;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +52,9 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         ChunkPos chunkPos = new ChunkPos(origin);
         Chunk chunk = worldAccess.getChunk(chunkPos.x, chunkPos.z);
         BlockPos highestBlock = findHighestChunkPos(worldAccess, chunkPos);
+        List<BlockPos> tempBotSlabPositions = new ArrayList<>();
+        List<BlockPos> tempTopSlabPositions = new ArrayList<>();
+
         for (int y = worldAccess.getBottomY(); y < highestBlock.getY()+1; y++) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
@@ -62,14 +66,18 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     BlockState currentBlockState = worldAccess.getBlockState(currentPos);
                     // Check conditions to place a slab on top of the current block
                     if (shouldPlaceBottomSlab(worldAccess, currentPos, blockAboveState, blockBelowState, currentBlockState, chunk)) {
-                        chunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new).add(currentPos);
+                        tempBotSlabPositions.add(currentPos);
                     }
                     else if (shouldPlaceTopSlab(worldAccess, currentPos, currentBlockState, blockBelowState, blockAboveState, blockAbovePos)) {
-                        chunk.getAttachedOrCreate(SlabChunkAttachment.TOP_SLAB_POSITIONS, ArrayList::new).add(currentPos);
+                        tempTopSlabPositions.add(currentPos);
                     }
                 }
             }
         }
+        tempBotSlabPositions.addAll(chunk.getAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS));
+        chunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, tempBotSlabPositions);
+        //chunk.getAttachedOrCreate(SlabChunkAttachment.TOP_SLAB_POSITIONS, ArrayList::new).addAll(tempTopSlabPositions);
+        addCornerSlabsForDiagonals(worldAccess, chunkPos, chunk);
     }
 
     private BlockPos findHighestChunkPos(WorldAccess worldAccess, ChunkPos chunkPos) {
@@ -193,10 +201,54 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         }
         if (validNeighbors && bottomOfMountain) {
             for (BlockPos extendedPosition : extendedPositions) {
-                world.getChunk(extendedPosition).getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new).add(extendedPosition);
+                Chunk tempChunk = world.getChunk(extendedPosition);
+                List<BlockPos> tempList = new ArrayList<>(tempChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
+                tempList.add(extendedPosition);
+                tempChunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, tempList);
             }
             return true;
         }
         return false;
+    }
+
+    private void addCornerSlabsForDiagonals(WorldAccess world, ChunkPos chunkPos, Chunk currentChunk) {
+        HashSet<BlockPos> allBotSlabs = new HashSet<>();
+        /*
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                Chunk neighbor = world.getChunk(chunkPos.x + dx, chunkPos.z + dz);
+                List<BlockPos> list = neighbor.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new);
+                allBotSlabs.addAll(list);
+            }
+        }
+
+         */
+        allBotSlabs.addAll(currentChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
+
+        List<BlockPos> myBotSlabs = currentChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new);
+        HashSet<BlockPos> myBotSet = new HashSet<>(myBotSlabs);
+
+        for (BlockPos s : new ArrayList<>(allBotSlabs)) {
+            BlockPos tEast = s.offset(Direction.EAST);
+            if (!myBotSet.contains(tEast) && isWithinChunkBounds(tEast, chunkPos)) {
+                if (allBotSlabs.contains(tEast.offset(Direction.NORTH)) || allBotSlabs.contains(tEast.offset(Direction.SOUTH))) {
+                    currentChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new).add(tEast);
+                    myBotSet.add(tEast);
+                }
+            }
+            BlockPos tWest = s.offset(Direction.WEST);
+            if (!myBotSet.contains(tWest) && isWithinChunkBounds(tWest, chunkPos)) {
+                if (allBotSlabs.contains(tWest.offset(Direction.NORTH)) || allBotSlabs.contains(tWest.offset(Direction.SOUTH))) {
+                    currentChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new).add(tWest);
+                    myBotSet.add(tWest);
+                }
+            }
+        }
+
+    }
+
+    private boolean isWithinChunkBounds(BlockPos pos, ChunkPos chunkPos) {
+        return pos.getX() >= chunkPos.getStartX() && pos.getX() <= chunkPos.getEndX()
+                && pos.getZ() >= chunkPos.getStartZ() && pos.getZ() <= chunkPos.getEndZ();
     }
 }
