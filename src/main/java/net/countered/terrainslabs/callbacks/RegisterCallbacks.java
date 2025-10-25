@@ -216,11 +216,10 @@ public class RegisterCallbacks {
         section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
     }
 
-    //TODO fix seagrass placement on top of slabs
     private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
         if (ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
-            if (!(currentBlockState.isOf(Blocks.SEAGRASS) && blockAboveState.isOf(Blocks.AIR))) {
-                //abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState());
+            if (!(currentBlockState.getBlock().equals(Blocks.SEAGRASS) && !blockAboveState.getBlock().equals(Blocks.WATER))) {
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState());
             }
         }
     }
