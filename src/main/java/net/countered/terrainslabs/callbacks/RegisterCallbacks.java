@@ -26,10 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RegisterCallbacks {
     private static final Map<Item, Block> VEGETATION_ON_TOP_ITEMS = new HashMap<>();
@@ -132,6 +129,12 @@ public class RegisterCallbacks {
         });
     }
 
+    private static final Set<Block> doubleTallPlants = new HashSet<>();
+    static {
+        doubleTallPlants.add(Blocks.TALL_GRASS);
+        doubleTallPlants.add(Blocks.LARGE_FERN);
+        doubleTallPlants.add(Blocks.TALL_SEAGRASS);
+    }
     private static void placeBottomSlab(WorldChunk worldChunk, BlockPos placePos) {
         BlockPos blockBelowPos = placePos.down();
         BlockPos blockAbovePos = placePos.up();
@@ -140,8 +143,18 @@ public class RegisterCallbacks {
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
         if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
+                && !doubleTallPlants.contains(currentBlockState.getBlock())
                 && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)) {
             return;
+        }
+        // remove double tall plants
+        if (doubleTallPlants.contains(currentBlockState.getBlock())) {
+            if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
+                worldChunk.setBlockState(blockAbovePos, Blocks.WATER.getDefaultState(), false);
+            }
+            else {
+                worldChunk.setBlockState(blockAbovePos, Blocks.AIR.getDefaultState(), false);
+            }
         }
         // Retrieve the slab type based on the block below the current position
         BlockState slabState = ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()).getDefaultState();
