@@ -4,12 +4,26 @@
 
   "block.terrainslabs.dirt_slab": "Земляная плита",
   "block.terrainslabs.mud_slab": "Грязевая плита",
-  "block.terrainslabs.coarse_slab": "Каменистая земляная плита",
+  "block.terrainslabs.coarse_slab": "Плита из каменистой земли",
   "block.terrainslabs.snow_slab": "Снежная плита",
-  "block.terrainslabs.packed_ice_slab": "Плита плотного льда",
+  "block.terrainslabs.packed_ice_slab": "Плита из плотного льда",
   "block.terrainslabs.deepslate_slab": "Глубинносланцевая плита",
   "block.terrainslabs.clay_slab": "Глиняная плита",
   "block.terrainslabs.moss_slab": "Моховая плита",
+
+  "block.terrainslabs.calcite_slab": "Кальцитовая плита",
+  "block.terrainslabs.smooth_basalt_slab": "Плита из гладкого базальта",
+  "block.terrainslabs.light_blue_terracotta_slab": "Плита из голубой керамики",
+  "block.terrainslabs.terrain_cobblestone_slab": "Рельефная булыжная плита",
+  "block.terrainslabs.cyan_terracotta_slab": "Плита из бирюзовой керамики",
+  "block.terrainslabs.terrain_mossy_cobblestone_slab": "Рельефная замшелая булыжная плита",
+  "block.terrainslabs.terrain_cobbled_deepslate_slab": "Рельефная плита из колотого глубинного сланца",
+  "block.terrainslabs.ice_slab": "Ледяная плита",
+  "block.terrainslabs.rooted_dirt_slab": "Плита из корнистой земли",
+  "block.terrainslabs.packed_mud_slab": "Саманная плита",
+  "block.terrainslabs.blue_ice_slab": "Плита из синего льда",
+  "block.terrainslabs.black_terracotta_slab": "Плита из чёрной керамики",
+  "block.terrainslabs.terrain_prismarine_slab": "Рельефная призмариновая плита",
 
   "block.terrainslabs.grass_slab": "Дерновая плита",
   "block.terrainslabs.mycelium_slab": "Мицелиевая плита",
@@ -18,7 +32,7 @@
 
   "block.terrainslabs.gravel_slab": "Гравийная плита",
   "block.terrainslabs.sand_slab": "Песчаная плита",
-  "block.terrainslabs.red_sand_slab": "Красная песчаная плита",
+  "block.terrainslabs.red_sand_slab": "Плита из красного песка",
 
   "block.terrainslabs.terracotta_slab": "Терракотовая плита",
   "block.terrainslabs.red_terracotta_slab": "Плита из красной керамики",
