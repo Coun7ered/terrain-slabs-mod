@@ -26,8 +26,6 @@ import net.minecraft.loot.function.SetCountLootFunction;
 import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.loot.provider.number.UniformLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
 
 public class ModLootTableProvider extends FabricBlockLootTableProvider {
     public ModLootTableProvider(FabricDataOutput dataOutput) {
@@ -39,7 +37,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         this.addDrop(ModBlocksRegistry.DIRT_SLAB, block -> silkSlabDrops(block, Blocks.DIRT));
         this.addDrop(ModBlocksRegistry.MUD_SLAB, block -> silkSlabDrops(block, Blocks.MUD));
         this.addDrop(ModBlocksRegistry.COARSE_SLAB, block -> silkSlabDrops(block, Blocks.COARSE_DIRT));
-        this.addDrop(ModBlocksRegistry.DEEPSLATE_SLAB, block -> silkSlabDrops(block, Blocks.DEEPSLATE));
+        this.addDrop(ModBlocksRegistry.DEEPSLATE_SLAB, block -> silkSlabDrops(block, Blocks.COBBLED_DEEPSLATE));
         this.addDrop(ModBlocksRegistry.MOSS_SLAB, block -> silkSlabDrops(block, Blocks.MOSS_BLOCK));
         //terralith
         this.addDrop(ModBlocksRegistry.CALCITE_SLAB, block -> silkSlabDrops(block, Blocks.CALCITE));
@@ -129,53 +127,56 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
      * Adds a loot table entry that makes the slab drop its base block instead of itself.
      */
     public LootTable.Builder gravelSlabDrops(Block slab, Block gravelDrop, Item flintDrop) {
-
         return LootTable.builder()
-                .pool(LootPool.builder()
-                        .rolls(ConstantLootNumberProvider.create(1.0F))
-                        .with(
-                                ItemEntry.builder(slab)
-                                        .conditionally(WITH_SILK_TOUCH)  // Drops the slab if Silk Touch is used
-                                        .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
-                                                .conditionally(BlockStatePropertyLootCondition.builder(slab)
-                                                        .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
+                .pool(
+                        LootPool.builder()
+                                .rolls(ConstantLootNumberProvider.create(1.0F))
+                                .with(
+                                        ItemEntry.builder(slab)
+                                                .conditionally(WITH_SILK_TOUCH)
+                                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
+                                                        .conditionally(BlockStatePropertyLootCondition.builder(slab)
+                                                                .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
+                                                        )
                                                 )
-                                        )
-                                        .alternatively(
-                                                // Drops gravel or flint without Silk Touch
-                                                ItemEntry.builder(flintDrop)
-                                                        .conditionally(BlockStatePropertyLootCondition.builder(slab).properties(StatePredicate.Builder.create().exactMatch(CustomSlab.GENERATED, true)))
-                                                        .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
+                                                .alternatively(
+                                                        ItemEntry.builder(flintDrop)
                                                                 .conditionally(BlockStatePropertyLootCondition.builder(slab)
-                                                                        .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
+                                                                        .properties(StatePredicate.Builder.create().exactMatch(CustomSlab.GENERATED, true))
                                                                 )
-                                                        )
-                                                        .conditionally(TableBonusLootCondition.builder(
-                                                                Enchantments.FORTUNE,
-                                                                0.1F, 0.14285715F, 0.25F, 1.0F // Fortune levels for flint drops
-                                                        ))
-                                                        .alternatively(
-                                                                ItemEntry.builder(gravelDrop) // Drop gravel if no Fortune for flint
-                                                                        .conditionally(BlockStatePropertyLootCondition.builder(slab).properties(StatePredicate.Builder.create().exactMatch(CustomSlab.GENERATED, true)))
-                                                                        .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
-                                                                                .conditionally(BlockStatePropertyLootCondition.builder(slab)
-                                                                                        .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
-                                                                                )
+                                                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
+                                                                        .conditionally(BlockStatePropertyLootCondition.builder(slab)
+                                                                                .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
                                                                         )
-                                                        )
-
-                                        )
-                                        .alternatively(
-                                                ItemEntry.builder(slab)
-                                                        .conditionally(BlockStatePropertyLootCondition.builder(slab).properties(StatePredicate.Builder.create().exactMatch(CustomSlab.GENERATED, false)))
-                                                        .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
-                                                                .conditionally(BlockStatePropertyLootCondition.builder(slab)
-                                                                        .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
                                                                 )
-                                                        )
-                                        )
-                        )
-
+                                                                .conditionally(TableBonusLootCondition.builder(
+                                                                        Enchantments.FORTUNE,
+                                                                        0.1F, 0.14285715F, 0.25F, 1.0F
+                                                                ))
+                                                )
+                                                .alternatively(
+                                                        ItemEntry.builder(gravelDrop)
+                                                                .conditionally(BlockStatePropertyLootCondition.builder(slab)
+                                                                        .properties(StatePredicate.Builder.create().exactMatch(CustomSlab.GENERATED, true))
+                                                                )
+                                                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
+                                                                        .conditionally(BlockStatePropertyLootCondition.builder(slab)
+                                                                                .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
+                                                                        )
+                                                                )
+                                                )
+                                                .alternatively(
+                                                        ItemEntry.builder(slab)
+                                                                .conditionally(BlockStatePropertyLootCondition.builder(slab)
+                                                                        .properties(StatePredicate.Builder.create().exactMatch(CustomSlab.GENERATED, false))
+                                                                )
+                                                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(2.0F))
+                                                                        .conditionally(BlockStatePropertyLootCondition.builder(slab)
+                                                                                .properties(StatePredicate.Builder.create().exactMatch(SlabBlock.TYPE, SlabType.DOUBLE))
+                                                                        )
+                                                                )
+                                                )
+                                )
                 );
     }
 

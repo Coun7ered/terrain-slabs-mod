@@ -4,7 +4,7 @@
       "model": "terrainslabs:block/red_sand_slab"
     },
     "type=double": {
-      "model": "minecraft:block/red_sand"
+      "model": "terrainslabs:block/red_sand_slab_double"
     },
     "type=top": {
       "model": "terrainslabs:block/red_sand_slab_top"

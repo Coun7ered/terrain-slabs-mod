@@ -4,7 +4,7 @@
       "model": "terrainslabs:block/packed_ice_slab"
     },
     "type=double": {
-      "model": "minecraft:block/packed_ice"
+      "model": "terrainslabs:block/packed_ice_slab_double"
     },
     "type=top": {
       "model": "terrainslabs:block/packed_ice_slab_top"

@@ -4,7 +4,7 @@
       "model": "terrainslabs:block/moss_slab"
     },
     "type=double": {
-      "model": "minecraft:block/moss_block"
+      "model": "terrainslabs:block/moss_slab_double"
     },
     "type=top": {
       "model": "terrainslabs:block/moss_slab_top"

@@ -4,7 +4,7 @@
       "model": "terrainslabs:block/calcite_slab"
     },
     "type=double": {
-      "model": "minecraft:block/calcite"
+      "model": "terrainslabs:block/calcite_slab_double"
     },
     "type=top": {
       "model": "terrainslabs:block/calcite_slab_top"

@@ -78,5 +78,9 @@
   "terrainslabs.midnightconfig.enableVegetationOnSlabs.tooltip": "Toggle whether vegetation like grass will be generated on top of slabs",
   "terrainslabs.midnightconfig.enableSnowOnSlabs": "Enable Snow on Slabs",
   "terrainslabs.midnightconfig.enableSnowOnSlabs.tooltip": "Toggle whether snow will be generated on top of slabs",
+  "terrainslabs.midnightconfig.slabRunLength": "Slab Run Length",
+  "terrainslabs.midnightconfig.slabRunLength.tooltip": "Determines the maximum number of slabs before elevations.",
+  "terrainslabs.midnightconfig.enableCornerSlabs": "Enable Corner Slabs",
+  "terrainslabs.midnightconfig.enableCornerSlabs.tooltip": "Toggle to enable or disable corner slab generation.",
   "terrainslabs.midnightconfig.title": "Countered's Terrain Slabs"
 }
