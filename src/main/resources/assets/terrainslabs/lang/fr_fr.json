@@ -1,0 +1,62 @@
+{
+  "itemgroup.terrainslabs": "Dalles de terrain",
+
+  "block.terrainslabs.dirt_slab": "Dalle de terre",
+  "block.terrainslabs.mud_slab": "Dalle de boue",
+  "block.terrainslabs.coarse_slab": "Dalle de terre stérile",
+  "block.terrainslabs.snow_slab": "Dalle de neige",
+  "block.terrainslabs.packed_ice_slab": "Dalle de glace compactée",
+  "block.terrainslabs.deepslate_slab": "Dalle d'ardoise des abîmes",
+  "block.terrainslabs.clay_slab": "Dalle d'argile",
+  "block.terrainslabs.moss_slab": "Dalle de mousse",
+
+  "block.terrainslabs.grass_slab": "Dalle d'herbe",
+  "block.terrainslabs.mycelium_slab": "Dalle de mycélium",
+  "block.terrainslabs.podzol_slab": "Dalle de podzol",
+  "block.terrainslabs.path_slab": "Dalle de chemin de terre",
+
+  "block.terrainslabs.gravel_slab": "Dalle de gravier",
+  "block.terrainslabs.sand_slab": "Dalle de sable",
+  "block.terrainslabs.red_sand_slab": "Dalle de sable rouge",
+
+  "block.terrainslabs.terracotta_slab": "Dalle de terre cuite",
+  "block.terrainslabs.red_terracotta_slab": "Dalle de terre cuite rouge",
+  "block.terrainslabs.orange_terracotta_slab": "Dalle de terre cuite orange",
+  "block.terrainslabs.light_gray_terracotta_slab": "Dalle de terre cuite gris clair",
+  "block.terrainslabs.white_terracotta_slab": "Dalle de terre cuite blanche",
+  "block.terrainslabs.brown_terracotta_slab": "Dalle de terre cuite brune",
+  "block.terrainslabs.yellow_terracotta_slab": "Dalle de terre cuite jaune",
+
+  "block.terrainslabs.terrain_stone_slab": "Dalle de roche de terrain",
+  "block.terrainslabs.terrain_tuff_slab": "Dalle de tuf de terrain",
+  "block.terrainslabs.terrain_sandstone_slab": "Dalle de grès de terrain",
+  "block.terrainslabs.terrain_red_sandstone_slab": "Dalle de grès rouge de terrain",
+  "block.terrainslabs.terrain_andesite_slab": "Dalle d'andésite de terrain",
+  "block.terrainslabs.terrain_diorite_slab": "Dalle de diorite de terrain",
+  "block.terrainslabs.terrain_granite_slab": "Dalle de granite de terrain",
+
+  "block.terrainslabs.soul_sand_slab": "Dalle de sable des âmes",
+  "block.terrainslabs.soul_soil_slab": "Dalle de terre des âmes",
+  "block.terrainslabs.netherrack_slab": "Dalle de Netherrack",
+  "block.terrainslabs.warped_nylium_slab": "Dalle de nylium biscornu",
+  "block.terrainslabs.crimson_nylium_slab": "Dalle de nylium carmin",
+  "block.terrainslabs.basalt_slab": "Dalle de basalte",
+  "block.terrainslabs.terrain_blackstone_slab": "Dalle de roche noire de terrain",
+  "block.terrainslabs.endstone_slab": "Dalle de pierre de l'End",
+
+  "block.terrainslabs.snow_on_top": "Neige sur dalle",
+  "block.terrainslabs.poppy_on_top": "Coquelicot sur dalle",
+  "block.terrainslabs.dandelion_on_top": "Pissenlit sur dalle",
+  "block.terrainslabs.azure_bluet_on_top": "Houstonie bleue sur dalle",
+  "block.terrainslabs.cornflower_top": "Bleuet sur dalle",
+  "block.terrainslabs.seagrass_on_top": "Herbe aquatique sur dalle",
+  "block.terrainslabs.red_mushroom_on_top": "Champignon rouge sur dalle",
+  "block.terrainslabs.brown_mushroom_on_top": "Champignon brun sur dalle",
+  "block.terrainslabs.fern_on_top": "Fougère sur dalle",
+  "block.terrainslabs.short_grass_on_top": "Herbes courtes sur dalle",
+  "block.terrainslabs.dead_bush_on_top": "Buisson mort sur dalle",
+
+  "terrainslabs.midnightconfig.enableSlabGeneration": "Activer la génération de dalles",
+  "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Permet d'activer ou de désactiver la génération de dalles dans le monde.",
+  "terrainslabs.midnightconfig.title": "Countered's Dalles de terrain"
+}
