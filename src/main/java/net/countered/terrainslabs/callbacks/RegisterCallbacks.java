@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
@@ -143,18 +144,9 @@ public class RegisterCallbacks {
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
         if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
-                && !doubleTallPlants.contains(currentBlockState.getBlock())
+                && !doubleTallPlants.contains(currentBlockState.getBlock()) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
                 && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)) {
             return;
-        }
-        // remove double tall plants
-        if (doubleTallPlants.contains(currentBlockState.getBlock())) {
-            if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
-                worldChunk.setBlockState(blockAbovePos, Blocks.WATER.getDefaultState(), false);
-            }
-            else {
-                worldChunk.setBlockState(blockAbovePos, Blocks.AIR.getDefaultState(), false);
-            }
         }
         // Retrieve the slab type based on the block below the current position
         BlockState slabState = ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()).getDefaultState();
@@ -179,6 +171,16 @@ public class RegisterCallbacks {
         ChunkSection belowPosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockBelowY));
         ChunkSection abovePosSection = worldChunk.getSection(sectionIndex);
 
+        // remove double tall plants
+        if (doubleTallPlants.contains(currentBlockState.getBlock()) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
+            if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.WATER.getDefaultState());
+                blockAboveState = Blocks.WATER.getDefaultState();
+            }
+            else {
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.AIR.getDefaultState());
+            }
+        }
         // Handle grass slab special case by converting grass to dirt before placing the slab
         if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
             belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15,  Blocks.DIRT.getDefaultState());
