@@ -66,31 +66,18 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
                     BlockState blockAboveState = worldAccess.getBlockState(blockAbovePos);
                     BlockState currentBlockState = worldAccess.getBlockState(currentPos);
                     if (shouldPlaceBottomSlab(worldAccess, currentPos, blockAboveState, blockBelowState, currentBlockState, chunk, extendedPositionsGlobal)) {
-                        tempBotSlabPositions.add(currentPos);
+                        chunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new).add(currentPos);
                     }
                     else if (shouldPlaceTopSlab(worldAccess, currentPos, currentBlockState, blockBelowState, blockAboveState, blockAbovePos)) {
-                        tempTopSlabPositions.add(currentPos);
+                        chunk.getAttachedOrCreate(SlabChunkAttachment.TOP_SLAB_POSITIONS, ArrayList::new).add(currentPos);
                     }
                 }
             }
         }
-        tempBotSlabPositions.addAll(chunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
-        chunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, tempBotSlabPositions);
-        tempBotSlabPositions.addAll(chunk.getAttachedOrCreate(SlabChunkAttachment.TOP_SLAB_POSITIONS, ArrayList::new));
-        chunk.setAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS, tempTopSlabPositions);
         if (MyModConfig.enableCornerSlabs) {
             addCornerSlabsForDiagonals(worldAccess, chunkPos, chunk);
         }
-
-        // Am Ende: extendedPositionsGlobal in die jeweiligen Chunks schreiben (erst jetzt)
-        for (BlockPos extendedPosition : extendedPositionsGlobal) {
-            Chunk tempChunk = worldAccess.getChunk(extendedPosition);
-            List<BlockPos> tempList = new ArrayList<>(tempChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
-            if (!tempList.contains(extendedPosition)) {
-                tempList.add(extendedPosition);
-                tempChunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, tempList);
-            }
-        }
+        chunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new).addAll(extendedPositionsGlobal);
     }
 
     private BlockPos findHighestChunkPos(WorldAccess worldAccess, ChunkPos chunkPos) {
@@ -166,8 +153,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         return topOfCeiling && validNeighbors;
     }
 
-    private List<BlockPos> storedLengthSlabPositions = new ArrayList<>();
-
     private boolean validSurroundingBottom(WorldAccess world, BlockPos currentPos, Chunk chunk, List<BlockPos> extendedCollector) {
         boolean bottomOfMountain = false;
         boolean validNeighbors = false;
@@ -214,7 +199,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
             }
         }
         if (validNeighbors && bottomOfMountain) {
-            // Statt die Positions direkt in die Chunks zu schreiben, sammeln wir sie und geben sie an den Collector zurück
             for (BlockPos p : extendedPositions) {
                 if (!extendedCollector.contains(p)) extendedCollector.add(p);
             }
@@ -224,7 +208,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     }
 
     private void addCornerSlabsForDiagonals(WorldAccess world, ChunkPos chunkPos, Chunk currentChunk) {
-        HashSet<BlockPos> allBotSlabs = new HashSet<>();
         /*
         for (int dx = -1; dx <= 1; dx++) {
             for (int dz = -1; dz <= 1; dz++) {
@@ -235,10 +218,11 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         }
 
          */
-        allBotSlabs.addAll(currentChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new));
+        HashSet<BlockPos> allBotSlabs = new HashSet<>();
 
-        List<BlockPos> myBotSlabs = currentChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new);
-        HashSet<BlockPos> myBotSet = new HashSet<>(myBotSlabs);
+        List<BlockPos> botSlabPositions = currentChunk.getAttachedOrCreate(SlabChunkAttachment.BOT_SLAB_POSITIONS, ArrayList::new);
+        allBotSlabs.addAll(botSlabPositions);
+        HashSet<BlockPos> myBotSet = new HashSet<>(botSlabPositions);
 
         for (BlockPos s : new ArrayList<>(allBotSlabs)) {
             BlockPos tEast = s.offset(Direction.EAST);
