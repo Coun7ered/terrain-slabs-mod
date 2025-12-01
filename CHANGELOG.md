@@ -1,6 +1,2 @@
 fix:
-- crash on world load
-
-add translations:
-- german
-- french
+map colors for slabs
