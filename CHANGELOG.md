@@ -1,2 +1,2 @@
 fix:
-crash on world load
+map colors for slabs

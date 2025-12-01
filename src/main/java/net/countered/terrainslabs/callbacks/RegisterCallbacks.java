@@ -196,7 +196,7 @@ public class RegisterCallbacks {
         }
         if (currentBlockState.isOf(Blocks.SNOW)) {
             if (MyModConfig.enableSnowOnSlabs) {
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState());
+                worldChunk.setBlockState(blockAbovePos, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState(), false);
                 if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
                     slabState = slabState.with(Properties.SNOWY, true);
                 }
@@ -204,7 +204,7 @@ public class RegisterCallbacks {
                 slabState = ModBlocksRegistry.SNOW_SLAB.getDefaultState();
             }
         }
-        placePosSection.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true));
+        worldChunk.setBlockState(placePos,  slabState.with(CustomSlab.GENERATED, true), false);
     }
 
     private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
