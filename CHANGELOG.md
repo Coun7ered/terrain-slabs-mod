@@ -1,2 +1,2 @@
 fix:
-map colors for slabs
+server freeze

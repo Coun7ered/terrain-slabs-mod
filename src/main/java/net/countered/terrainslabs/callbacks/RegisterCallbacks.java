@@ -23,6 +23,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
@@ -174,7 +175,7 @@ public class RegisterCallbacks {
         // remove double tall plants
         if (doubleTallPlants.contains(currentBlockState.getBlock()) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
             if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.WATER.getDefaultState());
+                setBlockWithoutUpdates(worldChunk, blockAbovePos, Blocks.WATER.getDefaultState());
                 blockAboveState = Blocks.WATER.getDefaultState();
             }
             else {
@@ -196,7 +197,8 @@ public class RegisterCallbacks {
         }
         if (currentBlockState.isOf(Blocks.SNOW)) {
             if (MyModConfig.enableSnowOnSlabs) {
-                worldChunk.setBlockState(blockAbovePos, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState(), false);
+                BlockState snowState = ModBlocksRegistry.SNOW_ON_TOP.getDefaultState();
+                setBlockWithoutUpdates(worldChunk, blockAbovePos, snowState);
                 if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
                     slabState = slabState.with(Properties.SNOWY, true);
                 }
@@ -204,7 +206,28 @@ public class RegisterCallbacks {
                 slabState = ModBlocksRegistry.SNOW_SLAB.getDefaultState();
             }
         }
-        worldChunk.setBlockState(placePos,  slabState.with(CustomSlab.GENERATED, true), false);
+        setBlockWithoutUpdates(worldChunk, placePos,  slabState.with(CustomSlab.GENERATED, true));
+    }
+
+    public static void setBlockWithoutUpdates(WorldChunk chunk, BlockPos pos, BlockState state) {
+        int y = pos.getY();
+        int lx = pos.getX() & 15;
+        int lz = pos.getZ() & 15;
+        int ly = y & 15;
+
+        ChunkSection section = chunk.getSection(chunk.getSectionIndex(y));
+
+        BlockState previous = section.setBlockState(lx, ly, lz, state);
+        if (previous == state) {
+            return;
+        }
+        for (Heightmap.Type type : Heightmap.Type.values()) {
+            Heightmap hm = chunk.getHeightmap(type);
+            if (hm != null) {
+                hm.trackUpdate(lx, y, lz, state);
+            }
+        }
+        chunk.setNeedsSaving(true);
     }
 
     private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
