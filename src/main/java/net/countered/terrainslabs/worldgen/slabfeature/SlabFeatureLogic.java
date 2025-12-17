@@ -54,7 +54,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         BlockPos highestBlock = findHighestChunkPos(worldAccess, chunkPos);
         List<BlockPos> tempBotSlabPositions = new ArrayList<>();
         List<BlockPos> tempTopSlabPositions = new ArrayList<>();
-        List<BlockPos> extendedPositionsGlobal = new ArrayList<>(); // neu: Sammelstelle für extended positions
+        List<BlockPos> extendedPositionsGlobal = new ArrayList<>();
 
         for (int y = worldAccess.getBottomY(); y < highestBlock.getY()+1; y++) {
             for (int x = 0; x < 16; x++) {

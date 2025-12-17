@@ -22,6 +22,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
@@ -250,8 +251,11 @@ public class RegisterCallbacks {
 
     private static BlockState updateTopWaterloggedState(WorldChunk worldChunk, BlockPos currentPos, BlockState slabState) {
         for (Direction direction : Direction.Type.HORIZONTAL) {
+            BlockPos checkPos = currentPos.offset(direction);
+            ChunkPos chunkPos = new ChunkPos(checkPos);
+
             // Check if the neighbor or the block above contains water to set the waterlogged property
-            if (worldChunk.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER)) {
+            if (worldChunk.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER) && worldChunk.getPos().equals(chunkPos)) {
                 return slabState.with(Properties.WATERLOGGED, true);
             }
         }
