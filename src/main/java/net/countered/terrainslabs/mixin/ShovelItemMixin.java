@@ -5,14 +5,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.enums.SlabType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -48,11 +45,11 @@ public abstract class ShovelItemMixin {
             pathState = pathState.with(TYPE, slabType).with(WATERLOGGED, blockState.get(WATERLOGGED));
 
             world.playSound(playerEntity, blockPos, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
-            if (!world.isClient) {
+            if (!world.isClient()) {
                 world.setBlockState(blockPos, pathState, Block.NOTIFY_ALL_AND_REDRAW);
                 world.emitGameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Emitter.of(playerEntity, pathState));
                 if (playerEntity != null) {
-                    context.getStack().damage(1, playerEntity, LivingEntity.getSlotForHand(context.getHand()));
+                    context.getStack().damage(1, playerEntity, context.getHand().getEquipmentSlot());
                 }
             }
 

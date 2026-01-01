@@ -3,7 +3,7 @@ package net.countered.terrainslabs;
 import eu.midnightdust.lib.config.MidnightConfig;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.callbacks.RegisterCallbacks;
-import net.countered.terrainslabs.config.MyModConfig;
+import net.countered.terrainslabs.config.ModConfig;
 import net.countered.terrainslabs.item.ModItemGroups;
 import net.countered.terrainslabs.item.ShovelPathSlab;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
@@ -22,7 +22,7 @@ public class TerrainSlabs implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Initializing TerrainSlabs");
-		MidnightConfig.init(TerrainSlabs.MOD_ID, MyModConfig.class);
+		MidnightConfig.init(TerrainSlabs.MOD_ID, ModConfig.class);
 		SlabChunkAttachment.registerSlabAttachment();
 		ModBlocksRegistry.registerModBlocks();
 		ModAddedFeatures.registerFeatures();

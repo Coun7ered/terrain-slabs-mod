@@ -31,7 +31,7 @@ public class NyliumSlab extends CustomSlab implements Fertilizable {
     private static boolean stayAlive(BlockState state, WorldView world, BlockPos pos) {
         BlockPos blockPos = pos.up();
         BlockState blockState = world.getBlockState(blockPos);
-        int i = ChunkLightProvider.getRealisticOpacity(world, Blocks.WARPED_NYLIUM.getDefaultState(), pos, blockState, blockPos, Direction.UP, blockState.getOpacity(world, blockPos));
+        int i = ChunkLightProvider.getRealisticOpacity(Blocks.WARPED_NYLIUM.getDefaultState(), blockState, Direction.UP, blockState.getOpacity());
         return i < 15;
     }
 

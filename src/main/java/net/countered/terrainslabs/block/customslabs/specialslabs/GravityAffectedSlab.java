@@ -3,8 +3,7 @@ package net.countered.terrainslabs.block.customslabs.specialslabs;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.LandingBlock;
-import net.minecraft.block.SlabBlock;
+import net.minecraft.block.Falling;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.fluid.FluidState;
@@ -23,10 +22,11 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
+import net.minecraft.world.tick.ScheduledTickView;
 import org.jetbrains.annotations.Nullable;
 
-public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
+public class GravityAffectedSlab extends CustomSlab implements Falling {
 
     public GravityAffectedSlab(Settings settings) {
         super(settings);
@@ -54,10 +54,17 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
 
     @Override
     protected BlockState getStateForNeighborUpdate(
-            BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos
+            BlockState state,
+            WorldView world,
+            ScheduledTickView tickView,
+            BlockPos pos,
+            Direction direction,
+            BlockPos neighborPos,
+            BlockState neighborState,
+            Random random
     ) {
-        world.scheduleBlockTick(pos, this, this.getFallDelay());
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        tickView.scheduleBlockTick(pos, this, this.getFallDelay());
+        return super.getStateForNeighborUpdate(state, world, tickView, pos, direction, neighborPos, neighborState, random);
     }
 
     @Override
@@ -114,14 +121,14 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
 
     @Override
     public void onDestroyedOnLanding(World world, BlockPos pos, FallingBlockEntity fallingBlockEntity) {
-        LandingBlock.super.onDestroyedOnLanding(world, pos, fallingBlockEntity);
+        Falling.super.onDestroyedOnLanding(world, pos, fallingBlockEntity);
         if (fallingBlockEntity.getBlockState().get(TYPE) == SlabType.DOUBLE) {
             dropStack(world, pos, new ItemStack(this.asItem()));
         }
     }
     @Override
     public void onLanding(World world, BlockPos pos, BlockState fallingBlockState, BlockState currentStateInPos, FallingBlockEntity fallingBlockEntity) {
-        LandingBlock.super.onLanding(world, pos, fallingBlockState, currentStateInPos, fallingBlockEntity);
+        Falling.super.onLanding(world, pos, fallingBlockState, currentStateInPos, fallingBlockEntity);
         if (fallingBlockState.get(TYPE) == SlabType.TOP) {
             world.setBlockState(pos, this.getDefaultState().with(Properties.SLAB_TYPE, SlabType.BOTTOM));
         }

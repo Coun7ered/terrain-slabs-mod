@@ -38,7 +38,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
-        RegistryWrapper.Impl<Enchantment> impl = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+        RegistryWrapper.Impl<Enchantment> impl = this.registries.getOrThrow(RegistryKeys.ENCHANTMENT);
 
         this.addDrop(ModBlocksRegistry.DIRT_SLAB, block -> silkSlabDrops(block, Blocks.DIRT));
         this.addDrop(ModBlocksRegistry.MUD_SLAB, block -> silkSlabDrops(block, Blocks.MUD));
@@ -107,7 +107,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
                 block -> LootTable.builder()
                         .pool(
                                 LootPool.builder()
-                                        .conditionally(EntityPropertiesLootCondition.create(LootContext.EntityTarget.THIS))
+                                        .conditionally(EntityPropertiesLootCondition.create(LootContext.EntityReference.THIS))
                                         .with(
                                                 AlternativeEntry.builder(
                                                         AlternativeEntry.builder(
@@ -158,7 +158,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
      * Adds a loot table entry that makes the slab drop its base block instead of itself.
      */
     public LootTable.Builder gravelSlabDrops(Block slab, Block gravelDrop, Item flintDrop) {
-        RegistryWrapper.Impl<Enchantment> impl = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+        RegistryWrapper.Impl<Enchantment> impl = this.registries.getOrThrow(RegistryKeys.ENCHANTMENT);
 
         return LootTable.builder()
                 .pool(LootPool.builder()

@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "#": {
-      "item": "minecraft:moss_block"
-    }
+    "#": "minecraft:moss_block"
   },
   "pattern": [
     "###"

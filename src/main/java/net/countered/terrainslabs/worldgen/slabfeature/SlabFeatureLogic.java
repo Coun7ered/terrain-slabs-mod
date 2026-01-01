@@ -3,7 +3,7 @@ package net.countered.terrainslabs.worldgen.slabfeature;
 import com.mojang.serialization.Codec;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
-import net.countered.terrainslabs.config.MyModConfig;
+import net.countered.terrainslabs.config.ModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -36,7 +36,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
 
     @Override
     public boolean generate(FeatureContext<DefaultFeatureConfig> context){
-        if (MyModConfig.enableSlabGeneration) {
+        if (ModConfig.enableSlabGeneration) {
             storeSlabPositions(context); // Logic for slab generation
             return true;
         }
@@ -92,7 +92,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
      * Determines if a slab should be placed at the given position based on world conditions.
      */
     private boolean shouldPlaceBottomSlab(WorldAccess world, BlockPos currentPos, BlockState blockAboveState, BlockState blockBelowState, BlockState currentBlockState) {
-        if ((currentBlockState.isOpaqueFullCube(world, currentPos) && !currentBlockState.isOf(Blocks.SNOW) && !currentBlockState.isReplaceable())
+        if ((currentBlockState.isOpaqueFullCube() && !currentBlockState.isOf(Blocks.SNOW) && !currentBlockState.isReplaceable())
                 || ModSlabsMap.getSlabForBlock(blockBelowState.getBlock()) == Blocks.AIR
                 || (!blockAboveState.isOf(Blocks.AIR) && !blockAboveState.isOf(Blocks.WATER) && !blockAboveState.isOf(Blocks.CAVE_AIR) && !blockAboveState.isOf(Blocks.VOID_AIR)))
         {
@@ -102,7 +102,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
     }
 
     private boolean shouldPlaceTopSlab(WorldAccess world, BlockPos currentPos, BlockState currentState, BlockState blockBelow, BlockState blockAboveState, BlockPos blockAbovePos) {
-        if (!currentState.isOpaqueFullCube(world, currentPos)
+        if (!currentState.isOpaqueFullCube()
                 || !(blockBelow.isOf(Blocks.AIR) || blockBelow.isOf(Blocks.WATER) || blockBelow.isOf(Blocks.CAVE_AIR) || blockBelow.isOf(Blocks.VOID_AIR))
                 || ModSlabsMap.getSlabForBlock(blockAboveState.getBlock()).equals(Blocks.AIR))
         {
@@ -127,10 +127,10 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
             if (neighborState.isOf(Blocks.GLOW_LICHEN) || neighborState.isOf(Blocks.LAVA)) {
                 return false;
             }
-            boolean isNeighborStateNotOpaque = !neighborState.isOpaqueFullCube(world, neighborPos);
-            boolean isOppositeStateOpaque = oppositeState.isOpaqueFullCube(world, oppositePos);
-            boolean isAboveNeighborStateOpaque = aboveNeighborState.isOpaqueFullCube(world, aboveNeighborPos);
-            boolean isBelowOppositeStateNotOpaque = !belowOppositeState.isOpaqueFullCube(world, belowOppositePos);
+            boolean isNeighborStateNotOpaque = !neighborState.isOpaqueFullCube();
+            boolean isOppositeStateOpaque = oppositeState.isOpaqueFullCube();
+            boolean isAboveNeighborStateOpaque = aboveNeighborState.isOpaqueFullCube();
+            boolean isBelowOppositeStateNotOpaque = !belowOppositeState.isOpaqueFullCube();
 
             if (isNeighborStateNotOpaque && isOppositeStateOpaque && isBelowOppositeStateNotOpaque) {
                 topOfCeiling = true;
@@ -176,7 +176,7 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
             }
 
             // Check if a neighboring block is opaque and not a slab
-            if (neighborState.isOpaqueFullCube(world, neighborPos) && !(neighborState.getBlock() instanceof SlabBlock) && !neighborState.isOf(Blocks.SNOW)
+            if (neighborState.isOpaqueFullCube() && !(neighborState.getBlock() instanceof SlabBlock) && !neighborState.isOf(Blocks.SNOW)
                     && (!world.getBlockState(neighborPos.up()).isOpaque() || world.getBlockState(neighborPos.up()).getBlock() == Blocks.SNOW)) {
                 validNeighbors = true;
             }

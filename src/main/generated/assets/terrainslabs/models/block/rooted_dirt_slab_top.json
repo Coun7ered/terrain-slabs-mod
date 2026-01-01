@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "minecraft:block/rooted_dirt",
-    "side": "minecraft:block/rooted_dirt",
-    "top": "minecraft:block/rooted_dirt"
-  }
-}

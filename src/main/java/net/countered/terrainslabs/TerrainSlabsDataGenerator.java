@@ -20,40 +20,41 @@ public class TerrainSlabsDataGenerator implements DataGeneratorEntrypoint {
 		registryBuilder.addRegistry(RegistryKeys.PLACED_FEATURE, ModPlacedFeatures::bootstrap);
 	}
 
-	@Override
-	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-		pack.addProvider(ModWorldGenerator::new);
-		pack.addProvider(ModModelProvider::new);
-		pack.addProvider(ModLootTableProvider::new);
-		pack.addProvider(ModBlockTagsProvider::new);
-		pack.addProvider(ModRecipeProvider::new);
-		Runtime.getRuntime().addShutdownHook(new Thread(this::deleteGeneratedDirectory)); //deletes directory src/main/generated/assets/terrainslabs because it is being generated but redundant
-	}
-	private void deleteGeneratedDirectory() {
-		Path generatedDir = Path.of("src", "main", "generated", "assets", "minecraft");
+    @Override
+    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
+        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+        pack.addProvider(ModWorldGenerator::new);
+        pack.addProvider(ModModelProvider::new);
+        pack.addProvider(ModLootTableProvider::new);
+        pack.addProvider(ModBlockTagsProvider::new);
+        pack.addProvider(ModRecipeProvider::new);
+        Runtime.getRuntime().addShutdownHook(new Thread(this::deleteGeneratedDirectory)); //deletes directory src/main/generated/assets/terrainslabs because it is being generated but redundant
+    }
 
-		if (Files.exists(generatedDir)) {
-			try {
-				deleteDirectoryRecursively(generatedDir.toFile());
-				System.out.println("Deleted generated directory after data generation: " + generatedDir);
-			} catch (IOException e) {
-				System.err.println("Error deleting directory: " + e.getMessage());
-			}
-		}
-	}
+    private void deleteGeneratedDirectory() {
+        Path generatedDir = Path.of("src", "main", "generated", "assets", "minecraft");
 
-	private void deleteDirectoryRecursively(File dir) throws IOException {
-		File[] allContents = dir.listFiles();
-		if (allContents != null) {
-			for (File file : allContents) {
-				if (file.isDirectory()) {
-					deleteDirectoryRecursively(file);
-				} else {
-					file.delete();
-				}
-			}
-		}
-		dir.delete();
-	}
+        if (Files.exists(generatedDir)) {
+            try {
+                deleteDirectoryRecursively(generatedDir.toFile());
+                System.out.println("Deleted generated directory after data generation: " + generatedDir);
+            } catch (IOException e) {
+                System.err.println("Error deleting directory: " + e.getMessage());
+            }
+        }
+    }
+
+    private void deleteDirectoryRecursively(File dir) throws IOException {
+        File[] allContents = dir.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                if (file.isDirectory()) {
+                    deleteDirectoryRecursively(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        dir.delete();
+    }
 }

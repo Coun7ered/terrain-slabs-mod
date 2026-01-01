@@ -29,7 +29,7 @@ public class NetherrackSlab extends CustomSlab implements Fertilizable{
 
     @Override
     public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state) {
-        if (!world.getBlockState(pos.up()).isTransparent(world, pos)) {
+        if (!world.getBlockState(pos.up()).isTransparent()) {
             return false;
         } else {
             for (BlockPos blockPos : BlockPos.iterate(pos.add(-1, -1, -1), pos.add(1, 1, 1))) {

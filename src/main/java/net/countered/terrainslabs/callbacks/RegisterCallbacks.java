@@ -3,7 +3,7 @@ package net.countered.terrainslabs.callbacks;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
-import net.countered.terrainslabs.config.MyModConfig;
+import net.countered.terrainslabs.config.ModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.countered.terrainslabs.worldgen.slabfeature.SlabFeatureLogic;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
@@ -176,11 +176,11 @@ public class RegisterCallbacks {
         slabState = updateBottomWaterloggedState(currentBlockState, blockAboveState, slabState);
 
         // place vegetation / snow on top
-        if (MyModConfig.enableVegetationOnSlabs) {
+        if (ModConfig.enableVegetationOnSlabs) {
             placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos);
         }
         if (currentBlockState.isOf(Blocks.SNOW)) {
-            if (MyModConfig.enableSnowOnSlabs) {
+            if (ModConfig.enableSnowOnSlabs) {
                 abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState());
                 if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
                     slabState = slabState.with(Properties.SNOWY, true);

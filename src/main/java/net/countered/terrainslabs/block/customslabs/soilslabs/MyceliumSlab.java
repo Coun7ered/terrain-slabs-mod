@@ -19,9 +19,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.chunk.light.ChunkLightProvider;
+import net.minecraft.world.tick.ScheduledTickView;
 
 public class MyceliumSlab extends CustomSlab {
 
@@ -44,8 +44,14 @@ public class MyceliumSlab extends CustomSlab {
 
     @Override
     protected BlockState getStateForNeighborUpdate(
-            BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos
-    ) {
+            BlockState state,
+            WorldView world,
+            ScheduledTickView tickView,
+            BlockPos pos,
+            Direction direction,
+            BlockPos neighborPos,
+            BlockState neighborState,
+            Random random    ) {
         // Handle snowy logic
         if (direction == Direction.UP) {
             state = state.with(SNOWY, isSnow(neighborState));
@@ -53,7 +59,7 @@ public class MyceliumSlab extends CustomSlab {
 
         // Handle waterlogging logic
         if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            tickView.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
 
         // Return the modified state based on the slab's existing logic
@@ -108,8 +114,8 @@ public class MyceliumSlab extends CustomSlab {
         } else if (blockState.getFluidState().getLevel() == 8) {
             return false;
         } else {
-            int i = ChunkLightProvider.getRealisticOpacity(world, Blocks.GRASS_BLOCK.getDefaultState(), pos, blockState, blockPos, Direction.UP, blockState.getOpacity(world, blockPos));
-            return i < world.getMaxLightLevel();
+            int i = ChunkLightProvider.getRealisticOpacity(Blocks.GRASS_BLOCK.getDefaultState(), blockState, Direction.UP, blockState.getOpacity());
+            return i < 15;
         }
     }
 
@@ -122,7 +128,7 @@ public class MyceliumSlab extends CustomSlab {
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         super.randomDisplayTick(state, world, pos, random);
         if (random.nextInt(10) == 0) {
-            world.addParticle(
+            world.addParticleClient(
                     ParticleTypes.MYCELIUM, (double)pos.getX() + random.nextDouble(), (double)pos.getY() + 1.1/2, (double)pos.getZ() + random.nextDouble(), 0.0, 0.0, 0.0
             );
         }
