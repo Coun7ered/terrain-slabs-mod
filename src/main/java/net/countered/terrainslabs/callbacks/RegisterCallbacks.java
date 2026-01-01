@@ -48,7 +48,7 @@ public class RegisterCallbacks {
     }
 
 
-    public static void registerCallbacks() {
+    public static void init() {
         registerPlaceOnTopCallback();
         registerSlabPlacementCallback();
     }

@@ -4,9 +4,13 @@ package net.countered.datagen;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.data.BlockStateModelGenerator;
-import net.minecraft.client.data.ItemModelGenerator;
+import net.minecraft.client.data.*;
+import net.minecraft.client.render.model.json.WeightedVariant;
+
+import static net.minecraft.client.data.BlockStateModelGenerator.createSlabBlockState;
+import static net.minecraft.client.data.BlockStateModelGenerator.createWeightedVariant;
 
 public class ModModelProvider extends FabricModelProvider {
     public ModModelProvider(FabricDataOutput output) {
@@ -15,54 +19,62 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+        generateSlabModel(blockStateModelGenerator, Blocks.GRAVEL, ModBlocksRegistry.GRAVEL_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.SAND, ModBlocksRegistry.SAND_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.RED_SAND, ModBlocksRegistry.RED_SAND_SLAB);
 
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.GRAVEL).slab(ModBlocksRegistry.GRAVEL_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.SAND).slab(ModBlocksRegistry.SAND_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.RED_SAND).slab(ModBlocksRegistry.RED_SAND_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.DIRT, ModBlocksRegistry.DIRT_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.MOSS_BLOCK, ModBlocksRegistry.MOSS_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.MUD, ModBlocksRegistry.MUD_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.PACKED_ICE, ModBlocksRegistry.PACKED_ICE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.COARSE_DIRT, ModBlocksRegistry.COARSE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.DEEPSLATE, ModBlocksRegistry.DEEPSLATE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.CLAY, ModBlocksRegistry.CLAY_SLAB);
 
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.DIRT).slab(ModBlocksRegistry.DIRT_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.MOSS_BLOCK).slab(ModBlocksRegistry.MOSS_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.MUD).slab(ModBlocksRegistry.MUD_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.PACKED_ICE).slab(ModBlocksRegistry.PACKED_ICE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.COARSE_DIRT).slab(ModBlocksRegistry.COARSE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.DEEPSLATE).slab(ModBlocksRegistry.DEEPSLATE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.CLAY).slab(ModBlocksRegistry.CLAY_SLAB);
+        // terralith
+        generateSlabModel(blockStateModelGenerator, Blocks.CALCITE, ModBlocksRegistry.CALCITE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.SMOOTH_BASALT, ModBlocksRegistry.SMOOTH_BASALT_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.LIGHT_BLUE_TERRACOTTA, ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.CYAN_TERRACOTTA, ModBlocksRegistry.CYAN_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.ICE, ModBlocksRegistry.ICE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.COBBLESTONE, ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.MOSSY_COBBLESTONE, ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.COBBLED_DEEPSLATE, ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.ROOTED_DIRT, ModBlocksRegistry.ROOTED_DIRT_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.PACKED_MUD, ModBlocksRegistry.PACKED_MUD_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.BLUE_ICE, ModBlocksRegistry.BLUE_ICE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.BLACK_TERRACOTTA, ModBlocksRegistry.BLACK_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.PRISMARINE, ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB);
 
-        //terralith
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.CALCITE).slab(ModBlocksRegistry.CALCITE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.SMOOTH_BASALT).slab(ModBlocksRegistry.SMOOTH_BASALT_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.LIGHT_BLUE_TERRACOTTA).slab(ModBlocksRegistry.LIGHT_BLUE_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.CYAN_TERRACOTTA).slab(ModBlocksRegistry.CYAN_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.ICE).slab(ModBlocksRegistry.ICE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.COBBLESTONE).slab(ModBlocksRegistry.CUSTOM_COBBLESTONE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.MOSSY_COBBLESTONE).slab(ModBlocksRegistry.CUSTOM_MOSSY_COBBLESTONE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.COBBLED_DEEPSLATE).slab(ModBlocksRegistry.CUSTOM_COBBLED_DEEPSLATE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.ROOTED_DIRT).slab(ModBlocksRegistry.ROOTED_DIRT_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.PACKED_MUD).slab(ModBlocksRegistry.PACKED_MUD_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.BLUE_ICE).slab(ModBlocksRegistry.BLUE_ICE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.BLACK_TERRACOTTA).slab(ModBlocksRegistry.BLACK_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.PRISMARINE).slab(ModBlocksRegistry.CUSTOM_PRISMARINE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.TERRACOTTA, ModBlocksRegistry.TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.BROWN_TERRACOTTA, ModBlocksRegistry.BROWN_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.ORANGE_TERRACOTTA, ModBlocksRegistry.ORANGE_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.WHITE_TERRACOTTA, ModBlocksRegistry.WHITE_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.RED_TERRACOTTA, ModBlocksRegistry.RED_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.YELLOW_TERRACOTTA, ModBlocksRegistry.YELLOW_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.LIGHT_GRAY_TERRACOTTA, ModBlocksRegistry.LIGHT_GRAY_TERRACOTTA_SLAB);
 
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.TERRACOTTA).slab(ModBlocksRegistry.TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.BROWN_TERRACOTTA).slab(ModBlocksRegistry.BROWN_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.ORANGE_TERRACOTTA).slab(ModBlocksRegistry.ORANGE_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.WHITE_TERRACOTTA).slab(ModBlocksRegistry.WHITE_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.RED_TERRACOTTA).slab(ModBlocksRegistry.RED_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.YELLOW_TERRACOTTA).slab(ModBlocksRegistry.YELLOW_TERRACOTTA_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.LIGHT_GRAY_TERRACOTTA).slab(ModBlocksRegistry.LIGHT_GRAY_TERRACOTTA_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.SOUL_SAND, ModBlocksRegistry.SOUL_SAND_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.SOUL_SOIL, ModBlocksRegistry.SOUL_SOIL_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.NETHERRACK, ModBlocksRegistry.NETHERRACK_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.BLACKSTONE, ModBlocksRegistry.CUSTOM_BLACKSTONE_SLAB);
+        generateSlabModel(blockStateModelGenerator, Blocks.END_STONE, ModBlocksRegistry.ENDSTONE_SLAB);
+   }
 
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.SOUL_SAND).slab(ModBlocksRegistry.SOUL_SAND_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.SOUL_SOIL).slab(ModBlocksRegistry.SOUL_SOIL_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.NETHERRACK).slab(ModBlocksRegistry.NETHERRACK_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.BLACKSTONE).slab(ModBlocksRegistry.CUSTOM_BLACKSTONE_SLAB);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(Blocks.END_STONE).slab(ModBlocksRegistry.ENDSTONE_SLAB);
+    public void generateSlabModel(BlockStateModelGenerator blockStateModelGenerator, Block baseBlock, Block slabBlock) {
+        WeightedVariant doubleModel = createWeightedVariant(ModelIds.getBlockModelId(baseBlock));
 
+        TextureMap textureMap = TextureMap.all(baseBlock);
+        WeightedVariant bottomModel = createWeightedVariant(Models.SLAB.upload(slabBlock, textureMap, blockStateModelGenerator.modelCollector));
+        WeightedVariant topModel = createWeightedVariant(Models.SLAB_TOP.upload(slabBlock, textureMap, blockStateModelGenerator.modelCollector));
+
+        blockStateModelGenerator.blockStateCollector.accept(
+                createSlabBlockState(slabBlock, bottomModel, topModel, doubleModel)
+        );
     }
-
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-
+        // itemModelGenerator.register(ModItems.SAND_SLAB_ITEM, Models.SLAB);
     }
 }
-

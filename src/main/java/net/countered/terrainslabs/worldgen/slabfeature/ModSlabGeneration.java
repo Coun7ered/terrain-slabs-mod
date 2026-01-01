@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.world.gen.GenerationStep;
 
 public class ModSlabGeneration {
-    public static void generateSlabs(){
+    public static void init(){
         BiomeModifications.addFeature(BiomeSelectors.all(),
                 GenerationStep.Feature.UNDERGROUND_STRUCTURES, ModPlacedFeatures.SLAB_FEATURE_PLACED_KEY);
     }

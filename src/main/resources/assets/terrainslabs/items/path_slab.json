@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "terrainslabs:block/path_slab_bottom"
+  }
+}

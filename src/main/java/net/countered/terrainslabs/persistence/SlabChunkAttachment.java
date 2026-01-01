@@ -26,6 +26,6 @@ public class SlabChunkAttachment {
                     .initializer(ArrayList::new)
     );
 
-    public static void registerSlabAttachment() {;
+    public static void init() {;
     }
 }

@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "terrainslabs:block/rooted_dirt_slab"
+  }
+}

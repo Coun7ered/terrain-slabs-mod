@@ -12,7 +12,7 @@ public class ModAddedFeatures {
     // Register your custom SlabFeature
     public static final Feature<DefaultFeatureConfig> SLAB_FEATURE = new SlabFeatureLogic(DefaultFeatureConfig.CODEC);
 
-    public static void registerFeatures() {
+    public static void init() {
         // Register the slab feature in the feature registry
         Registry.register(Registries.FEATURE, Identifier.of(TerrainSlabs.MOD_ID, "slab_feature"), SLAB_FEATURE);
     }

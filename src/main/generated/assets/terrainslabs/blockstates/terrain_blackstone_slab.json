@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "terrainslabs:block/terrain_blackstone_slab"
+    },
+    "type=double": {
+      "model": "minecraft:block/blackstone"
+    },
+    "type=top": {
+      "model": "terrainslabs:block/terrain_blackstone_slab_top"
+    }
+  }
+}

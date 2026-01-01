@@ -75,7 +75,7 @@ public class ModItemGroups {
                 entries.add(ModBlocksRegistry.ENDSTONE_SLAB);
             }).build());
 
-    public static void registerItemGroups() {
+    public static void init() {
         TerrainSlabs.LOGGER.info("Registering Mod Item Groups");
     }
 }

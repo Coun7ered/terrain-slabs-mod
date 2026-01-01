@@ -16,8 +16,6 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -173,27 +171,10 @@ public class ModBlocksRegistry {
 
         Block block = factory.apply(blockKey);
 
-        registerBlockItem(name, block);
-
         return Registry.register(Registries.BLOCK, id, block);
     }
 
-    private static void registerBlockItem(String name, Block block) {
-        Identifier id = Identifier.of(TerrainSlabs.MOD_ID, name);
-
-        Registry.register(
-                Registries.ITEM,
-                id,
-                new BlockItem(
-                        block,
-                        new Item.Settings()
-                                .registryKey(RegistryKey.of(RegistryKeys.ITEM, id))
-                                .useBlockPrefixedTranslationKey()
-                )
-        );
-    }
-
-    public static void registerModBlocks() {
+    public static void init() {
         TerrainSlabs.LOGGER.info("Registering Mod Blocks for " + TerrainSlabs.MOD_ID);
     }
 }
