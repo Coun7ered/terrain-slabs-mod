@@ -21,15 +21,13 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RegisterCallbacks {
     private static final Map<Item, Block> VEGETATION_ON_TOP_ITEMS = new HashMap<>();
@@ -132,6 +130,12 @@ public class RegisterCallbacks {
         });
     }
 
+    private static final Set<Block> doubleTallPlants = new HashSet<>();
+    static {
+        doubleTallPlants.add(Blocks.TALL_GRASS);
+        doubleTallPlants.add(Blocks.LARGE_FERN);
+        doubleTallPlants.add(Blocks.TALL_SEAGRASS);
+    }
     private static void placeBottomSlab(WorldChunk worldChunk, BlockPos placePos) {
         BlockPos blockBelowPos = placePos.down();
         BlockPos blockAbovePos = placePos.up();
@@ -140,6 +144,7 @@ public class RegisterCallbacks {
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
         if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
+                && !doubleTallPlants.contains(currentBlockState.getBlock())
                 && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)) {
             return;
         }
@@ -166,6 +171,16 @@ public class RegisterCallbacks {
         ChunkSection belowPosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockBelowY));
         ChunkSection abovePosSection = worldChunk.getSection(sectionIndex);
 
+        // remove double tall plants
+        if (doubleTallPlants.contains(currentBlockState.getBlock())) {
+            if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.WATER.getDefaultState());
+                blockAboveState = Blocks.WATER.getDefaultState();
+            }
+            else {
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.AIR.getDefaultState());
+            }
+        }
         // Handle grass slab special case by converting grass to dirt before placing the slab
         if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
             belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15,  Blocks.DIRT.getDefaultState());
@@ -181,7 +196,7 @@ public class RegisterCallbacks {
         }
         if (currentBlockState.isOf(Blocks.SNOW)) {
             if (ModConfig.enableSnowOnSlabs) {
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState());
+                worldChunk.setBlockState(blockAbovePos, ModBlocksRegistry.SNOW_ON_TOP.getDefaultState(), 0);
                 if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
                     slabState = slabState.with(Properties.SNOWY, true);
                 }
@@ -189,7 +204,7 @@ public class RegisterCallbacks {
                 slabState = ModBlocksRegistry.SNOW_SLAB.getDefaultState();
             }
         }
-        placePosSection.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true));
+        worldChunk.setBlockState(placePos,  slabState.with(CustomSlab.GENERATED, true), 0);
     }
 
     private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
@@ -218,7 +233,7 @@ public class RegisterCallbacks {
 
     private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
         if (ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
-            if (!(currentBlockState.isOf(Blocks.SEAGRASS) && blockAboveState.isOf(Blocks.AIR))) {
+            if (!(currentBlockState.getBlock().equals(Blocks.SEAGRASS) && !blockAboveState.getBlock().equals(Blocks.WATER))) {
                 abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState());
             }
         }
@@ -235,8 +250,11 @@ public class RegisterCallbacks {
 
     private static BlockState updateTopWaterloggedState(WorldChunk worldChunk, BlockPos currentPos, BlockState slabState) {
         for (Direction direction : Direction.Type.HORIZONTAL) {
+            BlockPos checkPos = currentPos.offset(direction);
+            ChunkPos chunkPos = new ChunkPos(checkPos);
+
             // Check if the neighbor or the block above contains water to set the waterlogged property
-            if (worldChunk.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER)) {
+            if (worldChunk.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER) && worldChunk.getPos().equals(chunkPos)) {
                 return slabState.with(Properties.WATERLOGGED, true);
             }
         }

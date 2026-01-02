@@ -15,8 +15,9 @@ import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO path slab turning full block on underside place, transparent with slab above
+//TODO
 // fix leaves replacing slabs
+// fix water in underside slabs -> move waterlogging to feature step?
 public class TerrainSlabs implements ModInitializer {
 	public static final String MOD_ID = "terrainslabs";
 

@@ -150,10 +150,7 @@ public class ModBlocksRegistry {
     public static final Block DEAD_BUSH_ON_TOP = registerBlock("dead_bush_on_top",
             key -> new DeadBushOnTop(AbstractBlock.Settings.copy(Blocks.DEAD_BUSH).registryKey(key)));
     public static final Block BROWN_MUSHROOM_ON_TOP = registerBlock("brown_mushroom_on_top",
-            key -> new MushroomOnTop(
-                    TreeConfiguredFeatures.HUGE_BROWN_MUSHROOM,
-                    AbstractBlock.Settings.copy(Blocks.BROWN_MUSHROOM).registryKey(key)
-            ));
+            key -> new MushroomOnTop(TreeConfiguredFeatures.HUGE_BROWN_MUSHROOM, AbstractBlock.Settings.copy(Blocks.BROWN_MUSHROOM).registryKey(key)));
     public static final Block RED_MUSHROOM_ON_TOP = registerBlock("red_mushroom_on_top",
             key -> new MushroomOnTop(TreeConfiguredFeatures.HUGE_RED_MUSHROOM, AbstractBlock.Settings.copy(Blocks.RED_MUSHROOM).registryKey(key)));
     public static final Block SHORT_GRASS_ON_TOP = registerBlock("short_grass_on_top",
