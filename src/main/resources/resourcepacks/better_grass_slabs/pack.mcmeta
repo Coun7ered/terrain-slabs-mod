@@ -1,6 +1,7 @@
 {
   "pack": {
-    "pack_format": 34,
+    "min_format": 75,
+    "max_format": 75,
     "description": {
       "translate": "resourcepack.terrainslabs.better_grass_slabs.description",
       "fallback": "Alternative Grass Slab Textures (Top sides)"

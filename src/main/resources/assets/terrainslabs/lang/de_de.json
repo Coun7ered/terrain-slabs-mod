@@ -1,0 +1,62 @@
+{
+  "itemgroup.terrainslabs": "Geländestufen",
+
+  "block.terrainslabs.dirt_slab": "Erdstufe",
+  "block.terrainslabs.mud_slab": "Schlammstufe",
+  "block.terrainslabs.coarse_slab": "Grobe Erdstufe",
+  "block.terrainslabs.snow_slab": "Schneestufe",
+  "block.terrainslabs.packed_ice_slab": "Packeisstufe",
+  "block.terrainslabs.deepslate_slab": "Tiefenschieferstufe",
+  "block.terrainslabs.clay_slab": "Lehmstufe",
+  "block.terrainslabs.moss_slab": "Moosstufe",
+
+  "block.terrainslabs.grass_slab": "Grasstufe",
+  "block.terrainslabs.mycelium_slab": "Myzelstufe",
+  "block.terrainslabs.podzol_slab": "Podzolstufe",
+  "block.terrainslabs.path_slab": "Trampelpfadstufe",
+
+  "block.terrainslabs.gravel_slab": "Kiesstufe",
+  "block.terrainslabs.sand_slab": "Sandstufe",
+  "block.terrainslabs.red_sand_slab": "Rote Sandstufe",
+
+  "block.terrainslabs.terracotta_slab": "Keramikstufe",
+  "block.terrainslabs.red_terracotta_slab": "Rote Keramikstufe",
+  "block.terrainslabs.orange_terracotta_slab": "Orange Keramikstufe",
+  "block.terrainslabs.light_gray_terracotta_slab": "Hellgraue Keramikstufe",
+  "block.terrainslabs.white_terracotta_slab": "Weiße Keramikstufe",
+  "block.terrainslabs.brown_terracotta_slab": "Braune Keramikstufe",
+  "block.terrainslabs.yellow_terracotta_slab": "Gelbe Keramikstufe",
+
+  "block.terrainslabs.terrain_stone_slab": "Geländesteinstufe",
+  "block.terrainslabs.terrain_tuff_slab": "Geländetuffsteinstufe",
+  "block.terrainslabs.terrain_sandstone_slab": "Geländesandsteinstufe",
+  "block.terrainslabs.terrain_red_sandstone_slab": "Rote Geländesandsteinstufe",
+  "block.terrainslabs.terrain_andesite_slab": "Geländeandesitstufe",
+  "block.terrainslabs.terrain_diorite_slab": "Geländedioritstufe",
+  "block.terrainslabs.terrain_granite_slab": "Geländegranitstufe",
+
+  "block.terrainslabs.soul_sand_slab": "Seelensandstufe",
+  "block.terrainslabs.soul_soil_slab": "Seelenerdestufe",
+  "block.terrainslabs.netherrack_slab": "Netherrackstufe",
+  "block.terrainslabs.warped_nylium_slab": "Wirr-Nezelstufe",
+  "block.terrainslabs.crimson_nylium_slab": "Karmesin-Nezelstufe",
+  "block.terrainslabs.basalt_slab": "Basaltstufe",
+  "block.terrainslabs.terrain_blackstone_slab": "Geländeschwarzsteinstufe",
+  "block.terrainslabs.endstone_slab": "Endsteinstufe",
+
+  "block.terrainslabs.snow_on_top": "Schnee auf Stufe",
+  "block.terrainslabs.poppy_on_top": "Mohn auf Stufe",
+  "block.terrainslabs.dandelion_on_top": "Löwenzahn auf Stufe",
+  "block.terrainslabs.azure_bluet_on_top": "Porzellansternchen auf Stufe",
+  "block.terrainslabs.cornflower_top": "Kornblume auf Stufe",
+  "block.terrainslabs.seagrass_on_top": "Seegras auf Stufe",
+  "block.terrainslabs.red_mushroom_on_top": "Roter Pilz auf Stufe",
+  "block.terrainslabs.brown_mushroom_on_top": "Brauner Pilz auf Stufe",
+  "block.terrainslabs.fern_on_top": "Farn auf Stufe",
+  "block.terrainslabs.short_grass_on_top": "Niedriges Gras auf Stufe",
+  "block.terrainslabs.dead_bush_on_top": "Toter Busch auf Stufe",
+
+  "terrainslabs.midnightconfig.enableSlabGeneration": "Stufenerzeugung einschalten",
+  "terrainslabs.midnightconfig.enableSlabGeneration.tooltip": "Umschalten, um die Erzeugung von Stufen in der Welt ein- oder auszuschalten.",
+  "terrainslabs.midnightconfig.title": "Countered's Geländestufen"
+}

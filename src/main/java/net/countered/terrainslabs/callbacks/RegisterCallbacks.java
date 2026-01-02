@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
@@ -21,8 +22,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
@@ -120,10 +119,10 @@ public class RegisterCallbacks {
                 }
                 worldChunk.setAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS, new ArrayList<>());
             }
-            List<BlockPos> topAttachedSlabPositions = worldChunk.getAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS);
+            List<SlabChunkAttachment.AttachedSlabPos> topAttachedSlabPositions = worldChunk.getAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS);
             if (topAttachedSlabPositions != null && !topAttachedSlabPositions.isEmpty()) {
-                for (BlockPos pos : topAttachedSlabPositions) {
-                    placeTopSlab(worldChunk, pos);
+                for (SlabChunkAttachment.AttachedSlabPos slabPos : topAttachedSlabPositions) {
+                    placeTopSlab(worldChunk, slabPos);
                 }
                 worldChunk.setAttached(SlabChunkAttachment.TOP_SLAB_POSITIONS, new ArrayList<>());
             }
@@ -145,7 +144,13 @@ public class RegisterCallbacks {
 
         if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
                 && !doubleTallPlants.contains(currentBlockState.getBlock())
-                && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)) {
+                && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())
+                && !currentBlockState.isOf(Blocks.SNOW)
+                && !currentBlockState.isOf(Blocks.LEAF_LITTER)
+                && !currentBlockState.isOf(Blocks.WILDFLOWERS)
+                && !currentBlockState.isOf(Blocks.PINK_PETALS)
+                && !currentBlockState.isIn(BlockTags.SMALL_FLOWERS))
+        {
             return;
         }
         // Retrieve the slab type based on the block below the current position
@@ -207,7 +212,9 @@ public class RegisterCallbacks {
         worldChunk.setBlockState(placePos,  slabState.with(CustomSlab.GENERATED, true), 0);
     }
 
-    private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
+    private static void placeTopSlab(WorldChunk worldChunk, SlabChunkAttachment.AttachedSlabPos attachedPos) {
+        BlockPos placePos = attachedPos.pos();
+        Boolean waterlogged = attachedPos.waterlogged();
         BlockState blockAboveState = worldChunk.getBlockState(placePos.up());
 
         // Retrieve the slab type based on the block below the current position
@@ -226,9 +233,8 @@ public class RegisterCallbacks {
         if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
             slabState = ModBlocksRegistry.NETHERRACK_SLAB.getDefaultState();
         }
-        slabState = updateTopWaterloggedState(worldChunk, placePos, slabState);
         ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
-        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
+        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP).with(Properties.WATERLOGGED, waterlogged));
     }
 
     private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
@@ -242,19 +248,6 @@ public class RegisterCallbacks {
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
         if (slabState.contains(Properties.WATERLOGGED)) {
             if (currentBlockState.isOf(Blocks.WATER) || blockAboveState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.SEAGRASS)) {
-                return slabState.with(Properties.WATERLOGGED, true);
-            }
-        }
-        return slabState;
-    }
-
-    private static BlockState updateTopWaterloggedState(WorldChunk worldChunk, BlockPos currentPos, BlockState slabState) {
-        for (Direction direction : Direction.Type.HORIZONTAL) {
-            BlockPos checkPos = currentPos.offset(direction);
-            ChunkPos chunkPos = new ChunkPos(checkPos);
-
-            // Check if the neighbor or the block above contains water to set the waterlogged property
-            if (worldChunk.getBlockState(currentPos.offset(direction)).isOf(Blocks.WATER) && worldChunk.getPos().equals(chunkPos)) {
                 return slabState.with(Properties.WATERLOGGED, true);
             }
         }
