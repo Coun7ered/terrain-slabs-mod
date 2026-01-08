@@ -184,11 +184,8 @@ public class RegisterCallbacks {
             }
         }
         // Handle grass slab special case by converting grass to dirt before placing the slab
-        if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
-            belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15,  Blocks.DIRT.getDefaultState());
-        }
-        if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
-            belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15,  Blocks.NETHERRACK.getDefaultState());
+        if (ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.containsKey(slabState.getBlock())) {
+            belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15, ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.get(slabState.getBlock()).getDefaultState());
         }
         slabState = updateBottomWaterloggedState(currentBlockState, blockAboveState, slabState);
 
@@ -244,11 +241,8 @@ public class RegisterCallbacks {
              */
             return;
         }
-        if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock())) {
-            slabState = ModBlocksRegistry.DIRT_SLAB.getDefaultState();
-        }
-        if (slabState.isOf(ModBlocksRegistry.WARPED_NYLIUM_SLAB) || slabState.isOf(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB)) {
-            slabState = ModBlocksRegistry.NETHERRACK_SLAB.getDefaultState();
+        if (ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.containsKey((slabState.getBlock()))) {
+            slabState = ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.get(slabState.getBlock()).getDefaultState();
         }
         slabState = updateTopWaterloggedState(worldChunk, placePos, slabState);
         ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
