@@ -1,13 +1,19 @@
 package net.countered.terrainslabs.block;
 
+import net.fabricmc.fabric.api.block.v1.FabricBlock;
+import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
+import net.fabricmc.loader.impl.launch.knot.FabricGlobalPropertyService;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModSlabsMap {
-    private static final Map<Block, Block> SLAB_MAP = new HashMap<>();
+    public static final Map<Block, Block> SLAB_MAP = new HashMap<>();
 
     static {
         // Register your block-to-slab mappings here
@@ -83,9 +89,49 @@ public class ModSlabsMap {
         ON_TOP_VEGETATION_BLOCKS_MAP.put(Blocks.FERN, ModBlocksRegistry.FERN_ON_TOP);
         ON_TOP_VEGETATION_BLOCKS_MAP.put(Blocks.SEAGRASS, ModBlocksRegistry.SEAGRASS_ON_TOP);
     }
+    public static final Map<Block, Block> BLOCK_BELOW_REPLACEMENT_MAP = new HashMap<>();
+
+    static {
+        BLOCK_BELOW_REPLACEMENT_MAP.put(ModBlocksRegistry.GRASS_SLAB, Blocks.DIRT);
+        BLOCK_BELOW_REPLACEMENT_MAP.put(ModBlocksRegistry.PODZOL_SLAB, Blocks.DIRT);
+        BLOCK_BELOW_REPLACEMENT_MAP.put(ModBlocksRegistry.MYCELIUM_SLAB, Blocks.DIRT);
+        BLOCK_BELOW_REPLACEMENT_MAP.put(ModBlocksRegistry.PATH_SLAB, Blocks.DIRT);
+        BLOCK_BELOW_REPLACEMENT_MAP.put(ModBlocksRegistry.WARPED_NYLIUM_SLAB, Blocks.NETHERRACK);
+        BLOCK_BELOW_REPLACEMENT_MAP.put(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB, Blocks.NETHERRACK);
+    }
+    public static final Map<Block, Block> TOP_SLAB_REPLACEMENT_MAP = new HashMap<>();
+
+    static {
+        TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.GRASS_SLAB, ModBlocksRegistry.DIRT_SLAB);
+        TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.PODZOL_SLAB, ModBlocksRegistry.DIRT_SLAB);
+        TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.MYCELIUM_SLAB, ModBlocksRegistry.DIRT_SLAB);
+        TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.PATH_SLAB, ModBlocksRegistry.DIRT_SLAB);
+        TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.WARPED_NYLIUM_SLAB, ModBlocksRegistry.NETHERRACK_SLAB);
+        TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB, ModBlocksRegistry.NETHERRACK_SLAB);
+    }
 
     public static Block getSlabForBlock(Block blockBelow) {
         return SLAB_MAP.getOrDefault(blockBelow, Blocks.AIR); // Default slab if no match
+    }
+
+    // Utilities to allow forge compats to cross the platform barrier with a common java object
+    public static void putOnTopVegetationFromString( String keyMod, String keyName, String valueMod, String valueName ) {
+        putWithId( ON_TOP_VEGETATION_BLOCKS_MAP, keyMod, keyName, valueMod, valueName );
+    }
+    public static void putTerrainSlabFromString( String keyMod, String keyName, String valueMod, String valueName ) {
+        putWithId( SLAB_MAP, keyMod, keyName, valueMod, valueName );
+    }
+    public static void putBlockBelowReplacementFromString( String keyMod, String keyName, String valueMod, String valueName ) {
+        putWithId( BLOCK_BELOW_REPLACEMENT_MAP, keyMod, keyName, valueMod, valueName );
+    }
+    public static void putTopSlabReplacementFromString( String keyMod, String keyName, String valueMod, String valueName ) {
+        putWithId( TOP_SLAB_REPLACEMENT_MAP, keyMod, keyName, valueMod, valueName );
+    }
+
+    private static void putWithId( Map<Block, Block> map, String keyMod, String keyName, String valueMod, String valueName ) {
+        Block block1 = Registries.BLOCK.get( Identifier.of( keyMod, keyName ) );
+        Block block2 = Registries.BLOCK.get( Identifier.of( valueMod, valueName ) );
+        map.put( block1, block2 );
     }
 
 }
