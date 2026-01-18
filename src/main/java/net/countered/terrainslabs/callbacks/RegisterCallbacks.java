@@ -201,7 +201,7 @@ public class RegisterCallbacks {
             if (MyModConfig.enableSnowOnSlabs) {
                 BlockState snowState = ModBlocksRegistry.SNOW_ON_TOP.getDefaultState();
                 setBlockWithoutUpdates(worldChunk, blockAbovePos, snowState);
-                if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
+                if (slabState.getProperties().contains(Properties.SNOWY)) {//SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
                     slabState = slabState.with(Properties.SNOWY, true);
                 }
             } else {
