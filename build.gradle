@@ -6,7 +6,7 @@ plugins {
 
 unifiedPublishing {
 	project {
-		displayName = "Terrain Slabs v$mod_version"
+		displayName = "Terrain Slabs v$mod_version + old gen"
 		changelog = file("$rootDir/CHANGELOG.md").text
 		releaseType = "release"
 		gameVersions = [minecraft_version]
