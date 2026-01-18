@@ -6,7 +6,6 @@ import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
 import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
-import net.countered.terrainslabs.worldgen.slabfeature.SlabFeatureLogic;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.*;
@@ -33,8 +32,6 @@ import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.*;
-
-import static com.mojang.text2speech.Narrator.LOGGER;
 
 public class RegisterCallbacks {
     private static final Map<Item, Block> VEGETATION_ON_TOP_ITEMS = new HashMap<>();
