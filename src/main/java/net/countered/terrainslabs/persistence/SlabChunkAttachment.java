@@ -20,21 +20,21 @@ public class SlabChunkAttachment {
                     .initializer(ArrayList::new)
     );
 
-    public record AttachedSlabPos(BlockPos pos, boolean waterlogged) {
+    public record AttachedSlabPlacements(BlockPos pos, boolean waterlogged) {
 
-        public static final Codec<AttachedSlabPos> CODEC =
+        public static final Codec<AttachedSlabPlacements> CODEC =
                 RecordCodecBuilder.create(instance -> instance.group(
-                        BlockPos.CODEC.fieldOf("pos").forGetter(AttachedSlabPos::pos),
-                        Codec.BOOL.fieldOf("waterlogged").forGetter(AttachedSlabPos::waterlogged)
-                ).apply(instance, AttachedSlabPos::new));
+                        BlockPos.CODEC.fieldOf("pos").forGetter(AttachedSlabPlacements::pos),
+                        Codec.BOOL.fieldOf("waterlogged").forGetter(AttachedSlabPlacements::waterlogged)
+                ).apply(instance, AttachedSlabPlacements::new));
     }
 
     // Pair for waterlogged check necessary to fix floating water bug
-    public static final AttachmentType<List<AttachedSlabPos>> TOP_SLAB_POSITIONS =
+    public static final AttachmentType<List<AttachedSlabPlacements>> TOP_SLAB_POSITIONS =
             AttachmentRegistry.create(
                     Identifier.of(TerrainSlabs.MOD_ID, "top_slab_positions"),
                     builder -> builder
-                            .persistent(Codec.list(AttachedSlabPos.CODEC))
+                            .persistent(Codec.list(AttachedSlabPlacements.CODEC))
                             .initializer(ArrayList::new)
             );
 

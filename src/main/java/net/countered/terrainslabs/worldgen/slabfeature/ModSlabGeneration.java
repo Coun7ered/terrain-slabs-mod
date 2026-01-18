@@ -8,6 +8,6 @@ import net.minecraft.world.gen.GenerationStep;
 public class ModSlabGeneration {
     public static void init(){
         BiomeModifications.addFeature(BiomeSelectors.all(),
-                GenerationStep.Feature.UNDERGROUND_STRUCTURES, ModPlacedFeatures.SLAB_FEATURE_PLACED_KEY);
+                GenerationStep.Feature.TOP_LAYER_MODIFICATION, ModPlacedFeatures.SLAB_FEATURE_PLACED_KEY);
     }
 }
