@@ -30,13 +30,6 @@ public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
         super(codec);
     }
 
-    public static final Set<Block> SOIL_SLAB_BLOCKS = Set.of(
-            ModBlocksRegistry.GRASS_SLAB,
-            ModBlocksRegistry.PODZOL_SLAB,
-            ModBlocksRegistry.MYCELIUM_SLAB,
-            ModBlocksRegistry.PATH_SLAB
-    );
-
     @Override
     public boolean generate(FeatureContext<DefaultFeatureConfig> context){
         if (MyModConfig.enableSlabGeneration) {
