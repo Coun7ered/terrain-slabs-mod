@@ -17,9 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin( BlockView.class )
 public interface BlockViewMixin {
 
-    //
-    //
-
     /**
      * Injects into lambda responsible for the "blockHitFactory" in the core raytrace method of BlockView.
      * Adds on a check for whether the block above the raytrace target is seen in front of the actual voxel targeted.
