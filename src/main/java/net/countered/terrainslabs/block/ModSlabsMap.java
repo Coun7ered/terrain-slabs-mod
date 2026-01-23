@@ -1,11 +1,7 @@
 package net.countered.terrainslabs.block;
 
-import net.fabricmc.fabric.api.block.v1.FabricBlock;
-import net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider;
-import net.fabricmc.loader.impl.launch.knot.FabricGlobalPropertyService;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 

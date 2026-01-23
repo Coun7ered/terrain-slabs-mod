@@ -1,11 +1,11 @@
 package net.countered.terrainslabs.callbacks;
 
+import net.countered.terrainslabs.block.ModBlockTags;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
 import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
-import net.countered.terrainslabs.worldgen.slabfeature.SlabFeatureLogic;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.*;
@@ -14,12 +14,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -47,6 +49,11 @@ public class RegisterCallbacks {
         VEGETATION_ON_TOP_ITEMS.put(Items.SEAGRASS, ModBlocksRegistry.SEAGRASS_ON_TOP);
     }
 
+    public static void putVegetaitonOnTopItemFromString( String keyMod, String keyName, String valueMod, String valueName ) {
+        Item item = Registries.ITEM.get( Identifier.of( keyMod, keyName ) );
+        Block onTopBlock = Registries.BLOCK.get( Identifier.of( valueMod, valueName ) );
+        VEGETATION_ON_TOP_ITEMS.put( item, onTopBlock );
+    }
 
     public static void registerCallbacks() {
         registerPlaceOnTopCallback();
@@ -132,12 +139,6 @@ public class RegisterCallbacks {
         });
     }
 
-    private static final Set<Block> doubleTallPlants = new HashSet<>();
-    static {
-        doubleTallPlants.add(Blocks.TALL_GRASS);
-        doubleTallPlants.add(Blocks.LARGE_FERN);
-        doubleTallPlants.add(Blocks.TALL_SEAGRASS);
-    }
     private static void placeBottomSlab(WorldChunk worldChunk, BlockPos placePos) {
         BlockPos blockBelowPos = placePos.down();
         BlockPos blockAbovePos = placePos.up();
@@ -146,7 +147,7 @@ public class RegisterCallbacks {
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
         if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
-                && !doubleTallPlants.contains(currentBlockState.getBlock()) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
+                && !currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
                 && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)) {
             return;
         }
@@ -174,7 +175,7 @@ public class RegisterCallbacks {
         ChunkSection abovePosSection = worldChunk.getSection(sectionIndex);
 
         // remove double tall plants
-        if (doubleTallPlants.contains(currentBlockState.getBlock()) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
+        if (currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
             if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
                 setBlockWithoutUpdates(worldChunk, blockAbovePos, Blocks.WATER.getDefaultState());
                 blockAboveState = Blocks.WATER.getDefaultState();
@@ -197,7 +198,7 @@ public class RegisterCallbacks {
             if (MyModConfig.enableSnowOnSlabs) {
                 BlockState snowState = ModBlocksRegistry.SNOW_ON_TOP.getDefaultState();
                 setBlockWithoutUpdates(worldChunk, blockAbovePos, snowState);
-                if (SlabFeatureLogic.SOIL_SLAB_BLOCKS.contains(slabState.getBlock()) && !slabState.isOf(ModBlocksRegistry.PATH_SLAB)) {
+                if (slabState.getProperties().contains(Properties.SNOWY)) {
                     slabState = slabState.with(Properties.SNOWY, true);
                 }
             } else {

@@ -5,7 +5,6 @@ import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
@@ -22,20 +21,12 @@ import net.minecraft.world.gen.feature.util.FeatureContext;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class SlabFeatureLogic extends Feature<DefaultFeatureConfig> {
 
     public SlabFeatureLogic(Codec<DefaultFeatureConfig> codec) {
         super(codec);
     }
-
-    public static final Set<Block> SOIL_SLAB_BLOCKS = Set.of(
-            ModBlocksRegistry.GRASS_SLAB,
-            ModBlocksRegistry.PODZOL_SLAB,
-            ModBlocksRegistry.MYCELIUM_SLAB,
-            ModBlocksRegistry.PATH_SLAB
-    );
 
     @Override
     public boolean generate(FeatureContext<DefaultFeatureConfig> context){
