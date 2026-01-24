@@ -264,20 +264,10 @@ public class RegisterCallbacks {
         if (ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
             if (!(currentBlockState.getBlock().equals(Blocks.SEAGRASS) && !blockAboveState.getBlock().equals(Blocks.WATER))) {
                 BlockState vegetationState = ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getStateWithProperties(currentBlockState);
-//                final BlockState[] vegetationState = { ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState() };
-//                currentBlockState.getProperties().forEach( ( property ) -> {
-//                    vegetationState[0] = assignProperty( property, currentBlockState, vegetationState[0] );
-//                });
                 abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, vegetationState);
             }
         }
     }
-
-//    // Required to get through error with unknown generics
-//    private static <T extends Comparable<T>> BlockState assignProperty(Property<T> property, BlockState blockState, BlockState newBlockState ) {
-//        // Should not need if statement... right?
-//        return newBlockState.with( property, blockState.get( property ) );
-//    }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
         if (slabState.contains(Properties.WATERLOGGED)) {
