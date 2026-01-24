@@ -1,5 +1,6 @@
 package net.countered.terrainslabs.callbacks;
 
+import net.countered.terrainslabs.TerrainSlabs;
 import net.countered.terrainslabs.block.ModBlockTags;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
@@ -19,6 +20,7 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
+import net.minecraft.state.property.Property;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -31,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
+import java.net.Proxy;
 import java.util.*;
 
 public class RegisterCallbacks {
@@ -95,7 +98,13 @@ public class RegisterCallbacks {
                 if (world.getBlockState(blockPos).isAir() && world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock
                         && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM) && !item.isOf(Items.SEAGRASS)) {
 
-                    world.setBlockState(blockPos, VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState(), 0);
+                    BlockState vegetationState = VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState();
+                    Collection<Property<?>> properties = vegetationState.getProperties();
+                    if ( properties.contains( Properties.HORIZONTAL_FACING ) ) {
+                        vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
+                    }
+
+                    world.setBlockState(blockPos, vegetationState, 0);
                     world.playSound(player, blockPos, SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
                     if (!player.isCreative()) {
@@ -103,7 +112,8 @@ public class RegisterCallbacks {
                     }
                     return ActionResult.SUCCESS;
                 }
-                else if (world.getBlockState(blockPos).isOf(Blocks.WATER) && world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM)) {
+                else if (world.getBlockState(blockPos).isOf(Blocks.WATER) && world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock
+                        && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM)) {
                     if (item.getItem().equals(Items.SEAGRASS)) {
                         world.setBlockState(blockPos, ModBlocksRegistry.SEAGRASS_ON_TOP.getDefaultState(), 0);
 
@@ -253,10 +263,21 @@ public class RegisterCallbacks {
     private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
         if (ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
             if (!(currentBlockState.getBlock().equals(Blocks.SEAGRASS) && !blockAboveState.getBlock().equals(Blocks.WATER))) {
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState());
+                BlockState vegetationState = ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getStateWithProperties(currentBlockState);
+//                final BlockState[] vegetationState = { ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getDefaultState() };
+//                currentBlockState.getProperties().forEach( ( property ) -> {
+//                    vegetationState[0] = assignProperty( property, currentBlockState, vegetationState[0] );
+//                });
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, vegetationState);
             }
         }
     }
+
+//    // Required to get through error with unknown generics
+//    private static <T extends Comparable<T>> BlockState assignProperty(Property<T> property, BlockState blockState, BlockState newBlockState ) {
+//        // Should not need if statement... right?
+//        return newBlockState.with( property, blockState.get( property ) );
+//    }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
         if (slabState.contains(Properties.WATERLOGGED)) {
