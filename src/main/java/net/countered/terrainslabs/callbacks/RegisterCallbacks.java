@@ -192,6 +192,9 @@ public class RegisterCallbacks {
             }
             else {
                 abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.AIR.getDefaultState());
+                if (MyModConfig.enableVegetationOnSlabs) {
+                    placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos);
+                }
             }
         }
         // Handle grass slab special case by converting grass to dirt before placing the slab
