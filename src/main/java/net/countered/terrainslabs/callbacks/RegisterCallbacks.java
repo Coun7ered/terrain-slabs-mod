@@ -156,9 +156,7 @@ public class RegisterCallbacks {
         BlockState currentBlockState = worldChunk.getBlockState(placePos);
         BlockState blockBelowState = worldChunk.getBlockState(blockBelowPos);
 
-        if (!(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
-                && !currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
-                && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)) {
+        if ( bottomSlabForbidden( currentBlockState ) ) {
             return;
         }
         // Retrieve the slab type based on the block below the current position
@@ -219,6 +217,13 @@ public class RegisterCallbacks {
             }
         }
         setBlockWithoutUpdates(worldChunk, placePos,  slabState.with(CustomSlab.GENERATED, true));
+    }
+
+    private static boolean bottomSlabForbidden( BlockState currentBlockState ) {
+        return !(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
+                && !currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
+                && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)
+                && !currentBlockState.isIn(BlockTags.REPLACEABLE) && !currentBlockState.isIn(BlockTags.REPLACEABLE_BY_TREES);
     }
 
     public static void setBlockWithoutUpdates(WorldChunk chunk, BlockPos pos, BlockState state) {
