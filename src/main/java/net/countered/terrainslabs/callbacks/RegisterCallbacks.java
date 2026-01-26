@@ -264,7 +264,11 @@ public class RegisterCallbacks {
         if (ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
             if (!(currentBlockState.getBlock().equals(Blocks.SEAGRASS) && !blockAboveState.getBlock().equals(Blocks.WATER))) {
                 BlockState vegetationState = ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getStateWithProperties(currentBlockState);
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15, vegetationState);
+                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,
+                        vegetationState.getProperties().contains( Properties.WATERLOGGED ) ?
+                                vegetationState.with( Properties.WATERLOGGED, false ) :
+                                vegetationState
+                );
             }
         }
     }
