@@ -294,9 +294,13 @@ public class RegisterCallbacks {
             return;
         }
 
+//        if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
+//
+//        }
 
         vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockAboveIsWater ) : vegetationState;
         setBlockWithSection( worldChunk, blockAbovePos, vegetationState );
+
     }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
