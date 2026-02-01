@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class ModSlabsMap {
     public static final Map<Block, Block> SLAB_MAP = new HashMap<>();
 

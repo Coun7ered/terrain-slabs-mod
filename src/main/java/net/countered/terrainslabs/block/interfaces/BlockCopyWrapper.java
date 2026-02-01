@@ -1,7 +1,6 @@
 package net.countered.terrainslabs.block.interfaces;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.TallPlantBlock;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 

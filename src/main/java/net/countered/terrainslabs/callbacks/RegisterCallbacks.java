@@ -55,7 +55,8 @@ public class RegisterCallbacks {
         VEGETATION_ON_TOP_ITEMS.put(Items.SEAGRASS, ModBlocksRegistry.SEAGRASS_ON_TOP);
     }
 
-    public static void putVegetaitonOnTopItemFromString( String keyMod, String keyName, String valueMod, String valueName ) {
+    @SuppressWarnings("unused")
+    public static void putVegetaitonOnTopItemFromString(String keyMod, String keyName, String valueMod, String valueName ) {
         Item item = Registries.ITEM.get( Identifier.of( keyMod, keyName ) );
         Block onTopBlock = Registries.BLOCK.get( Identifier.of( valueMod, valueName ) );
         VEGETATION_ON_TOP_ITEMS.put( item, onTopBlock );
