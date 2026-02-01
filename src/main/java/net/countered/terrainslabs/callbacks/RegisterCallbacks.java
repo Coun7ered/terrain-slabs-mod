@@ -4,6 +4,9 @@ import net.countered.terrainslabs.block.ModBlockTags;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
+import net.countered.terrainslabs.block.interfaces.BlockCopyWrapper;
+import net.countered.terrainslabs.block.interfaces.IBlockCopy;
+import net.countered.terrainslabs.mixinProxy.PlantBlockProxy;
 import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
@@ -66,9 +69,11 @@ public class RegisterCallbacks {
         UseBlockCallback.EVENT.register((PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) -> {
             ItemStack item = player.getStackInHand(hand);
 
+            // TODO: Allow plants to be placed on a double slab as normal?
             BlockPos blockPos = hitResult.getBlockPos().offset(hitResult.getSide());
-            if ( !( world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock
-                    && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM) ) )
+            BlockState blockBelowState = world.getBlockState(blockPos.down());
+            if ( !( blockBelowState.getBlock() instanceof SlabBlock
+                    && blockBelowState.get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM) ) )
             {
                 return ActionResult.PASS;
             }
@@ -100,8 +105,11 @@ public class RegisterCallbacks {
             if ( !VEGETATION_ON_TOP_ITEMS.containsKey(item.getItem()) ) {
                 return ActionResult.PASS;
             }
-
             BlockState vegetationState = VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState();
+            if ( !canPlaceOnTopVegetation( vegetationState, blockBelowState, world, blockPos ) ) {
+                return ActionResult.PASS;
+            }
+
             // Ensure the block can be replaced and there's air at the target position
             if (world.getBlockState(blockPos).isAir() && !vegetationState.isIn( ModBlockTags.REQUIRES_WATER ) ) {
 
@@ -137,6 +145,21 @@ public class RegisterCallbacks {
         });
     }
 
+    static boolean canPlaceOnTopVegetation( BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
+        if ( vegetationState.getBlock() instanceof PlantBlock ) {
+            if ( !( blockBelowState.getBlock() instanceof IBlockCopy ) ) {
+                return false;
+            }
+
+            Block originPlant = new BlockCopyWrapper( (IBlockCopy) vegetationState.getBlock() ).getOriginBlock();
+            Block originBlock = new BlockCopyWrapper( (IBlockCopy) blockBelowState.getBlock() ).getOriginBlock();
+            return ((PlantBlockProxy) originPlant).terrain_slabs_mod$canPlantOnTopProxy(
+                    originBlock.getStateWithProperties(blockBelowState), world, pos);
+        }
+        return true;
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
     private static void registerSlabPlacementCallback() {
         ServerChunkEvents.CHUNK_LOAD.register((serverWorld, worldChunk) -> {
             List<BlockPos> botAttachedSlabPositions = worldChunk.getAttached(SlabChunkAttachment.BOT_SLAB_POSITIONS);
