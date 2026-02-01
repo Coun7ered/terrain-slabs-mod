@@ -1,6 +1,5 @@
 package net.countered.terrainslabs.callbacks;
 
-import net.countered.terrainslabs.TerrainSlabs;
 import net.countered.terrainslabs.block.ModBlockTags;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
@@ -33,7 +32,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.WorldChunk;
 
-import java.net.Proxy;
 import java.util.*;
 
 public class RegisterCallbacks {
@@ -105,7 +103,7 @@ public class RegisterCallbacks {
                     }
 
                     world.setBlockState(blockPos, vegetationState, 0);
-                    world.playSound(player, blockPos, SoundEvents.BLOCK_GRASS_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
 
                     if (!player.isCreative()) {
                         item.decrement(1);
