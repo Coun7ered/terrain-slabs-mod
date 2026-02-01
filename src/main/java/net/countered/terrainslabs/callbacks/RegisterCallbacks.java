@@ -123,7 +123,7 @@ public class RegisterCallbacks {
                 vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
             }
 
-            if ( vegetationState.getBlock() instanceof TallPlantBlock tallPlant ) {
+            if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
                 BlockPos topPos = blockPos.up();
                 BlockState topState = world.getBlockState( topPos );
                 boolean topBlockIsWater = topState.getBlock().equals( Blocks.WATER );
@@ -313,6 +313,7 @@ public class RegisterCallbacks {
         boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
         boolean blockAboveIsWater = blockAboveState.getBlock().equals(Blocks.WATER );
         if ( lacksValidFluidStateAndReplacement( vegetationState, canBeWaterlogged, blockAboveIsWater, blockAboveState.isAir() )) {
+
             return;
         }
 
@@ -333,9 +334,9 @@ public class RegisterCallbacks {
 
     // Checks is position is available and valid fluid state is possible
     private static boolean lacksValidFluidStateAndReplacement(BlockState vegetationState, boolean canBeWaterlogged, boolean blockIsWater, boolean blockIsAir ) {
-        return !( !( blockIsWater || blockIsAir )
+        return !( blockIsWater || blockIsAir )
                 || blockIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
-                || !blockIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ));
+                || !blockIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER );
     }
     private static BlockState withWaterloggedState(BlockState vegetationState, boolean canBeWaterlogged, boolean blockIsWater ) {
         return canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockIsWater ) : vegetationState;
