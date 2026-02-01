@@ -123,7 +123,19 @@ public class RegisterCallbacks {
                 vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
             }
 
-            world.setBlockState(blockPos, getValidFluidState( vegetationState, canBeWaterlogged, blockPosIsWater ), 0);
+            if ( vegetationState.getBlock() instanceof TallPlantBlock tallPlant ) {
+                BlockPos topPos = blockPos.up();
+                BlockState topState = world.getBlockState( topPos );
+                boolean topBlockIsWater = topState.getBlock().equals( Blocks.WATER );
+                if ( lacksValidFluidStateAndReplacement( topState, canBeWaterlogged, topBlockIsWater, topState.isAir() ) ) {
+                    return ActionResult.PASS;
+                }
+
+                BlockState topVegeState = vegetationState.with( Properties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER );
+                world.setBlockState( topPos, withWaterloggedState( topVegeState, canBeWaterlogged, blockPosIsWater ), Block.NOTIFY_NEIGHBORS);
+            }
+
+            world.setBlockState(blockPos, withWaterloggedState( vegetationState, canBeWaterlogged, blockPosIsWater ), Block.NOTIFY_NEIGHBORS);
             world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
 
             if (!player.isCreative()) {
@@ -307,17 +319,16 @@ public class RegisterCallbacks {
         if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
             BlockPos topPos = blockAbovePos.up();
             BlockState topState = worldChunk.getBlockState( topPos );
-            boolean canTopBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
-            boolean topBlockIsWater = blockAboveState.getBlock().equals(Blocks.WATER );
-            if ( lacksValidFluidStateAndReplacement( topState, canTopBeWaterlogged, topBlockIsWater, topState.isAir()) ) {
+            boolean topBlockIsWater = topState.getBlock().equals( Blocks.WATER );
+            if ( lacksValidFluidStateAndReplacement( topState, canBeWaterlogged, topBlockIsWater, topState.isAir()) ) {
                 return;
             }
 
             BlockState topVegeState = vegetationState.with( Properties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER );
-            setBlockWithSection( worldChunk, topPos, getValidFluidState( topVegeState, canTopBeWaterlogged, topBlockIsWater ) );
+            setBlockWithSection( worldChunk, topPos, withWaterloggedState( topVegeState, canBeWaterlogged, topBlockIsWater ) );
         }
 
-        setBlockWithSection( worldChunk, blockAbovePos, getValidFluidState( vegetationState, canBeWaterlogged, blockAboveIsWater ) );
+        setBlockWithSection( worldChunk, blockAbovePos, withWaterloggedState( vegetationState, canBeWaterlogged, blockAboveIsWater ) );
     }
 
     // Checks is position is available and valid fluid state is possible
@@ -326,7 +337,7 @@ public class RegisterCallbacks {
                 || blockIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
                 || !blockIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ));
     }
-    private static BlockState getValidFluidState( BlockState vegetationState, boolean canBeWaterlogged, boolean blockIsWater ) {
+    private static BlockState withWaterloggedState(BlockState vegetationState, boolean canBeWaterlogged, boolean blockIsWater ) {
         return canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockIsWater ) : vegetationState;
     }
 
