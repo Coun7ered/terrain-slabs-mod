@@ -12,6 +12,7 @@ import net.countered.terrainslabs.persistence.SlabChunkAttachment;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.*;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -317,9 +318,17 @@ public class RegisterCallbacks {
             return;
         }
 
-//        if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
-//
-//        }
+        if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
+            BlockPos topPos = blockAbovePos.up();
+            BlockState topState = worldChunk.getBlockState( topPos );
+            if ( !topState.getBlock().equals(Blocks.AIR) ) {
+                return;
+            }
+
+            BlockState topVegeState = vegetationState.with( Properties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER );
+            topVegeState = canBeWaterlogged ? topVegeState.with( Properties.WATERLOGGED, false ) : topVegeState;
+            setBlockWithSection( worldChunk, topPos, topVegeState );
+        }
 
         vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockAboveIsWater ) : vegetationState;
         setBlockWithSection( worldChunk, blockAbovePos, vegetationState );
