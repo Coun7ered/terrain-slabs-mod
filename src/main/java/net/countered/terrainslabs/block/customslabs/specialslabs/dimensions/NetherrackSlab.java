@@ -14,8 +14,8 @@ import net.minecraft.world.WorldView;
 
 public class NetherrackSlab extends CustomSlab implements Fertilizable{
 
-    public NetherrackSlab(Settings settings) {
-        super(settings);
+    public NetherrackSlab(Block originalBlock ) {
+        super( originalBlock );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
                 .with(WATERLOGGED, Boolean.valueOf(false))

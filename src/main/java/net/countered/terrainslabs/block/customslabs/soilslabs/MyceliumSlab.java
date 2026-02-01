@@ -24,8 +24,8 @@ import net.minecraft.world.chunk.light.ChunkLightProvider;
 
 public class MyceliumSlab extends CustomSlab {
 
-    public MyceliumSlab(AbstractBlock.Settings settings) {
-        super(settings);
+    public MyceliumSlab(Block originalBlock ) {
+        super( originalBlock );
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(SlabBlock.TYPE, SlabType.BOTTOM)
                 .with(SNOWY, false)

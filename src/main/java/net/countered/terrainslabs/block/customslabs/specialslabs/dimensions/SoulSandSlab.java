@@ -17,8 +17,8 @@ public class SoulSandSlab extends CustomSlab {
     protected static final VoxelShape BOTTOM_SHAPE_OUT = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
     protected static final VoxelShape TOP_SHAPE_OUT = Block.createCuboidShape(0.0, 8.0, 0.0, 16.0, 16.0, 16.0);
 
-    public SoulSandSlab(Settings settings) {
-        super(settings);
+    public SoulSandSlab(Block originalBlock ) {
+        super( originalBlock, AbstractBlock.Settings.copy( originalBlock ).blockVision(Blocks::never) );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
                 .with(WATERLOGGED, Boolean.valueOf(false))

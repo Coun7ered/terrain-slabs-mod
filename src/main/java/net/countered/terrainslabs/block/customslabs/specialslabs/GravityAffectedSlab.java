@@ -27,8 +27,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
 
-    public GravityAffectedSlab(Settings settings) {
-        super(settings);
+    public GravityAffectedSlab(Block originalBlock ) {
+        super( originalBlock );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
                 .with(WATERLOGGED, Boolean.valueOf(false))
