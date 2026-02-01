@@ -192,7 +192,7 @@ public class RegisterCallbacks {
             else {
                 setBlockWithSection( worldChunk, blockAbovePos, Blocks.AIR.getDefaultState() );
                 if (MyModConfig.enableVegetationOnSlabs) {
-                    placeVegetationOnTop(worldChunk, currentBlockState, blockAboveState, blockAbovePos, true);
+                    placeVegetationOnTop(worldChunk, currentBlockState, blockAboveState, blockAbovePos);
                 }
             }
         }
@@ -279,23 +279,24 @@ public class RegisterCallbacks {
         setBlockWithSection(worldChunk, placePos, slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
     }
 
-    private static void placeVegetationOnTop(WorldChunk worldChunk, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos, boolean isDoublePlant) {
+    private static void placeVegetationOnTop(WorldChunk worldChunk, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
         if ( !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) ) {
             return;
         }
 
         BlockState vegetationState = ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getStateWithProperties(currentBlockState);
+        // Handle Water
         boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
-        boolean isWater = blockAboveState.getBlock().equals(Blocks.WATER );
-        if ( isWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER )) ) {
+        boolean blockAboveIsWater = blockAboveState.getBlock().equals(Blocks.WATER );
+        if ( blockAboveIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+            || !blockAboveIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+        {
             return;
         }
 
-        vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, isWater ) : vegetationState;
+
+        vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockAboveIsWater ) : vegetationState;
         setBlockWithSection( worldChunk, blockAbovePos, vegetationState );
-    }
-    private static void placeVegetationOnTop(WorldChunk worldChunk, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
-        placeVegetationOnTop(worldChunk, currentBlockState, blockAboveState, blockAbovePos, false );
     }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
