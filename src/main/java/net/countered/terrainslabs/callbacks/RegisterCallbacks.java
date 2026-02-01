@@ -79,9 +79,11 @@ public class RegisterCallbacks {
                 return ActionResult.PASS;
             }
 
+            BlockState currentBlockState = world.getBlockState(blockPos);
+            boolean blockPosIsAir = currentBlockState.isAir() || currentBlockState.isIn( BlockTags.REPLACEABLE );
             if (item.getItem() == Items.SNOW) {
                 // Ensure the block can be replaced and there's air at the target position
-                if ((world.getBlockState(blockPos).isAir() || world.getBlockState(blockPos).getBlock() == ModBlocksRegistry.SNOW_ON_TOP)) {
+                if ((blockPosIsAir || currentBlockState.getBlock() == ModBlocksRegistry.SNOW_ON_TOP)) {
                     // Replace with custom snow slab
                     int currentLayers = world.getBlockState(blockPos).getBlock() instanceof SnowBlock
                             ? world.getBlockState(blockPos).get(SnowBlock.LAYERS)
@@ -103,46 +105,39 @@ public class RegisterCallbacks {
                 return ActionResult.PASS;
             }
 
-            if ( !VEGETATION_ON_TOP_ITEMS.containsKey(item.getItem()) ) {
+            // Cancel if is not on top vegetation or position is not available.
+            boolean blockPosIsWater = currentBlockState.isOf(Blocks.WATER);
+            if ( !VEGETATION_ON_TOP_ITEMS.containsKey(item.getItem()) || !( blockPosIsAir || blockPosIsWater ) ) {
                 return ActionResult.PASS;
             }
+            // Cancel if original vegetation is not compatible with original block
             BlockState vegetationState = VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState();
             if ( !canPlaceOnTopVegetation( vegetationState, blockBelowState, world, blockPos ) ) {
                 return ActionResult.PASS;
             }
 
-            // Ensure the block can be replaced and there's air at the target position
-            if (world.getBlockState(blockPos).isAir() && !vegetationState.isIn( ModBlockTags.REQUIRES_WATER ) ) {
-
-                Collection<Property<?>> properties = vegetationState.getProperties();
-                if ( properties.contains( Properties.HORIZONTAL_FACING ) ) {
-                    vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
-                }
-
-                world.setBlockState(blockPos, vegetationState, 0);
-                world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-                if (!player.isCreative()) {
-                    item.decrement(1);
-                }
-                return ActionResult.SUCCESS;
-            }
-            else if (world.getBlockState(blockPos).isOf(Blocks.WATER) ) {
-                boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
-                if ( !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER )) ) {
-                    return ActionResult.PASS;
-                }
-
-                world.setBlockState(blockPos, canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, true ) : vegetationState, 0);
-                world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
-                if (!player.isCreative()) {
-                    item.decrement(1);
-                }
-                return ActionResult.SUCCESS;
+            // Cancel if fluidState cannot be matched
+            boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
+            if ( blockPosIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+                    || !blockPosIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+            {
+                return ActionResult.PASS;
             }
 
-            // Pass to allow normal behavior if conditions are not met
-            return ActionResult.PASS;
+            Collection<Property<?>> properties = vegetationState.getProperties();
+            if ( properties.contains( Properties.HORIZONTAL_FACING ) ) {
+                vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
+            }
+
+            vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockPosIsWater ) : vegetationState;
+            world.setBlockState(blockPos, vegetationState, 0);
+            world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+            if (!player.isCreative()) {
+                item.decrement(1);
+            }
+            return ActionResult.SUCCESS;
+
         });
     }
 
@@ -312,8 +307,9 @@ public class RegisterCallbacks {
         // Handle Water
         boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
         boolean blockAboveIsWater = blockAboveState.getBlock().equals(Blocks.WATER );
-        if ( blockAboveIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
-            || !blockAboveIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+        if ( !( blockAboveIsWater || blockAboveState.isAir() ) ||
+                blockAboveIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+                || !blockAboveIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
         {
             return;
         }
