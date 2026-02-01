@@ -105,23 +105,17 @@ public class RegisterCallbacks {
                 return ActionResult.PASS;
             }
 
-            // Cancel if is not on top vegetation or position is not available.
-            boolean blockPosIsWater = currentBlockState.isOf(Blocks.WATER);
-            if ( !VEGETATION_ON_TOP_ITEMS.containsKey(item.getItem()) || !( blockPosIsAir || blockPosIsWater ) ) {
-                return ActionResult.PASS;
-            }
-            // Cancel if original vegetation is not compatible with original block
-            BlockState vegetationState = VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState();
-            if ( !canPlaceOnTopVegetation( vegetationState, blockBelowState, world, blockPos ) ) {
-                return ActionResult.PASS;
+            if ( !VEGETATION_ON_TOP_ITEMS.containsKey(item.getItem()) ) {
+                return ActionResult.PASS; // Cancel if is not on top vegetation
             }
 
-            // Cancel if fluidState cannot be matched
+            BlockState vegetationState = VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState();
             boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
-            if ( blockPosIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
-                    || !blockPosIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+            boolean blockPosIsWater = currentBlockState.isOf(Blocks.WATER);
+            if ( lacksValidFluidStateAndReplacement( vegetationState, canBeWaterlogged, blockPosIsWater, blockPosIsAir )
+                    || !canPlaceOnTop( vegetationState, blockBelowState, world, blockPos ) )
             {
-                return ActionResult.PASS;
+                return ActionResult.PASS; // Cancel if original vegetation is not compatible with original block
             }
 
             Collection<Property<?>> properties = vegetationState.getProperties();
@@ -129,8 +123,7 @@ public class RegisterCallbacks {
                 vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
             }
 
-            vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockPosIsWater ) : vegetationState;
-            world.setBlockState(blockPos, vegetationState, 0);
+            world.setBlockState(blockPos, getValidFluidState( vegetationState, canBeWaterlogged, blockPosIsWater ), 0);
             world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
 
             if (!player.isCreative()) {
@@ -141,7 +134,7 @@ public class RegisterCallbacks {
         });
     }
 
-    static boolean canPlaceOnTopVegetation( BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
+    static boolean canPlaceOnTop(BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
         if ( vegetationState.getBlock() instanceof PlantBlock ) {
             if ( !( blockBelowState.getBlock() instanceof IBlockCopy ) ) {
                 return false;
@@ -307,28 +300,34 @@ public class RegisterCallbacks {
         // Handle Water
         boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
         boolean blockAboveIsWater = blockAboveState.getBlock().equals(Blocks.WATER );
-        if ( !( blockAboveIsWater || blockAboveState.isAir() ) ||
-                blockAboveIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
-                || !blockAboveIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
-        {
+        if ( lacksValidFluidStateAndReplacement( vegetationState, canBeWaterlogged, blockAboveIsWater, blockAboveState.isAir() )) {
             return;
         }
 
         if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
             BlockPos topPos = blockAbovePos.up();
             BlockState topState = worldChunk.getBlockState( topPos );
-            if ( !topState.getBlock().equals(Blocks.AIR) ) {
+            boolean canTopBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
+            boolean topBlockIsWater = blockAboveState.getBlock().equals(Blocks.WATER );
+            if ( lacksValidFluidStateAndReplacement( topState, canTopBeWaterlogged, topBlockIsWater, topState.isAir()) ) {
                 return;
             }
 
             BlockState topVegeState = vegetationState.with( Properties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER );
-            topVegeState = canBeWaterlogged ? topVegeState.with( Properties.WATERLOGGED, false ) : topVegeState;
-            setBlockWithSection( worldChunk, topPos, topVegeState );
+            setBlockWithSection( worldChunk, topPos, getValidFluidState( topVegeState, canTopBeWaterlogged, topBlockIsWater ) );
         }
 
-        vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockAboveIsWater ) : vegetationState;
-        setBlockWithSection( worldChunk, blockAbovePos, vegetationState );
+        setBlockWithSection( worldChunk, blockAbovePos, getValidFluidState( vegetationState, canBeWaterlogged, blockAboveIsWater ) );
+    }
 
+    // Checks is position is available and valid fluid state is possible
+    private static boolean lacksValidFluidStateAndReplacement(BlockState vegetationState, boolean canBeWaterlogged, boolean blockIsWater, boolean blockIsAir ) {
+        return !( !( blockIsWater || blockIsAir )
+                || blockIsWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER ))
+                || !blockIsWater && vegetationState.isIn( ModBlockTags.REQUIRES_WATER ));
+    }
+    private static BlockState getValidFluidState( BlockState vegetationState, boolean canBeWaterlogged, boolean blockIsWater ) {
+        return canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, blockIsWater ) : vegetationState;
     }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
