@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -65,12 +66,16 @@ public class RegisterCallbacks {
         UseBlockCallback.EVENT.register((PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) -> {
             ItemStack item = player.getStackInHand(hand);
 
-            if (item.getItem() == Items.SNOW) {
-                BlockPos blockPos = hitResult.getBlockPos().offset(hitResult.getSide());
+            BlockPos blockPos = hitResult.getBlockPos().offset(hitResult.getSide());
+            if ( !( world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock
+                    && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM) ) )
+            {
+                return ActionResult.PASS;
+            }
 
+            if (item.getItem() == Items.SNOW) {
                 // Ensure the block can be replaced and there's air at the target position
-                if ((world.getBlockState(blockPos).isAir() || world.getBlockState(blockPos).getBlock() == ModBlocksRegistry.SNOW_ON_TOP)
-                        && world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM)) {
+                if ((world.getBlockState(blockPos).isAir() || world.getBlockState(blockPos).getBlock() == ModBlocksRegistry.SNOW_ON_TOP)) {
                     // Replace with custom snow slab
                     int currentLayers = world.getBlockState(blockPos).getBlock() instanceof SnowBlock
                             ? world.getBlockState(blockPos).get(SnowBlock.LAYERS)
@@ -89,40 +94,44 @@ public class RegisterCallbacks {
                         return ActionResult.SUCCESS;
                     }
                 }
+                return ActionResult.PASS;
             }
-            else if (VEGETATION_ON_TOP_ITEMS.containsKey(item.getItem())) {
-                BlockPos blockPos = hitResult.getBlockPos().offset(hitResult.getSide());
-                // Ensure the block can be replaced and there's air at the target position
-                if (world.getBlockState(blockPos).isAir() && world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock
-                        && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM) && !item.isOf(Items.SEAGRASS)) {
 
-                    BlockState vegetationState = VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState();
-                    Collection<Property<?>> properties = vegetationState.getProperties();
-                    if ( properties.contains( Properties.HORIZONTAL_FACING ) ) {
-                        vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
-                    }
-
-                    world.setBlockState(blockPos, vegetationState, 0);
-                    world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-                    if (!player.isCreative()) {
-                        item.decrement(1);
-                    }
-                    return ActionResult.SUCCESS;
-                }
-                else if (world.getBlockState(blockPos).isOf(Blocks.WATER) && world.getBlockState(blockPos.down()).getBlock() instanceof SlabBlock
-                        && world.getBlockState(blockPos.down()).get(Properties.SLAB_TYPE).equals(SlabType.BOTTOM)) {
-                    if (item.getItem().equals(Items.SEAGRASS)) {
-                        world.setBlockState(blockPos, ModBlocksRegistry.SEAGRASS_ON_TOP.getDefaultState(), 0);
-
-                        world.playSound(player, blockPos, SoundEvents.BLOCK_WET_GRASS_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                        if (!player.isCreative()) {
-                            item.decrement(1);
-                        }
-                        return ActionResult.SUCCESS;
-                    }
-                }
+            if ( !VEGETATION_ON_TOP_ITEMS.containsKey(item.getItem()) ) {
+                return ActionResult.PASS;
             }
+
+            BlockState vegetationState = VEGETATION_ON_TOP_ITEMS.get(item.getItem()).getDefaultState();
+            // Ensure the block can be replaced and there's air at the target position
+            if (world.getBlockState(blockPos).isAir() && !vegetationState.isIn( ModBlockTags.REQUIRES_WATER ) ) {
+
+                Collection<Property<?>> properties = vegetationState.getProperties();
+                if ( properties.contains( Properties.HORIZONTAL_FACING ) ) {
+                    vegetationState = vegetationState.with( Properties.HORIZONTAL_FACING, player.getHorizontalFacing().getOpposite() );
+                }
+
+                world.setBlockState(blockPos, vegetationState, 0);
+                world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+                if (!player.isCreative()) {
+                    item.decrement(1);
+                }
+                return ActionResult.SUCCESS;
+            }
+            else if (world.getBlockState(blockPos).isOf(Blocks.WATER) ) {
+                boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
+                if ( !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER )) ) {
+                    return ActionResult.PASS;
+                }
+
+                world.setBlockState(blockPos, canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, true ) : vegetationState, 0);
+                world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+                if (!player.isCreative()) {
+                    item.decrement(1);
+                }
+                return ActionResult.SUCCESS;
+            }
+
             // Pass to allow normal behavior if conditions are not met
             return ActionResult.PASS;
         });
@@ -189,7 +198,7 @@ public class RegisterCallbacks {
             else {
                 abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.AIR.getDefaultState());
                 if (MyModConfig.enableVegetationOnSlabs) {
-                    placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos);
+                    placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos, true);
                 }
             }
         }
@@ -266,22 +275,31 @@ public class RegisterCallbacks {
         section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
     }
 
-    private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
-        if (ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock())) {
-            if (!(currentBlockState.getBlock().equals(Blocks.SEAGRASS) && !blockAboveState.getBlock().equals(Blocks.WATER))) {
-                BlockState vegetationState = ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getStateWithProperties(currentBlockState);
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,
-                        vegetationState.getProperties().contains( Properties.WATERLOGGED ) ?
-                                vegetationState.with( Properties.WATERLOGGED, false ) :
-                                vegetationState
-                );
-            }
+    private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos, boolean isDoublePlant) {
+        if ( !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) ) {
+            return;
         }
+
+        BlockState vegetationState = ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getStateWithProperties(currentBlockState);
+        boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
+        boolean isWater = blockAboveState.getBlock().equals(Blocks.WATER );
+        if ( isWater && !( canBeWaterlogged || vegetationState.isIn( ModBlockTags.REQUIRES_WATER )) ) {
+            return;
+        }
+
+        abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,
+                canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, isWater ) : vegetationState );
+
+    }
+    private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
+        placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos, false );
     }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
         if (slabState.contains(Properties.WATERLOGGED)) {
-            if (currentBlockState.isOf(Blocks.WATER) || blockAboveState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.SEAGRASS)) {
+            if (currentBlockState.isOf(Blocks.WATER) || blockAboveState.isOf(Blocks.WATER)
+                    || currentBlockState.getFluidState() == Fluids.WATER.getStill(false) )
+            {
                 return slabState.with(Properties.WATERLOGGED, true);
             }
         }

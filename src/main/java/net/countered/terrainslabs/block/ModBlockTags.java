@@ -13,4 +13,7 @@ public class ModBlockTags {
 
     public static final TagKey<Block> SOIL_SLAB_BLOCKS =
             TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "soil_slabs"));
+
+    public static final TagKey<Block> REQUIRES_WATER =
+            TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "requires_water"));
 }
