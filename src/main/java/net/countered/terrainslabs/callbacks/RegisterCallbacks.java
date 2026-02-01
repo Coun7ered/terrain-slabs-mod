@@ -176,18 +176,12 @@ public class RegisterCallbacks {
              */
             return;
         }
-        int blockBelowY = blockBelowPos.getY();
-        int blockAboveY = blockAbovePos.getY();
-        int placeY = placePos.getY();
 
         // check if section is too high
-        int sectionIndex = worldChunk.getSectionIndex(blockAboveY);
+        int sectionIndex = worldChunk.getSectionIndex(blockAbovePos.getY());
         if (sectionIndex < 0 || sectionIndex >= worldChunk.getSectionArray().length) {
             return;
         }
-        ChunkSection placePosSection = worldChunk.getSection(worldChunk.getSectionIndex(placeY));
-        ChunkSection belowPosSection = worldChunk.getSection(worldChunk.getSectionIndex(blockBelowY));
-        ChunkSection abovePosSection = worldChunk.getSection(sectionIndex);
 
         // remove double tall plants
         if (currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
@@ -196,21 +190,21 @@ public class RegisterCallbacks {
                 blockAboveState = Blocks.WATER.getDefaultState();
             }
             else {
-                abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,  Blocks.AIR.getDefaultState());
+                setBlockWithSection( worldChunk, blockAbovePos, Blocks.AIR.getDefaultState() );
                 if (MyModConfig.enableVegetationOnSlabs) {
-                    placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos, true);
+                    placeVegetationOnTop(worldChunk, currentBlockState, blockAboveState, blockAbovePos, true);
                 }
             }
         }
         // Handle grass slab special case by converting grass to dirt before placing the slab
         if (ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.containsKey(slabState.getBlock())) {
-            belowPosSection.setBlockState(blockBelowPos.getX() & 15, blockBelowPos.getY() & 15, blockBelowPos.getZ() & 15, ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.get(slabState.getBlock()).getDefaultState());
+            setBlockWithSection( worldChunk, blockBelowPos, ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.get(slabState.getBlock()).getDefaultState() );
         }
         slabState = updateBottomWaterloggedState(currentBlockState, blockAboveState, slabState);
 
         // place vegetation / snow on top
         if (MyModConfig.enableVegetationOnSlabs) {
-            placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos);
+            placeVegetationOnTop(worldChunk, currentBlockState, blockAboveState, blockAbovePos);
         }
         if (currentBlockState.isOf(Blocks.SNOW)) {
             if (MyModConfig.enableSnowOnSlabs) {
@@ -233,7 +227,7 @@ public class RegisterCallbacks {
                 && !currentBlockState.isIn(BlockTags.REPLACEABLE) && !currentBlockState.isIn(BlockTags.REPLACEABLE_BY_TREES);
     }
 
-    public static void setBlockWithoutUpdates(WorldChunk chunk, BlockPos pos, BlockState state) {
+    static void setBlockWithoutUpdates(WorldChunk chunk, BlockPos pos, BlockState state) {
         int y = pos.getY();
         int lx = pos.getX() & 15;
         int lz = pos.getZ() & 15;
@@ -254,6 +248,17 @@ public class RegisterCallbacks {
         chunk.setNeedsSaving(true);
     }
 
+    static void setBlockWithSection( WorldChunk chunk, BlockPos pos, BlockState state ) {
+        int y = pos.getY();
+        int lx = pos.getX() & 15;
+        int lz = pos.getZ() & 15;
+        int ly = y & 15;
+
+        ChunkSection section = chunk.getSection(chunk.getSectionIndex(y));
+
+        section.setBlockState(lx, ly, lz, state);
+    }
+
     private static void placeTopSlab(WorldChunk worldChunk, BlockPos placePos) {
         BlockState blockAboveState = worldChunk.getBlockState(placePos.up());
 
@@ -271,11 +276,10 @@ public class RegisterCallbacks {
             slabState = ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.get(slabState.getBlock()).getDefaultState();
         }
         slabState = updateTopWaterloggedState(worldChunk, placePos, slabState);
-        ChunkSection section = worldChunk.getSection(worldChunk.getSectionIndex(placePos.getY()));
-        section.setBlockState(placePos.getX() & 15, placePos.getY() & 15, placePos.getZ() & 15,  slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
+        setBlockWithSection(worldChunk, placePos, slabState.with(CustomSlab.GENERATED, true).with(Properties.SLAB_TYPE, SlabType.TOP));
     }
 
-    private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos, boolean isDoublePlant) {
+    private static void placeVegetationOnTop(WorldChunk worldChunk, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos, boolean isDoublePlant) {
         if ( !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) ) {
             return;
         }
@@ -287,12 +291,11 @@ public class RegisterCallbacks {
             return;
         }
 
-        abovePosSection.setBlockState(blockAbovePos.getX() & 15, blockAbovePos.getY() & 15, blockAbovePos.getZ() & 15,
-                canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, isWater ) : vegetationState );
-
+        vegetationState = canBeWaterlogged ? vegetationState.with( Properties.WATERLOGGED, isWater ) : vegetationState;
+        setBlockWithSection( worldChunk, blockAbovePos, vegetationState );
     }
-    private static void placeVegetationOnTop(ChunkSection abovePosSection, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
-        placeVegetationOnTop(abovePosSection, currentBlockState, blockAboveState, blockAbovePos, false );
+    private static void placeVegetationOnTop(WorldChunk worldChunk, BlockState currentBlockState, BlockState blockAboveState, BlockPos blockAbovePos) {
+        placeVegetationOnTop(worldChunk, currentBlockState, blockAboveState, blockAbovePos, false );
     }
 
     private static BlockState updateBottomWaterloggedState(BlockState currentBlockState, BlockState blockAboveState, BlockState slabState) {
