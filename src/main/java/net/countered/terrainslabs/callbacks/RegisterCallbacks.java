@@ -131,13 +131,13 @@ public class RegisterCallbacks {
                 if ( lacksValidFluidStateAndReplacement( topState, canBeWaterlogged, topBlockIsWater, topState.isAir() ) ) {
                     return ActionResult.PASS;
                 }
-
-                BlockState topVegeState = vegetationState.with( Properties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER );
-                world.setBlockState( topPos, withWaterloggedState( topVegeState, canBeWaterlogged, blockPosIsWater ), Block.NOTIFY_NEIGHBORS);
             }
 
             world.setBlockState(blockPos, withWaterloggedState( vegetationState, canBeWaterlogged, blockPosIsWater ), Block.NOTIFY_NEIGHBORS);
             world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+            if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
+                ( vegetationState.getBlock()).onPlaced( world, blockPos, vegetationState, player, item );
+            }
 
             if (!player.isCreative()) {
                 item.decrement(1);
