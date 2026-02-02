@@ -1,5 +1,6 @@
 package net.countered.terrainslabs.callbacks;
 
+import net.countered.terrainslabs.TerrainSlabs;
 import net.countered.terrainslabs.block.ModBlockTags;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
@@ -131,13 +132,13 @@ public class RegisterCallbacks {
                 if ( lacksValidFluidStateAndReplacement( topState, canBeWaterlogged, topBlockIsWater, topState.isAir() ) ) {
                     return ActionResult.PASS;
                 }
-
-                BlockState topVegeState = vegetationState.with( Properties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER );
-                world.setBlockState( topPos, withWaterloggedState( topVegeState, canBeWaterlogged, blockPosIsWater ), Block.NOTIFY_NEIGHBORS);
             }
 
             world.setBlockState(blockPos, withWaterloggedState( vegetationState, canBeWaterlogged, blockPosIsWater ), Block.NOTIFY_NEIGHBORS);
             world.playSound(player, blockPos, vegetationState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 1.0F);
+            if ( vegetationState.getBlock() instanceof TallPlantBlock ) {
+                ( vegetationState.getBlock()).onPlaced( world, blockPos, vegetationState, player, item );
+            }
 
             if (!player.isCreative()) {
                 item.decrement(1);
@@ -216,9 +217,7 @@ public class RegisterCallbacks {
             }
             else {
                 setBlockWithSection( worldChunk, blockAbovePos, Blocks.AIR.getDefaultState() );
-                if (MyModConfig.enableVegetationOnSlabs) {
-                    placeVegetationOnTop(worldChunk, currentBlockState, blockAboveState, blockAbovePos);
-                }
+                blockAboveState = Blocks.AIR.getDefaultState();
             }
         }
         // Handle grass slab special case by converting grass to dirt before placing the slab
@@ -310,11 +309,9 @@ public class RegisterCallbacks {
         }
 
         BlockState vegetationState = ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.get(currentBlockState.getBlock()).getStateWithProperties(currentBlockState);
-        // Handle Water
         boolean canBeWaterlogged = vegetationState.getProperties().contains( Properties.WATERLOGGED );
         boolean blockAboveIsWater = blockAboveState.getBlock().equals(Blocks.WATER );
         if ( lacksValidFluidStateAndReplacement( vegetationState, canBeWaterlogged, blockAboveIsWater, blockAboveState.isAir() )) {
-
             return;
         }
 
