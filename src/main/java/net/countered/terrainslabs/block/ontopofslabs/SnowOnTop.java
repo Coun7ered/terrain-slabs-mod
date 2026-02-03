@@ -1,5 +1,6 @@
 package net.countered.terrainslabs.block.ontopofslabs;
 
+import net.countered.terrainslabs.block.interfaces.IBlockCopyFabric;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.util.math.BlockPos;
@@ -10,9 +11,12 @@ import net.minecraft.world.WorldView;
 
 import static net.minecraft.block.SlabBlock.TYPE;
 
-public class SnowOnTop extends SnowBlock {
-    public SnowOnTop(Settings settings) {
-        super(settings);
+public class SnowOnTop extends SnowBlock implements IBlockCopyFabric {
+    private final Block originalBlock;
+
+    public SnowOnTop(Block originalBlock ) {
+        super( AbstractBlock.Settings.copy( originalBlock ) );
+        this.originalBlock = originalBlock;
     }
 
     protected static final VoxelShape[] LAYERS_TO_SHAPE = new VoxelShape[]{
@@ -60,5 +64,15 @@ public class SnowOnTop extends SnowBlock {
     @Override
     public float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
         return 1.0F;
+    }
+
+    @Override
+    public Block getOriginBlock() {
+        return originalBlock;
+    }
+
+    @Override
+    public BlockCopyType getCopyType() {
+        return BlockCopyType.ON_TOP;
     }
 }

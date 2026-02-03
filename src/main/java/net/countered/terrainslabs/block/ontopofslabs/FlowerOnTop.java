@@ -1,5 +1,6 @@
 package net.countered.terrainslabs.block.ontopofslabs;
 
+import net.countered.terrainslabs.block.interfaces.IBlockCopyFabric;
 import net.minecraft.block.*;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -10,12 +11,15 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldView;
 
 
-public class FlowerOnTop extends FlowerBlock implements SuspiciousStewIngredient {
-
+public class FlowerOnTop extends FlowerBlock implements IBlockCopyFabric {
+    private final Block originalBlock;
     protected static final VoxelShape SHAPE = Block.createCuboidShape(5.0, -8.0, 5.0, 11.0, 2.0, 11.0);
 
-    public FlowerOnTop(StatusEffect suspiciousStewEffect, int effectDuration, Settings settings) {
-        super(suspiciousStewEffect, effectDuration, settings);
+    public FlowerOnTop(Block originalBlock ) {
+        super( ((FlowerBlock) originalBlock).getEffectInStew(),
+                ((FlowerBlock) originalBlock).getEffectInStewDuration(),
+                AbstractBlock.Settings.copy( originalBlock ));
+        this.originalBlock = originalBlock;
     }
 
 
@@ -27,5 +31,15 @@ public class FlowerOnTop extends FlowerBlock implements SuspiciousStewIngredient
     @Override
     protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
         return floor.getBlock() instanceof SlabBlock;
+    }
+
+    @Override
+    public Block getOriginBlock() {
+        return originalBlock;
+    }
+
+    @Override
+    public BlockCopyType getCopyType() {
+        return BlockCopyType.ON_TOP;
     }
 }
