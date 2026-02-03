@@ -20,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class PathSlab extends CustomSlab {
 
-    public PathSlab(Settings settings) {
-        super(settings);
+    public PathSlab(Block originalBlock ) {
+        super( originalBlock, AbstractBlock.Settings.copy( originalBlock ).blockVision(Blocks::never) );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
                 .with(WATERLOGGED, Boolean.valueOf(false))

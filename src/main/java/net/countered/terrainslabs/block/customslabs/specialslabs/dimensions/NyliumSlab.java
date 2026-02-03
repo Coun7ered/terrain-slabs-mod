@@ -15,8 +15,8 @@ import net.minecraft.world.chunk.light.ChunkLightProvider;
 
 public class NyliumSlab extends CustomSlab implements Fertilizable {
 
-    public NyliumSlab(Settings settings) {
-        super(settings);
+    public NyliumSlab(Block originalBlock ) {
+        super( originalBlock );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
                 .with(WATERLOGGED, Boolean.valueOf(false))

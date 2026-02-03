@@ -24,8 +24,8 @@ import net.minecraft.world.chunk.light.ChunkLightProvider;
 
 public class GrassSlab extends CustomSlab {
 
-    public GrassSlab(Settings settings) {
-        super(settings);
+    public GrassSlab( Block originalBlock ) {
+        super( originalBlock );
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(SlabBlock.TYPE, SlabType.BOTTOM)
                 .with(SNOWY, false)

@@ -16,8 +16,8 @@ import net.minecraft.world.WorldAccess;
 
 public class PodzolSlab extends CustomSlab {
 
-    public PodzolSlab(Settings settings) {
-        super(settings);
+    public PodzolSlab(Block originalBlock ) {
+        super( originalBlock );
         this.setDefaultState(this.stateManager.getDefaultState()
                 .with(SlabBlock.TYPE, SlabType.BOTTOM)
                 .with(SNOWY, false)
