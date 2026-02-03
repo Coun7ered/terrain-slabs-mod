@@ -1,2 +1,5 @@
-fix:
-underside waterlogged slabs (improved)
+# fix: 
+- raytrace for on top vegetation
+
+# add:
+- compatibility for addon mods
