@@ -1,12 +1,12 @@
 package net.countered.terrainslabs.callbacks;
 
-import net.countered.terrainslabs.TerrainSlabs;
 import net.countered.terrainslabs.block.ModBlockTags;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
 import net.countered.terrainslabs.block.interfaces.BlockCopyWrapper;
 import net.countered.terrainslabs.block.interfaces.IBlockCopy;
+import net.countered.terrainslabs.block.interfaces.IOnTopCopy;
 import net.countered.terrainslabs.mixinProxy.PlantBlockProxy;
 import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
@@ -148,7 +148,11 @@ public class RegisterCallbacks {
         });
     }
 
-    static boolean canPlaceOnTop(BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
+    static boolean canPlaceOnTop( BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
+        if ( vegetationState.getBlock() instanceof IOnTopCopy copy && copy.hasPlacementRule( "custom" ) ) {
+            return vegetationState.canPlaceAt( world, pos );
+        }
+
         if ( vegetationState.getBlock() instanceof PlantBlock ) {
             if ( !( blockBelowState.getBlock() instanceof IBlockCopy ) ) {
                 return false;
