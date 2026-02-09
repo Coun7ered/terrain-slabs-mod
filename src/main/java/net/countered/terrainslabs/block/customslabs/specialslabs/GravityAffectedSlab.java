@@ -104,14 +104,12 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
 
     @Override
     public void onDestroyedOnLanding(World world, BlockPos pos, FallingBlockEntity fallingBlockEntity) {
-        LandingBlock.super.onDestroyedOnLanding(world, pos, fallingBlockEntity);
         if (fallingBlockEntity.getBlockState().get(TYPE) == SlabType.DOUBLE) {
             dropStack(world, pos, new ItemStack(this.asItem()));
         }
     }
     @Override
     public void onLanding(World world, BlockPos pos, BlockState fallingBlockState, BlockState currentStateInPos, FallingBlockEntity fallingBlockEntity) {
-        LandingBlock.super.onLanding(world, pos, fallingBlockState, currentStateInPos, fallingBlockEntity);
         if (fallingBlockState.get(TYPE) == SlabType.TOP) {
             world.setBlockState(pos, this.getDefaultState().with(Properties.SLAB_TYPE, SlabType.BOTTOM));
         }
