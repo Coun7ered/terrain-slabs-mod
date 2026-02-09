@@ -53,12 +53,7 @@ public class SnowOnTop extends SnowBlock implements IBlockCopyFabric {
     @Override
     public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
         BlockState blockState = world.getBlockState(pos.down());
-        if (blockState.getBlock() instanceof SlabBlock) {
-            if (blockState.get(TYPE).equals(SlabType.BOTTOM)) {
-                return true;
-            }
-        }
-        return false;
+        return blockState.getBlock() instanceof SlabBlock && blockState.get(TYPE).equals(SlabType.BOTTOM);
     }
 
     @Override
