@@ -5,6 +5,7 @@
   "mixins": [
     "BlockViewMixin",
     "FallingBlockEntityMixin",
+    "FlowableFluidMixin",
     "PlantBlockMixin",
     "ShovelItemMixin"
   ],
