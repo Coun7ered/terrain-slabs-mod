@@ -6,7 +6,6 @@ import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.customslabs.specialslabs.CustomSlab;
 import net.countered.terrainslabs.block.interfaces.BlockCopyWrapper;
 import net.countered.terrainslabs.block.interfaces.IBlockCopy;
-import net.countered.terrainslabs.block.interfaces.IOnTopCopy;
 import net.countered.terrainslabs.mixinProxy.PlantBlockProxy;
 import net.countered.terrainslabs.config.MyModConfig;
 import net.countered.terrainslabs.persistence.SlabChunkAttachment;
@@ -57,7 +56,7 @@ public class RegisterCallbacks {
     }
 
     @SuppressWarnings("unused")
-    public static void putVegetaitonOnTopItemFromString(String keyMod, String keyName, String valueMod, String valueName ) {
+    public static void putVegetationOnTopItemFromString(String keyMod, String keyName, String valueMod, String valueName ) {
         Item item = Registries.ITEM.get( Identifier.of( keyMod, keyName ) );
         Block onTopBlock = Registries.BLOCK.get( Identifier.of( valueMod, valueName ) );
         VEGETATION_ON_TOP_ITEMS.put( item, onTopBlock );
@@ -149,7 +148,7 @@ public class RegisterCallbacks {
     }
 
     static boolean canPlaceOnTop( BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
-        if ( vegetationState.getBlock() instanceof IOnTopCopy copy && copy.hasPlacementRule( "custom" ) ) {
+        if ( vegetationState.getBlock() instanceof IBlockCopy copy && copy.hasPlacementRule( "custom" ) ) {
             return vegetationState.canPlaceAt( world, pos );
         }
 

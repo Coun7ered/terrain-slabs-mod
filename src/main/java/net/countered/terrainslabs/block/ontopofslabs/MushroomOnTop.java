@@ -1,17 +1,15 @@
 package net.countered.terrainslabs.block.ontopofslabs;
 
 import net.countered.terrainslabs.block.interfaces.IBlockCopyFabric;
-import net.countered.terrainslabs.block.interfaces.IOnTopCopy;
 import net.minecraft.block.*;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 
-public class MushroomOnTop extends MushroomPlantBlock implements IBlockCopyFabric, IOnTopCopy {
+public class MushroomOnTop extends MushroomPlantBlock implements IBlockCopyFabric {
     private final Block originalBlock;
     protected static final VoxelShape SHAPE = Block.createCuboidShape(5.0, -8.0, 5.0, 11.0, -2.0, 11.0);
 
@@ -40,5 +38,10 @@ public class MushroomOnTop extends MushroomPlantBlock implements IBlockCopyFabri
     @Override
     public Block getOriginBlock() {
         return originalBlock;
+    }
+
+    @Override
+    public BlockCopyType getCopyType() {
+        return BlockCopyType.ON_TOP;
     }
 }
