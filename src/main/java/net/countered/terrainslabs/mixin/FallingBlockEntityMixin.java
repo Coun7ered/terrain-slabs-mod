@@ -19,10 +19,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin( FallingBlockEntity.class )
 public abstract class FallingBlockEntityMixin {
 
+    /**
+     * This method allows the correct item to be dropped by IBlockCopy falling slabs, as well as includes
+     * special behaviour for blocks falling on a generated copy of themselves (places on top if possible
+     * and converts the slab to a block)
+     * @param instance falling block entity which is being removed
+     * @param itemConvertible object that will convert to the item dropped by default
+     * @return Item entity that will be spawned
+     */
     @Redirect( method = "tick", at = @At( value = "INVOKE",
             target = "Lnet/minecraft/entity/FallingBlockEntity;dropItem(Lnet/minecraft/item/ItemConvertible;)Lnet/minecraft/entity/ItemEntity;" )
     )
     private ItemEntity dropItemProxy(FallingBlockEntity instance, ItemConvertible itemConvertible) {
+        // block copies have their own listener to handle this.
         if ( instance.getBlockState().getBlock() instanceof IBlockCopy ) {
             return instance.dropItem( Blocks.AIR, 1 );
         }
@@ -32,6 +41,7 @@ public abstract class FallingBlockEntityMixin {
             return instance.dropItem( itemConvertible );
         }
 
+        // If block types match and slab is generated, place on top instead of breaking for better natural behaviour
         World world = instance.getWorld();
         BlockPos belowPos = instance.getBlockPos();
         BlockState belowState = world.getBlockState( belowPos );

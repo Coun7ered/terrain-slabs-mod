@@ -5,7 +5,6 @@ import net.minecraft.block.enums.SlabType;
 import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.WaterFluid;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
@@ -25,36 +24,9 @@ public abstract class FlowableFluidMixin {
     @Unique
     private static final BooleanProperty GENERATED = BooleanProperty.of("generated");
 
-    @Inject( method = "flow", at = @At( "HEAD" ), cancellable = true )
-    void onFlow(
-            WorldAccess world, BlockPos pos,
-            BlockState state, Direction direction,
-            FluidState fluidState, CallbackInfo ci
-    ) {
-        if ( !state.getProperties().contains( GENERATED ) || !state.get( GENERATED ) ) {
-            return;
-        }
-        if ( direction == Direction.DOWN || fluidState.getLevel() >= 4 ) {
-            world.breakBlock( pos, false );
-            world.setBlockState( pos, fluidState.getBlockState(), Block.NOTIFY_ALL );
-            ci.cancel();
-        }
-    }
-
-//    @Redirect( method = "flow", at = @At( value = "INVOKE",
-//            target = "Lnet/minecraft/block/FluidFillable;tryFillWithFluid(Lnet/minecraft/world/WorldAccess;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/fluid/FluidState;)Z"))
-//    private boolean tryFillWithFluidProxy(
-//            FluidFillable instance, WorldAccess world,
-//            BlockPos pos, BlockState state, FluidState fluidState
-//    ) {
-//        if ( !state.getProperties().contains( GENERATED ) || !state.get( GENERATED ) ) {
-//            return instance.tryFillWithFluid( world, pos, state, fluidState );
-//        }
-//        world.breakBlock( pos, false );
-//        world.setBlockState( pos, fluidState.getBlockState(), Block.NOTIFY_ALL );
-//        return true;
-//    }
-
+    /**
+     * Fluid considers trying to flow into generated slabs
+     */
     @Inject( method = "canFill", at = @At( "HEAD" ), cancellable = true )
     private void onCanFill(
             BlockView world, BlockPos pos,
@@ -70,4 +42,28 @@ public abstract class FlowableFluidMixin {
         }
     }
 
+    /**
+     * Fluid flows into generated slabs if the fluid level is high enough
+     * @param world world
+     * @param pos pos
+     * @param state blockState flowing into
+     * @param direction flow direction
+     * @param fluidState fluidState
+     * @param ci context
+     */
+    @Inject( method = "flow", at = @At( "HEAD" ), cancellable = true )
+    void onFlow(
+            WorldAccess world, BlockPos pos,
+            BlockState state, Direction direction,
+            FluidState fluidState, CallbackInfo ci
+    ) {
+        if ( !state.getProperties().contains( GENERATED ) || !state.get( GENERATED ) ) {
+            return;
+        }
+        if ( direction == Direction.DOWN || fluidState.getLevel() >= 4 ) {
+            world.breakBlock( pos, false );
+            world.setBlockState( pos, fluidState.getBlockState(), Block.NOTIFY_ALL );
+            ci.cancel();
+        }
+    }
 }
