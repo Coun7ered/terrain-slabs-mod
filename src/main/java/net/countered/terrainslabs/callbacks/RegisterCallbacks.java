@@ -213,7 +213,7 @@ public class RegisterCallbacks {
         }
 
         // remove double tall plants
-        if (currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
+        if (currentBlockState.isIn(ModBlockTags.TALL_DECORATIONS) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
             if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
                 setBlockWithoutUpdates(worldChunk, blockAbovePos, Blocks.WATER.getDefaultState());
                 blockAboveState = Blocks.WATER.getDefaultState();
@@ -249,7 +249,7 @@ public class RegisterCallbacks {
 
     private static boolean bottomSlabForbidden( BlockState currentBlockState ) {
         return !(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
-                && !currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
+                && !currentBlockState.isIn(ModBlockTags.TALL_DECORATIONS) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
                 && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)
                 && !currentBlockState.isIn(BlockTags.REPLACEABLE) && !currentBlockState.isIn(BlockTags.REPLACEABLE_BY_TREES);
     }
