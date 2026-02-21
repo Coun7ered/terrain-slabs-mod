@@ -106,6 +106,9 @@ public class ModSlabsMap {
         TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.WARPED_NYLIUM_SLAB, ModBlocksRegistry.NETHERRACK_SLAB);
         TOP_SLAB_REPLACEMENT_MAP.put(ModBlocksRegistry.CRIMSON_NYLIUM_SLAB, ModBlocksRegistry.NETHERRACK_SLAB);
     }
+    public static final Map<Block, Block> INVERSE_SLAB_REPLACEMENT_MAP = new HashMap<>();
+
+
 
     public static Block getSlabForBlock(Block blockBelow) {
         return SLAB_MAP.getOrDefault(blockBelow, Blocks.AIR); // Default slab if no match
@@ -123,6 +126,9 @@ public class ModSlabsMap {
     }
     public static void putTopSlabReplacementFromString( String keyMod, String keyName, String valueMod, String valueName ) {
         putWithId( TOP_SLAB_REPLACEMENT_MAP, keyMod, keyName, valueMod, valueName );
+    }
+    public static void putInverseSlabReplacementFromString( String keyMod, String keyName, String valueMod, String valueName ) {
+        putWithId( INVERSE_SLAB_REPLACEMENT_MAP, keyMod, keyName, valueMod, valueName );
     }
 
     private static void putWithId( Map<Block, Block> map, String keyMod, String keyName, String valueMod, String valueName ) {

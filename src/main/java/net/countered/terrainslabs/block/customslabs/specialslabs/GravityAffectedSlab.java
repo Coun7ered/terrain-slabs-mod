@@ -1,6 +1,5 @@
 package net.countered.terrainslabs.block.customslabs.specialslabs;
 
-import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.interfaces.BlockCopyWrapper;
 import net.countered.terrainslabs.block.interfaces.IBlockCopy;
 import net.minecraft.block.*;
@@ -103,10 +102,7 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
         BlockState landedOnBlockState = world.getBlockState( pos );
 
         //No need to check state, would only trigger on bottom slab
-        if ( landedOnBlockState.isOf( this )
-                || fallingBlockState.isOf( ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.getOrDefault( landedOnBlockState.getBlock(), Blocks.AIR ) )
-                || landedOnBlockState.isOf( ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.getOrDefault( fallingBlockState.getBlock(), Blocks.AIR ) )
-        ) {
+        if ( landedOnBlockState.isOf( this ) ) {
             Block originBlock = new BlockCopyWrapper( (IBlockCopy) fallingBlockState.getBlock() ).getOriginBlock();
 
             if ( fallingBlockState.get( TYPE ).equals( SlabType.DOUBLE ) ) {
@@ -120,8 +116,7 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
                         .with( TYPE, SlabType.BOTTOM ) );
 
                 if ( landedOnBlockState.get( GENERATED ) ) {
-                    world.setBlockState( pos, ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.getOrDefault(
-                            fallingBlockState.getBlock(), originBlock ).getStateWithProperties( landedOnBlockState ) );
+                    originBlock.getStateWithProperties( landedOnBlockState );
                 } else {
                     world.setBlockState( pos, this.getDefaultState().with( TYPE, SlabType.DOUBLE ));
                 }

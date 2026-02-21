@@ -13,6 +13,7 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
@@ -30,36 +31,50 @@ public abstract class FallingBlockEntityMixin {
     @Redirect( method = "tick", at = @At( value = "INVOKE",
             target = "Lnet/minecraft/entity/FallingBlockEntity;dropItem(Lnet/minecraft/item/ItemConvertible;)Lnet/minecraft/entity/ItemEntity;" )
     )
-    private ItemEntity dropItemProxy(FallingBlockEntity instance, ItemConvertible itemConvertible) {
+    private ItemEntity dropItemProxy( FallingBlockEntity instance, ItemConvertible itemConvertible) {
         // block copies have their own listener to handle this.
-        if ( instance.getBlockState().getBlock() instanceof IBlockCopy ) {
+        BlockState fallingBlockState = instance.getBlockState();
+        if ( fallingBlockState.getBlock() instanceof IBlockCopy ) {
             return instance.dropItem( Blocks.AIR, 1 );
         }
 
-        Block slab = ModSlabsMap.SLAB_MAP.getOrDefault( instance.getBlockState().getBlock(), Blocks.AIR );
-        Block slabReplace = ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.getOrDefault( slab, Blocks.AIR );
+        Block slab = ModSlabsMap.SLAB_MAP.getOrDefault( fallingBlockState.getBlock(), Blocks.AIR );
         if ( slab.equals( Blocks.AIR ) ) {
             return instance.dropItem( itemConvertible );
         }
 
         World world = instance.getWorld();
         BlockPos belowPos = instance.getBlockPos();
-        BlockState fallingBlockState = instance.getBlockState();
 
         // If block types match and slab is generated, place on top instead of breaking for better natural behaviour
         BlockState belowState = world.getBlockState( belowPos );
-        BlockState currentStateAtPos = world.getBlockState( belowPos.up() );
-        if ( !( ( belowState.isOf( slab ) || fallingBlockState.isOf( slabReplace ) )
-                        && belowState.get( CustomSlab.GENERATED ) )
-                || !( currentStateAtPos.isIn( BlockTags.REPLACEABLE ) || currentStateAtPos.isAir()
-                        || currentStateAtPos.isOf( Blocks.WATER ) )
-        ) {
+        if ( !terrainSlabs$canPlaceOn( world, belowPos, slab ) ) {
             return instance.dropItem( itemConvertible );
         }
 
-        Block belowBlock = slabReplace.getDefaultState().isAir() ? fallingBlockState.getBlock() : slabReplace;
+        Block belowBlock = ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.getOrDefault( slab, fallingBlockState.getBlock() );
         world.setBlockState( belowPos, belowBlock.getStateWithProperties( belowState ) );
         world.setBlockState( instance.getBlockPos().up(), fallingBlockState );
         return instance.dropItem( Blocks.AIR, 1 );
     }
+
+    @Unique
+    private static boolean terrainSlabs$canPlaceOn(World world, BlockPos belowPos, Block slab ) {
+        BlockState currentStateAtPos = world.getBlockState( belowPos.up() );
+        if ( !( currentStateAtPos.isIn( BlockTags.REPLACEABLE ) || currentStateAtPos.isAir()
+                || currentStateAtPos.isOf( Blocks.WATER ) )
+        ) {
+            return false;
+        }
+
+        BlockState belowState = world.getBlockState( belowPos );
+        if ( !belowState.get( CustomSlab.GENERATED ) ) {
+            return false;
+        }
+
+        return belowState.isOf( slab ) || belowState.isOf( ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.getOrDefault( slab,
+                ModSlabsMap.INVERSE_SLAB_REPLACEMENT_MAP.getOrDefault( slab, Blocks.AIR ) )
+        );
+    }
+
 }
