@@ -8,8 +8,8 @@ import net.minecraft.util.Identifier;
 import static net.countered.terrainslabs.TerrainSlabs.MOD_ID;
 
 public class ModBlockTags {
-    public static final TagKey<Block> DOUBLE_TALL_PLANTS =
-            TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "double_tall_plants"));
+    public static final TagKey<Block> TALL_DECORATIONS =
+            TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "tall_decorations"));
 
     public static final TagKey<Block> SOIL_SLAB_BLOCKS =
             TagKey.of(RegistryKeys.BLOCK, new Identifier(MOD_ID, "soil_slabs"));

@@ -1,6 +1,5 @@
 package net.countered.terrainslabs.callbacks;
 
-import net.countered.terrainslabs.TerrainSlabs;
 import net.countered.terrainslabs.block.ModBlockTags;
 import net.countered.terrainslabs.block.ModBlocksRegistry;
 import net.countered.terrainslabs.block.ModSlabsMap;
@@ -57,7 +56,7 @@ public class RegisterCallbacks {
     }
 
     @SuppressWarnings("unused")
-    public static void putVegetaitonOnTopItemFromString(String keyMod, String keyName, String valueMod, String valueName ) {
+    public static void putVegetationOnTopItemFromString(String keyMod, String keyName, String valueMod, String valueName ) {
         Item item = Registries.ITEM.get( Identifier.of( keyMod, keyName ) );
         Block onTopBlock = Registries.BLOCK.get( Identifier.of( valueMod, valueName ) );
         VEGETATION_ON_TOP_ITEMS.put( item, onTopBlock );
@@ -148,7 +147,11 @@ public class RegisterCallbacks {
         });
     }
 
-    static boolean canPlaceOnTop(BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
+    static boolean canPlaceOnTop( BlockState vegetationState, BlockState blockBelowState, World world, BlockPos pos ) {
+        if ( vegetationState.getBlock() instanceof IBlockCopy copy && copy.hasPlacementRule( "custom" ) ) {
+            return vegetationState.canPlaceAt( world, pos );
+        }
+
         if ( vegetationState.getBlock() instanceof PlantBlock ) {
             if ( !( blockBelowState.getBlock() instanceof IBlockCopy ) ) {
                 return false;
@@ -210,7 +213,7 @@ public class RegisterCallbacks {
         }
 
         // remove double tall plants
-        if (currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
+        if (currentBlockState.isIn(ModBlockTags.TALL_DECORATIONS) || currentBlockState.isIn(BlockTags.TALL_FLOWERS)) {
             if (currentBlockState.isOf(Blocks.TALL_SEAGRASS)) {
                 setBlockWithoutUpdates(worldChunk, blockAbovePos, Blocks.WATER.getDefaultState());
                 blockAboveState = Blocks.WATER.getDefaultState();
@@ -246,7 +249,7 @@ public class RegisterCallbacks {
 
     private static boolean bottomSlabForbidden( BlockState currentBlockState ) {
         return !(currentBlockState.isOf(Blocks.AIR) || currentBlockState.isOf(Blocks.WATER) || currentBlockState.isOf(Blocks.CAVE_AIR) || currentBlockState.isOf(Blocks.VOID_AIR)  || currentBlockState.isOf(Blocks.LAVA))
-                && !currentBlockState.isIn(ModBlockTags.DOUBLE_TALL_PLANTS) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
+                && !currentBlockState.isIn(ModBlockTags.TALL_DECORATIONS) && !currentBlockState.isIn(BlockTags.TALL_FLOWERS)
                 && !ModSlabsMap.ON_TOP_VEGETATION_BLOCKS_MAP.containsKey(currentBlockState.getBlock()) && !currentBlockState.isOf(Blocks.SNOW)
                 && !currentBlockState.isIn(BlockTags.REPLACEABLE) && !currentBlockState.isIn(BlockTags.REPLACEABLE_BY_TREES);
     }

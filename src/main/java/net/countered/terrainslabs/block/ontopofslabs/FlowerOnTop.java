@@ -2,13 +2,10 @@ package net.countered.terrainslabs.block.ontopofslabs;
 
 import net.countered.terrainslabs.block.interfaces.IBlockCopyFabric;
 import net.minecraft.block.*;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.WorldView;
 
 
 public class FlowerOnTop extends FlowerBlock implements IBlockCopyFabric {
