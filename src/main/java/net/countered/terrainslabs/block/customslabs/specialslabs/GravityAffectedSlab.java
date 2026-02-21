@@ -1,9 +1,8 @@
 package net.countered.terrainslabs.block.customslabs.specialslabs;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LandingBlock;
-import net.minecraft.block.SlabBlock;
+import net.countered.terrainslabs.block.interfaces.BlockCopyWrapper;
+import net.countered.terrainslabs.block.interfaces.IBlockCopy;
+import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.client.util.ParticleUtil;
 import net.minecraft.entity.FallingBlockEntity;
@@ -15,29 +14,22 @@ import net.minecraft.particle.BlockStateParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("deprecation")
 public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
 
     public GravityAffectedSlab(Block originalBlock ) {
         super( originalBlock );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
-                .with(WATERLOGGED, Boolean.valueOf(false))
-                .with(GENERATED, Boolean.valueOf(false)));
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(TYPE, WATERLOGGED, GENERATED);
+                .with(WATERLOGGED, false)
+                .with(GENERATED, false));
     }
 
     @Override
@@ -47,9 +39,10 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (canFallThrough(world.getBlockState(pos.down())) && pos.getY() >= world.getBottomY()) {
-            FallingBlockEntity fallingBlockEntity = FallingBlockEntity.spawnFromBlock(world, pos, state);
-            this.configureFallingBlockEntity(fallingBlockEntity);
+        if ( canFallThrough( world.getBlockState( pos.down() ) ) && pos.getY() >= world.getBottomY() ) {
+            // FallingBlockEntity fallingBlockEntity =
+            FallingBlockEntity.spawnFromBlock( world, pos, state );
+            // this.configureFallingBlockEntity(fallingBlockEntity);
         }
     }
     @Override
@@ -58,8 +51,13 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
         return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
-    protected void configureFallingBlockEntity(FallingBlockEntity entity) {
+    private boolean canFallThrough( BlockState state ) {
+        return FallingBlock.canFallThrough( state )
+                || ( state.isOf( this ) && state.get( TYPE ).equals( SlabType.BOTTOM ) );
     }
+
+//    protected void configureFallingBlockEntity(FallingBlockEntity entity) {
+//    }
 
     /**
      * Gets the amount of time in ticks this block will wait before attempting to start falling.
@@ -68,33 +66,29 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
         return 2;
     }
 
-    public static boolean canFallThrough(BlockState state) {
-        return state.isAir() || state.isIn(BlockTags.FIRE) || state.isLiquid() || state.isReplaceable();
-    }
-
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         if (random.nextInt(16) == 0) {
             BlockPos blockPos = pos.down();
-            if (canFallThrough(world.getBlockState(blockPos))) {
+            if ( canFallThrough(world.getBlockState(blockPos))) {
                 ParticleUtil.spawnParticle(world, pos, random, new BlockStateParticleEffect(ParticleTypes.FALLING_DUST, state));
             }
         }
     }
 
-    public int getColor(BlockState state, BlockView world, BlockPos pos) {
-        return -16777216;
-    }
+//    public int getColor(BlockState state, BlockView world, BlockPos pos) {
+//        return -16777216;
+//    }
 
     @Override
     public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
         BlockPos blockPos = ctx.getBlockPos();
         BlockState blockState = ctx.getWorld().getBlockState(blockPos);
         if (blockState.isOf(this)) {
-            return blockState.with(TYPE, SlabType.DOUBLE).with(WATERLOGGED, Boolean.valueOf(false));
+            return blockState.with(TYPE, SlabType.DOUBLE).with(WATERLOGGED, false );
         } else {
             FluidState fluidState = ctx.getWorld().getFluidState(blockPos);
-            BlockState blockState2 = this.getDefaultState().with(TYPE, SlabType.BOTTOM).with(WATERLOGGED, Boolean.valueOf(fluidState.getFluid() == Fluids.WATER));
+            BlockState blockState2 = this.getDefaultState().with(TYPE, SlabType.BOTTOM).with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
             Direction direction = ctx.getSide();
             return direction != Direction.DOWN && (direction == Direction.UP || !(ctx.getHitPos().y - (double)blockPos.getY() > 0.5))
                     ? blockState2
@@ -104,16 +98,50 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
 
     @Override
     public void onDestroyedOnLanding(World world, BlockPos pos, FallingBlockEntity fallingBlockEntity) {
-        LandingBlock.super.onDestroyedOnLanding(world, pos, fallingBlockEntity);
-        if (fallingBlockEntity.getBlockState().get(TYPE) == SlabType.DOUBLE) {
-            dropStack(world, pos, new ItemStack(this.asItem()));
+        BlockState fallingBlockState = fallingBlockEntity.getBlockState();
+        BlockState landedOnBlockState = world.getBlockState( pos );
+
+        //No need to check state, would only trigger on bottom slab
+        if ( landedOnBlockState.isOf( this ) ) {
+            Block originBlock = new BlockCopyWrapper( (IBlockCopy) fallingBlockState.getBlock() ).getOriginBlock();
+
+            if ( fallingBlockState.get( TYPE ).equals( SlabType.DOUBLE ) ) {
+                BlockState aboveState = world.getBlockState( pos.up() );
+                if ( !( aboveState.isIn( BlockTags.REPLACEABLE ) || aboveState.isAir() || aboveState.isOf( Blocks.WATER ) ) ) {
+                    dropStack(world, pos, new ItemStack(this.getOriginItem()));
+                    return;
+                }
+
+                world.setBlockState( pos.up(), this.getStateWithProperties( landedOnBlockState )
+                        .with( TYPE, SlabType.BOTTOM ) );
+
+                if ( landedOnBlockState.get( GENERATED ) ) {
+                    originBlock.getStateWithProperties( landedOnBlockState );
+                } else {
+                    world.setBlockState( pos, this.getDefaultState().with( TYPE, SlabType.DOUBLE ));
+                }
+            } else {
+                if ( landedOnBlockState.get( GENERATED ) ) {
+                    world.setBlockState( pos, originBlock.getStateWithProperties( landedOnBlockState ) );
+                } else {
+                    world.setBlockState( pos, this.getDefaultState().with( TYPE, SlabType.DOUBLE ));
+                }
+            }
+            return;
+        }
+
+        // Loot if checks fail
+        if ( fallingBlockState.get(TYPE).equals( SlabType.DOUBLE) ) {
+            dropStack(world, pos, new ItemStack(this.getOriginItem(), 2));
+        } else {
+            dropStack(world, pos, new ItemStack(this.getOriginItem()));
         }
     }
+
     @Override
     public void onLanding(World world, BlockPos pos, BlockState fallingBlockState, BlockState currentStateInPos, FallingBlockEntity fallingBlockEntity) {
-        LandingBlock.super.onLanding(world, pos, fallingBlockState, currentStateInPos, fallingBlockEntity);
-        if (fallingBlockState.get(TYPE) == SlabType.TOP) {
-            world.setBlockState(pos, this.getDefaultState().with(Properties.SLAB_TYPE, SlabType.BOTTOM));
+        if ( fallingBlockState.get( TYPE ) == SlabType.TOP ) {
+            world.setBlockState( pos, fallingBlockState.with( TYPE, SlabType.BOTTOM ) );
         }
     }
 }
