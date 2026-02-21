@@ -1,5 +1,6 @@
 package net.countered.terrainslabs.block.customslabs.specialslabs;
 
+import net.countered.terrainslabs.block.ModSlabsMap;
 import net.countered.terrainslabs.block.interfaces.BlockCopyWrapper;
 import net.countered.terrainslabs.block.interfaces.IBlockCopy;
 import net.minecraft.block.*;
@@ -100,28 +101,41 @@ public class GravityAffectedSlab extends CustomSlab implements LandingBlock {
     public void onDestroyedOnLanding(World world, BlockPos pos, FallingBlockEntity fallingBlockEntity) {
         BlockState fallingBlockState = fallingBlockEntity.getBlockState();
         BlockState landedOnBlockState = world.getBlockState( pos );
-        if ( landedOnBlockState.isOf( this ) ) { //No need to check state, would only trigger on bottom slab
-            if ( landedOnBlockState.get( GENERATED ) ) {
-                world.setBlockState( pos, new BlockCopyWrapper(
-                        (IBlockCopy) fallingBlockState.getBlock() ).getOriginBlock().getDefaultState());
+
+        //No need to check state, would only trigger on bottom slab
+        if ( landedOnBlockState.isOf( this )
+                || fallingBlockState.isOf( ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.getOrDefault( landedOnBlockState.getBlock(), Blocks.AIR ) )
+                || landedOnBlockState.isOf( ModSlabsMap.TOP_SLAB_REPLACEMENT_MAP.getOrDefault( fallingBlockState.getBlock(), Blocks.AIR ) )
+        ) {
+            Block originBlock = new BlockCopyWrapper( (IBlockCopy) fallingBlockState.getBlock() ).getOriginBlock();
+
+            if ( fallingBlockState.get( TYPE ).equals( SlabType.DOUBLE ) ) {
+                BlockState aboveState = world.getBlockState( pos.up() );
+                if ( !( aboveState.isIn( BlockTags.REPLACEABLE ) || aboveState.isAir() || aboveState.isOf( Blocks.WATER ) ) ) {
+                    dropStack(world, pos, new ItemStack(this.getOriginItem()));
+                    return;
+                }
+
+                world.setBlockState( pos.up(), this.getStateWithProperties( landedOnBlockState )
+                        .with( TYPE, SlabType.BOTTOM ) );
+
+                if ( landedOnBlockState.get( GENERATED ) ) {
+                    world.setBlockState( pos, ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.getOrDefault(
+                            fallingBlockState.getBlock(), originBlock ).getStateWithProperties( landedOnBlockState ) );
+                } else {
+                    world.setBlockState( pos, this.getDefaultState().with( TYPE, SlabType.DOUBLE ));
+                }
             } else {
-                world.setBlockState( pos, this.getDefaultState().with( TYPE, SlabType.DOUBLE ));
+                if ( landedOnBlockState.get( GENERATED ) ) {
+                    world.setBlockState( pos, originBlock.getStateWithProperties( landedOnBlockState ) );
+                } else {
+                    world.setBlockState( pos, this.getDefaultState().with( TYPE, SlabType.DOUBLE ));
+                }
             }
-            if ( !fallingBlockState.get( TYPE ).equals( SlabType.DOUBLE ) ) {
-                return;
-            }
-
-            BlockState aboveState = world.getBlockState( pos.up() );
-            if ( !( aboveState.isIn( BlockTags.REPLACEABLE ) || aboveState.isAir() || aboveState.isOf( Blocks.WATER ) ) ) {
-                dropStack(world, pos, new ItemStack(this.getOriginItem()));
-                return;
-            }
-
-            world.setBlockState( pos.up(), landedOnBlockState
-                    .with( TYPE, SlabType.BOTTOM ) );
             return;
         }
 
+        // Loot if checks fail
         if ( fallingBlockState.get(TYPE).equals( SlabType.DOUBLE) ) {
             dropStack(world, pos, new ItemStack(this.getOriginItem(), 2));
         } else {

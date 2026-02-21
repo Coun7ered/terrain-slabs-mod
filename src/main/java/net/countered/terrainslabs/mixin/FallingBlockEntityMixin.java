@@ -37,25 +37,29 @@ public abstract class FallingBlockEntityMixin {
         }
 
         Block slab = ModSlabsMap.SLAB_MAP.getOrDefault( instance.getBlockState().getBlock(), Blocks.AIR );
+        Block slabReplace = ModSlabsMap.BLOCK_BELOW_REPLACEMENT_MAP.getOrDefault( slab, Blocks.AIR );
         if ( slab.equals( Blocks.AIR ) ) {
             return instance.dropItem( itemConvertible );
         }
 
-        // If block types match and slab is generated, place on top instead of breaking for better natural behaviour
         World world = instance.getWorld();
         BlockPos belowPos = instance.getBlockPos();
+        BlockState fallingBlockState = instance.getBlockState();
+
+        // If block types match and slab is generated, place on top instead of breaking for better natural behaviour
         BlockState belowState = world.getBlockState( belowPos );
         BlockState currentStateAtPos = world.getBlockState( belowPos.up() );
-        if ( !( belowState.isOf( slab ) && belowState.get( CustomSlab.GENERATED ) )
+        if ( !( ( belowState.isOf( slab ) || fallingBlockState.isOf( slabReplace ) )
+                        && belowState.get( CustomSlab.GENERATED ) )
                 || !( currentStateAtPos.isIn( BlockTags.REPLACEABLE ) || currentStateAtPos.isAir()
                         || currentStateAtPos.isOf( Blocks.WATER ) )
         ) {
             return instance.dropItem( itemConvertible );
         }
 
-        BlockState state = instance.getBlockState();
-        world.setBlockState( belowPos, state.getBlock().getStateWithProperties( belowState ) );
-        world.setBlockState( instance.getBlockPos().up(), state );
+        Block belowBlock = slabReplace.getDefaultState().isAir() ? fallingBlockState.getBlock() : slabReplace;
+        world.setBlockState( belowPos, belowBlock.getStateWithProperties( belowState ) );
+        world.setBlockState( instance.getBlockPos().up(), fallingBlockState );
         return instance.dropItem( Blocks.AIR, 1 );
     }
 }
