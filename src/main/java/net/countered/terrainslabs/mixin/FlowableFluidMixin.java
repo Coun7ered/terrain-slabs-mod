@@ -61,7 +61,7 @@ public abstract class FlowableFluidMixin {
             return;
         }
         if ( direction == Direction.DOWN || fluidState.getLevel() >= 4 ) {
-            world.breakBlock( pos, false );
+            world.breakBlock( pos, true );
             world.setBlockState( pos, fluidState.getBlockState(), Block.NOTIFY_ALL );
             ci.cancel();
         }
