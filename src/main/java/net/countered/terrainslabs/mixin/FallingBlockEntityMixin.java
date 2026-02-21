@@ -68,7 +68,7 @@ public abstract class FallingBlockEntityMixin {
         }
 
         BlockState belowState = world.getBlockState( belowPos );
-        if ( !belowState.get( CustomSlab.GENERATED ) ) {
+        if ( !belowState.getProperties().contains( CustomSlab.GENERATED ) || !belowState.get( CustomSlab.GENERATED ) ) {
             return false;
         }
 
