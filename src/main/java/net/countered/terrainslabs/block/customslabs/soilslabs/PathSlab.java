@@ -22,7 +22,8 @@ public class PathSlab extends CustomSlab {
 
     public PathSlab(Block originalBlock ) {
         super( originalBlock, AbstractBlock.Settings.copy( originalBlock ).blockVision(
-                ( state, world, pos ) -> false ) );
+                ( state, world, pos ) -> state.get( TYPE ).equals( SlabType.DOUBLE ) )
+        );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
                 .with(WATERLOGGED, Boolean.valueOf(false))

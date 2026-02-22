@@ -19,7 +19,8 @@ public class SoulSandSlab extends CustomSlab {
 
     public SoulSandSlab(Block originalBlock ) {
         super( originalBlock, AbstractBlock.Settings.copy( originalBlock ).blockVision(
-                ( state, world, pos ) -> false ) );
+                ( state, world, pos ) -> state.get( TYPE ).equals( SlabType.DOUBLE ) )
+        );
         this.setDefaultState(this.getDefaultState()
                 .with(TYPE, SlabType.BOTTOM)
                 .with(WATERLOGGED, Boolean.valueOf(false))
