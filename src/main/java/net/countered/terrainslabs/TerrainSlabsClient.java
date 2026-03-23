@@ -1,20 +1,19 @@
 package net.countered.terrainslabs;
 
 import net.fabricmc.api.*;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.*;
 import net.fabricmc.fabric.api.client.rendering.v1.*;
 import net.minecraft.block.*;
 import net.minecraft.client.color.block.*;
 import net.minecraft.client.color.world.*;
 import net.minecraft.client.render.*;
-import net.minecraft.world.biome.*;
+import net.minecraft.world.biome.GrassColors;
 
 import static net.countered.terrainslabs.block.ModBlocksRegistry.*;
 
 public class TerrainSlabsClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(), getCutoutMippedBlocks());
+        BlockRenderLayerMap.putBlocks(BlockRenderLayer.CUTOUT_MIPPED, getCutoutMippedBlocks());
         ColorProviderRegistry.BLOCK.register(colorBlockOrDefaultProvider(), getTintedBlocks());
     }
 
