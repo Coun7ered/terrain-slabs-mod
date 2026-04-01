@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.enums.SlabType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.ShovelItem;
@@ -49,7 +50,7 @@ public abstract class ShovelItemMixin {
                 world.setBlockState(blockPos, pathState, Block.NOTIFY_ALL_AND_REDRAW);
                 world.emitGameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Emitter.of(playerEntity, pathState));
                 if (playerEntity != null) {
-                    context.getStack().damage(1, playerEntity, context.getHand().getEquipmentSlot());
+                    context.getStack().damage(1, playerEntity, LivingEntity.getSlotForHand(context.getHand()));
                 }
             }
 

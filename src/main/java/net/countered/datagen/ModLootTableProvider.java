@@ -107,7 +107,7 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
                 block -> LootTable.builder()
                         .pool(
                                 LootPool.builder()
-                                        .conditionally(EntityPropertiesLootCondition.create(LootContext.EntityReference.THIS))
+                                        .conditionally(EntityPropertiesLootCondition.create(LootContext.EntityTarget.THIS))
                                         .with(
                                                 AlternativeEntry.builder(
                                                         AlternativeEntry.builder(
