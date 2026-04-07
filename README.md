@@ -1,4 +1,6 @@
-# Countered's Terrain Slabs
+# Countered's Terrain Slabs (Deprecated)
+
+New repo: https://github.com/Coun7ered/terrain_slabs_multiloader
 
 **Countered's Terrain Slabs** is a Minecraft mod that adds unique slabs to the terrain, creating a smoother, more walkable world. These slabs naturally generate next to full blocks and blend seamlessly with the surrounding landscape, allowing players to explore mountains and hills without constantly needing to jump up or down.
 
